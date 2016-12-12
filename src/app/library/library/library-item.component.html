@@ -1,0 +1,13 @@
+<div class="publication md-whiteframe-3dp p-1 mb-1" (click)="openPublication()">
+    <div class="float-xs-right">
+        <img class="md-whiteframe-2dp ml-1" [src]="getImagePath()" height="150" width="104" alt="{{topic.publication}}" />
+    </div>
+    <div>
+        <h6>{{topic.title}}</h6>
+        <p *ngIf="topic.subtitle">{{subtitle}}</p>
+        <p *ngIf="topic.author">{{topic.author}}</p>
+        <p *ngIf="topic.publisher" class="caption text-muted">{{topic.publisher}}</p>
+        <p *ngIf="topic.pubDate" class="caption text-muted">{{topic.pubDate}}></p>
+        <p *ngIf="topic.isbn" class="caption text-muted">ISBN {{topic.isbn}}</p>
+    </div>
+</div>

@@ -1,0 +1,32 @@
+<ls-simple-navbar [navTitle]="'Sign In'" [backRoute]="['/library']"></ls-simple-navbar>
+
+<div class="container ">
+  <div class="row">
+    <div class="col-lg-8 offset-lg-2 col-xs-12">
+      <div class="login jumbotron center-block mt-2">
+        <div class="my-1">
+          <button type="button" class="btn btn-primary" (click)="oauthSignIn('google')">
+                <i class="fa fa-google"></i> Sign in with Google
+            </button>
+        </div>
+        <h1>Login</h1>
+
+        <form role="form" (ngSubmit)="onSubmit(f)" #f="ngForm">
+          <div ngModelGroup="userCredentials">
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" id="email" placeholder="Email" ngModel name="email" required>
+            </div>
+            <div class="form-group">
+              <label for="password">Password</label>
+              <input type="password" class="form-control" id="password" placeholder="Password" ngModel name="password" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-default">Submit</button>
+          <!--<a href="/signup">Click here to Signup</a>-->
+        </form>
+
+      </div>
+    </div>
+  </div>
+</div>

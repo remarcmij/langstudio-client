@@ -1,0 +1,17 @@
+.flashcard {
+    height: 250px;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+    @media (max-width: 599px) {
+        height: 196px;
+    }
+}
+
+.flashcard-controller {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

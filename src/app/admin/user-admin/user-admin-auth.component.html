@@ -1,0 +1,27 @@
+<ls-simple-navbar [navTitle]="'User Group Authorizations'" [backRoute]="['/admin/user']"></ls-simple-navbar>
+
+<div class="container">
+  <div class="row">
+    <form *ngIf="groups" class="offset-lg-2 col-lg-8 col-xs-12">
+      <div class="list-group">
+        <ls-user-admin-item class="list-group-item" [user]="user"></ls-user-admin-item>
+      </div>
+      <div class="list-group mt-1">
+        <li class="list-group-item">
+          <button class="btn btn-primary" (click)="selectAll()">Select All</button>
+          <button class="btn btn-primary" (click)="selectNone()">Select None</button>
+          <button class="btn btn-primary" *ngIf="isDirty" (click)="restoreSelection()">Reset</button>
+        </li>
+        <li class="list-group-item" *ngFor="let group of groups; let index = $index">
+          <div class="form-check float-xs-right">
+            <input type="checkbox" [name]="group.name" class="form-check-input" [(ngModel)]="group.selected" (ngModelChange)="onModelChange()" [disabled]="group.name==='public'">
+          </div>
+          <h5 class="list-group-item-heading">{{group.name}}</h5>
+          <p class="list-group-item-text" *ngFor="let topic of group.topics">
+            {{topic.title}}
+          </p>
+        </li>
+      </div>
+    </form>
+  </div>
+</div>

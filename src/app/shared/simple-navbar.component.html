@@ -1,0 +1,24 @@
+<nav class="navbar navbar-fixed-top navbar-dark bg-primary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2 col-xs-12">
+        <ul class="nav navbar-nav">
+          <li class="nav-item">
+            <button type="button" class="btn btn-primary" (click)="goBack()">
+                <i class="fa fa-fw fa-chevron-left"></i>
+            </button>
+          </li>
+          <li class="nav-item ml-0">
+            <p class="nav-title">{{navTitle}}</p>
+          </li>
+        </ul>
+        <div class="float-xs-right">
+          <button *ngFor="let navButton of navButtons" type="button" class="btn btn-primary"
+                (click)="onClick($event, navButton.command)">
+            <i class="fa fa-fw {{navButton.faName}}"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>

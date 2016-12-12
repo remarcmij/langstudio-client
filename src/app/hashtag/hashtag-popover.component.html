@@ -1,0 +1,16 @@
+<div #popover class="card" [style.opacity]="scrollState === 'busy' ? 0 : 1">
+  <div *ngIf="!errorText">
+    <h5 class="card-title m-1">
+      tag: <span class="text-danger">#{{hashTag}}</span>
+    </h5>
+    <div class="card-text">
+      <div class="list-group">
+        <ls-hashtag-popover-item *ngFor="let item of items" [item]="item" [tag]="hashTag" class="list-group-item"></ls-hashtag-popover-item>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="errorText">
+    <h5 class="card-title text-warning">{{hashTag}}</h5>
+    <p class="card-text">{{errorText}}</p>
+  </div>
+</div>

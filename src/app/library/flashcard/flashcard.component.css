@@ -1,0 +1,30 @@
+.flashcard {
+    height: 250px;
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 599px) {
+    .flashcard {
+        height: 196px;
+    }
+}
+
+h5 {
+    margin: 4px;
+    text-align: center;
+}
+
+h6 {
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.controller {
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

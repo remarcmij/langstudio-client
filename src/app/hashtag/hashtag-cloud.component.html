@@ -1,0 +1,23 @@
+<ls-simple-navbar [navTitle]="'Alle tags'">
+</ls-simple-navbar>
+
+<div class="container">
+  <ls-hashtag-popover *ngIf="hashTag" [hashTag]="hashTag" (shouldHide)="hidePopover()">
+  </ls-hashtag-popover>
+
+  <div *ngIf="tagGroups" class="row">
+    <div class="col-lg-8 offset-lg-2 col-xs-12">
+      <div class="list-group ls-fade-in" [ngClass]="{'ls-hide': scrollState === 'busy'}">
+        <div *ngFor="let tagGroup of tagGroups">
+          <hr>
+          <h5>&nbsp;{{tagGroup._id}}</h5>
+          <p>
+            <span class="hashtag" *ngFor="let tag of tagGroup.tags" (click)="onClick($event, tag.name)">#{{tag.name}}
+                <span *ngIf="tag.count > 1"><small>({{tag.count}})</small></span>
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

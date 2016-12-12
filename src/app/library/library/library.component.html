@@ -1,0 +1,95 @@
+<nav class="navbar navbar-fixed-top navbar-dark bg-primary">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-8 offset-lg-2 col-xs-12">
+        <ul class="nav navbar-nav">
+          <li class="nav-item">
+            <button type="button" class="btn btn-primary" (click)="openSidePanel($event)">
+              <i class="fa fa-bars"></i>
+            </button>
+          </li>
+          <li class="nav-item ml-0">
+            <p class="nav-title">{{appTitle}}</p>
+          </li>
+        </ul>
+        <div class="float-xs-right">
+          <a class="btn btn-primary" routerLink="/hashtag">
+            <i class="fa fa-fw fa-hashtag"></i>
+          </a>
+          <button type="button" class="btn btn-primary" (click)="search()">
+            <i class="fa fa-fw fa-search"></i>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="row mt-1 ls-fade-in" [ngClass]="{'ls-hide': scrollState === 'busy'}">
+    <div class="offset-lg-2 col-lg-8">
+      <div class="row">
+        <div class="col-lg-6" *ngFor="let topic of topics">
+          <ls-library-item [topic]="topic"></ls-library-item>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="sidepanel.isopen" class="ls-modal-overlay"></div>
+
+<ls-sidepanel *ngIf="sidepanel.isopen" [location]="'left'" [title]="'Taalstudio'" (shouldHide)="sidepanel.isopen = false">
+  <div class="p-1">
+
+    <h6 *ngIf="!user">Not signed in</h6>
+    <h6 *ngIf="user" [ngSwitch]="user.provider">
+      <i *ngSwitchCase="'google'" class="fa fa-google fa-fw"></i>
+      <i *ngSwitchCase="'facebook'" class="fa fa-facebook-official fa-fw"></i>
+      <i *ngSwitchCase="'local'" class="fa fa-user fa-fw"></i> {{user.email}}
+    </h6>
+
+    <hr>
+
+    <p>
+      <a *ngIf="!user" tabindex="0" routerLink="/signin">
+        <i class="fa fa-sign-in fa-fw"></i> Sign in
+      </a>
+    </p>
+
+    <p>
+      <a *ngIf="user" (click)="signOut()" tabindex="0">
+        <i class="fa fa-sign-out fa-fw"></i> Sign out
+      </a>
+    </p>
+
+    <p>
+      <a tabindex="0" routerLink="/about">
+        <i class="fa fa-info-circle fa-fw"></i> About
+      </a>
+    </p>
+
+    <div *ngIf="user && user.role === 'admin'" class="mt-2">
+      <hr>
+      <h6>System Administration</h6>
+      <hr>
+      <p>
+        <a tabindex="0" (click)="clearCacheNavigate(['/admin', 'upload'])">
+          <i class="fa fa-upload fa-fw"></i> Upload files
+        </a>
+      </p>
+      <p>
+        <a tabindex="0" (click)="clearCacheNavigate(['/admin', 'library'])">
+          <i class="fa fa-files-o fa-fw"></i> Manage publications
+        </a>
+      </p>
+      <p>
+        <a tabindex="0" (click)="clearCacheNavigate(['/admin', 'user'])">
+          <i class="fa fa-users fa-fw"></i> Manage users
+        </a>
+      </p>
+    </div>
+
+  </div>
+</ls-sidepanel>

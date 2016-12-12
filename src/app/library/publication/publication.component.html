@@ -1,0 +1,14 @@
+<ls-simple-navbar [navTitle]="'Articles'" [backRoute]="['/library']"
+    [navButtons]="[{faName: 'fa-hashtag', command: 'allTags'}, {faName: 'fa-search', command: 'search' }]"
+    (handler)="commandHandler($event)">
+</ls-simple-navbar>
+
+<div class="container">
+  <div class="row">
+    <div class="col-lg-8 offset-lg-2 col-xs-12">
+      <div *ngIf="indexTopic" class="list-group ls-fade-in" [ngClass]="{'ls-hide': scrollState === 'busy'}" [ngStyle]="{'text-align': indexTopic.baseLang === 'ar' ? 'right' : 'left'}">
+        <ls-publication-item *ngFor="let topic of topics" [topic]="topic" class="list-group-item"></ls-publication-item>
+      </div>
+    </div>
+  </div>
+</div>

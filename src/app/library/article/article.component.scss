@@ -1,0 +1,16 @@
+.btn {
+    padding: 0.5rem;
+}
+
+.anchor-link {
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+}
+
+.sidepanel-nav-container {
+    display: flex;
+    justify-content: center;
+}

@@ -1,0 +1,23 @@
+<template #customItemTemplate let-item="item">
+    <p [style.margin]="'8px'">
+        <i class="text-muted" [ngClass]="item.lang === 'id' ? 'fa fa-globe' : 'fa fa-home'"></i>
+        {{ item.word }}
+    </p>
+</template>
+<input #searchField type="search"
+    name="searchField"
+    [(ngModel)]="asyncSelected"
+    [typeahead]="dataSource"
+    [typeaheadItemTemplate]="customItemTemplate"
+    (typeaheadLoading)="changeTypeaheadLoading($event)"
+    (typeaheadNoResults)="changeTypeaheadNoResults($event)"
+    (typeaheadOnSelect)="typeaheadOnSelect($event)"
+    [typeaheadOptionsLimit]="10"
+    [typeaheadOptionField]="'word'"
+    placeholder="Search word"
+    autocapitalize="none"
+    autocorrect="none"
+    spellcheck="false">
+<button type="button" class="btn btn-primary" (click)="clearInput()">
+    <i class="fa fa-times"></i>
+</button>

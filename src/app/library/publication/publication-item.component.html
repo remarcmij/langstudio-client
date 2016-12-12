@@ -1,0 +1,5 @@
+<a (click)="openArticle()" class="list-group-item-action">
+    <h5 class="list-group-item-heading">{{topic.title}}</h5>
+    <p class="list-group-item-text" *ngIf="topic.subtitle" [innerHTML]="subtitle"></p>
+    <p class="list-group-item-text" *ngIf="topic.part">{{topic.part}}</p>
+</a>

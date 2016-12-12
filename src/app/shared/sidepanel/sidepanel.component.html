@@ -1,0 +1,11 @@
+<div class="sidepanel-header bg-primary">
+  <button type="button" class="btn btn-primary float-xs-right" (click)="shouldHide.emit()">
+    <i class="fa fa-times"></i>
+  </button>
+  <div class="sidepanel-title py-1 nav-title">
+      {{title}}
+  </div>
+</div>
+<div #container class="sidepanel-container">
+  <ng-content></ng-content>
+</div>

@@ -1,0 +1,173 @@
+@import "variables";
+/*@import "../../node_modules/bootstrap/scss/bootstrap";*/
+@import "bootstrap";
+@import "material";
+@import "dictionary";
+@import "article";
+@import "flashcard";
+@import "side-panel";
+
+/* You can add global styles to this file, and also import other style files */
+
+body {
+    padding-top: $navbar-height;
+    background-color: $body_background_color;
+    overflow-y: scroll;
+}
+
+ls-article-core, ls-lemma-group {
+    span {
+        cursor: pointer;
+        color: $brand-primary;
+    }
+
+    span.hashtag {
+        color: $brand-danger;
+    }
+}
+
+.navbar {
+    height: $navbar-height;
+}
+
+.nav-item>p {
+    margin-top: 7px;
+}
+
+.nav-item .btn-back {
+    margin-top: 2px;
+}
+
+button:focus {
+    outline: none!important;
+}
+
+.navbar {
+    padding-left: 0;
+    padding-right: 0;
+}
+
+ls-dict-popover {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    z-index: 1000;
+    transform: translateZ(0);
+    background-color: transparent;
+    padding: 8px;
+    .card {
+        max-width: 480px;
+        margin: 0 auto;
+        border: 2px solid #444;
+    }
+    .card-block {
+        padding: 0.75rem;
+    }
+    .card-title {
+        font-variant: small-caps;
+        font-size: 90%;
+    }
+    .card-text {
+        font-size: 90%;
+    }
+    button {
+        font-variant: small-caps;
+        font-size: 90%;
+    }
+    @media not screen {
+        display: none;
+    }
+}
+
+ls-hashtag-popover {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    top: 64px;
+    z-index: 1000;
+    transform: translateZ(0);
+    background-color: transparent;
+    padding: 8px;
+    .card {
+        max-width: 480px;
+        margin: 0 auto;
+        border: 2px solid #444;
+    }
+    .card-title {
+        font-size: 90%;
+    }
+    .card-text {
+        font-size: 90%;
+    }
+    .list-group-item {
+        padding: 8px;
+    }
+    @media not screen {
+        display: none;
+    }
+}
+
+.ls-fade-in {
+    transition: opacity 150ms;
+    &.ls-hide {
+        visibility: hidden;
+        opacity: 0;
+    }
+}
+
+body.ls-modal-open {
+    overflow: hidden;
+}
+
+.ls-modal-overlay {
+    background-color: #333;
+    opacity: 0.48;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1100;
+    overflow: hidden;
+}
+
+.ls-homonym {
+    font-size: 15px;
+    line-height: 19px;
+    margin-bottom: 6px;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Chrome/Safari/Opera */
+    -khtml-user-select: none;
+    /* Konqueror */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                  not supported by any browser */
+}
+
+blockquote {
+    font-size: $font-size-base;
+    padding: 0 0 0 16px;
+    margin: 0 0 16px;
+    border-left: 3px solid $grey_color;
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.ls-highlight {
+    color: white !important;
+    background-color: $brand-danger;
+    padding-left: 4px;
+    padding-right: 4px;
+    border-radius: 4px;
+}

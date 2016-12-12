@@ -1,0 +1,7 @@
+ <a (click)="openArticle()" class="list-group-item-action">
+    <p class="list-group-item-text">
+        <i *ngIf="item.active" class="fa fa-hand-o-right"></i>
+        <span [innerHTML]="subtitle"></span>
+    </p>
+    <p class="list-group-item-text text-muted">{{item.pubTitle}}</p>
+</a>
