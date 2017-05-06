@@ -10,7 +10,7 @@ import { AppConstants } from '../app.constants'
 import { AuthService } from '../core'
 
 @Injectable()
-export class ContentHttpService {
+export class ContentHttp {
 
   private readonly topicCache = LRU<Topic[]>({ max: 100, maxAge: 1000 * 60 * 60 })
   private readonly hashTagCache = LRU<HashTagItem[]>({ max: 100, maxAge: 1000 * 60 * 60 })

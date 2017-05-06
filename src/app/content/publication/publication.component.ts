@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription'
 
 import { Topic } from '../../shared'
 import { ContentService } from '../content.service'
-import { ContentHttpService } from '../contentHttp.service'
+import { ContentHttp } from '../content-http.service'
 import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
 
@@ -26,7 +26,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
     private router: Router,
     private route: ActivatedRoute,
     private libraryService: ContentService,
-    private httpService: ContentHttpService,
+    private httpService: ContentHttp,
     private navigationService: NavigationService
   ) {
   }

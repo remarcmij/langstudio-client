@@ -13,7 +13,7 @@ import { FlashCardComponent } from './flashcard/flashcard.component'
 import { FlashCardService } from './flashcard/flashcard.service'
 import { contentRouting } from './content.routing'
 import { ContentService } from './content.service'
-import { ContentHttpService } from './contentHttp.service'
+import { ContentHttp } from './content-http.service'
 import { NavigationModule } from '../navigation/navigation.module'
 
 @NgModule({
@@ -34,7 +34,7 @@ import { NavigationModule } from '../navigation/navigation.module'
   ],
   providers: [
     ContentService,
-    ContentHttpService,
+    ContentHttp,
     FlashCardService,
     ArticleResolver
   ]

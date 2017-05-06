@@ -1,4 +1,4 @@
-import { Component, ViewChild, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Component, ViewChild, Output, EventEmitter } from '@angular/core';
 import { FormControl } from '@angular/forms'
 import { MdAutocompleteTrigger } from '@angular/material'
 import { Observable } from 'rxjs/Observable'
@@ -32,12 +32,11 @@ const MAX_ITEMS = 20
     }`
   ]
 })
-export class DictAutocompleteComponent implements OnDestroy {
+export class DictAutocompleteComponent {
 
   searchCtrl: FormControl
   term: string
   items$: Observable<any>
-  sub$: Subscription
   @ViewChild(MdAutocompleteTrigger) trigger: MdAutocompleteTrigger
   @Output() onSelect = new EventEmitter<WordLang>()
 
@@ -45,10 +44,6 @@ export class DictAutocompleteComponent implements OnDestroy {
     private dictService: DictionaryHttp
   ) {
     this.searchCtrl = new FormControl()
-  }
-
-  ngOnDestroy() {
-    this.sub$.unsubscribe()
   }
 
   onItemSelect(item: WordLang) {

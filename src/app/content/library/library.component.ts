@@ -5,8 +5,8 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 
 import { AuthService, User } from '../../core'
-import { ContentService } from '../content.service'
-import { ContentHttpService } from '../contentHttp.service'
+import { ContentHttp } from '../content-http.service'
+import * as myUtil from '../../core'
 import { Topic } from '../../shared'
 import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
@@ -32,8 +32,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private authService: AuthService,
-    private libraryService: ContentService,
-    private httpService: ContentHttpService,
+    private httpService: ContentHttp,
     private navigationService: NavigationService
   ) { }
 
@@ -49,7 +48,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       }).subscribe(() => { }, err => this.httpErrorHandler(err))
     this.subscriptions$.push(sub2$)
 
-    const sub3$ = this.libraryService.handleKeyUp(() => this.search())
+    const sub3$ = myUtil.handleKeyUp(() => this.search())
     this.subscriptions$.push(sub3$)
   }
 

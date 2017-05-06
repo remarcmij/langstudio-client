@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { Response } from '@angular/http'
 import { Subscription } from 'rxjs/Subscription'
 
-import { ContentHttpService } from '../content/contentHttp.service'
+import { ContentHttp } from '../content/content-http.service'
 import { NavigationService } from '../core'
 import { CanComponentDeactivate } from '../core'
 
@@ -46,7 +46,7 @@ export class HashTagCloudComponent implements OnInit, OnDestroy, CanComponentDea
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
-        private httpService: ContentHttpService,
+        private httpService: ContentHttp,
         private navigationService: NavigationService
     ) {
     }

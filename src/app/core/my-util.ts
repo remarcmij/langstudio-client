@@ -1,4 +1,8 @@
+import { Observable } from 'rxjs/Observable'
+import { Subscription } from 'rxjs/Subscription'
 import * as latinize from 'latinize'
+
+const ESC_KEYCODE = 27
 
 const FOREIGN_WORD_REGEXP = /[-'()a-zA-Z\u00C0-\u00FF]{2,}/g
 const FOREIGN_FRAGMENT_REGEXP = /\*{1,2}.+?\*{1,2}/g
@@ -70,4 +74,15 @@ export function tinyMarkdown(text: string): string {
 
 export function isMobile(): boolean {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+}
+
+export function handleKeyUp(cb: () => void): Subscription {
+  return Observable.fromEvent(document.body, 'keyup')
+    .subscribe((ev: KeyboardEvent) => {
+      if (ev.keyCode === ESC_KEYCODE) {
+        ev.preventDefault()
+        ev.stopPropagation()
+        cb()
+      }
+    })
 }

@@ -4,7 +4,7 @@ import { Subscription } from 'rxjs/Subscription'
 import { Response } from '@angular/http'
 import { Router } from '@angular/router'
 
-import { ContentHttpService } from '../content/contentHttp.service'
+import { ContentHttp } from '../content/content-http.service'
 import { HashTagItem } from '../content/article/article.model'
 
 const scrollDistBeforeHide = 16
@@ -31,7 +31,7 @@ export class HashTagPopoverComponent implements OnInit, OnDestroy {
     constructor(
         private elementRef: ElementRef,
         private router: Router,
-        private httpService: ContentHttpService
+        private httpService: ContentHttp
     ) {
     }
 

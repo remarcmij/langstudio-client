@@ -7,7 +7,7 @@ import * as debounce from 'lodash.debounce'
 import * as equal from 'deep-equal'
 
 import { Article } from '../article/article.model'
-import { ContentHttpService } from '../contentHttp.service'
+import { ContentHttp } from '../content-http.service'
 import { FlashCardService, FlashCard } from './flashcard.service'
 import { SpeechSynthesizer } from '../../core'
 import { NavButton } from '../../shared'
@@ -60,7 +60,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
         private router: Router,
         private activatedRoute: ActivatedRoute,
         private changeDetector: ChangeDetectorRef,
-        private httpService: ContentHttpService,
+        private httpService: ContentHttp,
         private flashCardService: FlashCardService,
         private speechSynthesizer: SpeechSynthesizer
     ) {
