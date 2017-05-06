@@ -4,7 +4,7 @@ import { UtilityService } from '../core'
 import { Lemma } from './lemma.model'
 
 @Component({
-    selector: 'ls-lemma-group',
+    selector: 'my-lemma-group',
     templateUrl: './lemma-group.component.html',
     styles: [
         `p {

@@ -1,0 +1,10 @@
+<h5 class="list-group-item-heading">
+  <span [ngSwitch]="user.provider">
+    <i *ngSwitchCase="'google'" class="fa fa-google fa-fw"></i>
+    <i *ngSwitchCase="'facebook'" class="fa fa-facebook-official fa-fw"></i>
+    <i *ngSwitchCase="'local'" class="fa fa-user fa-fw"></i>
+  </span> {{user.email}}
+</h5>
+<p class="list-group-item-text" *ngIf="user.name">Name: {{user.name}}</p>
+<p class="list-group-item-text" *ngIf="user.created">Created: {{user.created | date:'d MMMM y'}}</p>
+<p class="list-group-item-text" *ngIf="user.lastAccessed">Last access: {{user.lastAccessed | date:'d MMMM y HH:mm'}}</p>

@@ -7,7 +7,7 @@ import { AuthService } from '../core'
 import { AppConstants } from '../app.constants'
 
 @Component({
-    selector: 'ls-sign-in',
+    selector: 'my-sign-in',
     templateUrl: './sign-in.component.html',
     styles: []
 })

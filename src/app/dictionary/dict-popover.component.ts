@@ -20,8 +20,8 @@ export interface DictPopoverInput {
 }
 
 @Component({
-    selector: 'ls-dict-popover',
-    templateUrl: 'dict-popover.component.html',
+    selector: 'my-dict-popover',
+    templateUrl: './dict-popover.component.html',
     styles: []
 })
 export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked {

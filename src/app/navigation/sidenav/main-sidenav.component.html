@@ -1,0 +1,50 @@
+<md-sidenav-container>
+
+  <md-sidenav #sidenav align="start" [opened]="open" (close)="close.emit()">
+    <md-toolbar>{{title}}</md-toolbar>
+    <md-nav-list>
+
+      <div *ngIf="!user">
+        <h3 md-subheader>Not signed in</h3>
+        <a md-list-item (click)="action.emit('signin')">
+          <md-icon md-list-icon fontSet="fa" fontIcon="fa-sign-in" class="fa-fw fa-dimmed"></md-icon>
+          <p md-line>Sign in</p>
+        </a>
+      </div>
+
+      <div *ngIf="user">
+        <h3 md-subheader>Signed in as: {{user.email}}</h3>
+        <a md-list-item (click)="action.emit('signout')">
+          <md-icon md-list-icon fontSet="fa" fontIcon="fa-sign-out" class="fa-fw fa-dimmed"></md-icon>
+          <p md-line>Sign out</p>
+        </a>
+      </div>
+
+      <div *ngIf="user && user.role === 'admin'">
+        <h3 md-subheader>System Management</h3>
+        <a md-list-item (click)="action.emit('upload')">
+          <md-icon md-list-icon fontSet="fa" fontIcon="fa-upload" class="fa-fw fa-dimmed"></md-icon>
+          <p md-line>Upload Content</p>
+        </a>
+        <a md-list-item (click)="action.emit('manageContent')">
+          <md-icon md-list-icon fontSet="fa" fontIcon="fa-files-o" class="fa-fw fa-dimmed"></md-icon>
+          <p md-line>Manage Content</p>
+        </a>
+        <a md-list-item (click)="action.emit('manageUsers')">
+          <md-icon md-list-icon fontSet="fa" fontIcon="fa-users" class="fa-fw fa-dimmed"></md-icon>
+          <p md-line>Manage Users</p>
+        </a>
+      </div>
+
+      <h3 md-subheader>Info</h3>
+      <a md-list-item (click)="action.emit('about')">
+        <md-icon md-list-icon fontSet="fa" fontIcon="fa-info-circle" class="fa-fw fa-dimmed"></md-icon>
+        <p md-line>About</p>
+      </a>
+
+    </md-nav-list>
+  </md-sidenav>
+
+  <ng-content></ng-content>
+
+</md-sidenav-container>

@@ -1,0 +1,27 @@
+<my-flex-container>
+  <md-toolbar color="primary">
+
+    <button md-icon-button (click)="action.emit('openSidenav')">
+      <md-icon class="md-24">menu</md-icon>
+    </button>
+
+    <span>{{title}}</span>
+
+    <span class="my-spacer"></span>
+
+    <button md-icon-button (click)="action.emit('search')">
+      <md-icon class="md-24">search</md-icon>
+    </button>
+
+    <button md-icon-button [mdMenuTriggerFor]="menu">
+      <md-icon class="md-24">more_horiz</md-icon>
+    </button>
+    <md-menu #menu="mdMenu">
+      <button md-menu-item (click)="visitMainSite()">
+      <md-icon><i class="fa fa-fw fa-external-link"></i></md-icon>
+      Visit HackYourFuture
+    </button>
+    </md-menu>
+
+  </md-toolbar>
+</my-flex-container>

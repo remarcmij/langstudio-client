@@ -1,7 +1,10 @@
 @import "variables";
+
 /*@import "../../node_modules/bootstrap/scss/bootstrap";*/
+
 @import "bootstrap";
 @import "material";
+
 @import "dictionary";
 @import "article";
 @import "flashcard";
@@ -10,17 +13,17 @@
 /* You can add global styles to this file, and also import other style files */
 
 body {
-    padding-top: $navbar-height;
-    background-color: $body_background_color;
-    overflow-y: scroll;
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', 'Roboto', sans-serif;
 }
 
-ls-article-core, ls-lemma-group {
+my-article-core,
+my-lemma-group {
     span {
         cursor: pointer;
         color: $brand-primary;
     }
-
     span.hashtag {
         color: $brand-danger;
     }
@@ -47,7 +50,7 @@ button:focus {
     padding-right: 0;
 }
 
-ls-dict-popover {
+my-dict-popover {
     position: fixed;
     width: 100%;
     left: 0;
@@ -79,7 +82,7 @@ ls-dict-popover {
     }
 }
 
-ls-hashtag-popover {
+my-hashtag-popover {
     position: fixed;
     width: 100%;
     left: 0;
@@ -107,19 +110,19 @@ ls-hashtag-popover {
     }
 }
 
-.ls-fade-in {
+.my-fade-in {
     transition: opacity 150ms;
-    &.ls-hide {
+    &.my-hide {
         visibility: hidden;
         opacity: 0;
     }
 }
 
-body.ls-modal-open {
+body.my-modal-open {
     overflow: hidden;
 }
 
-.ls-modal-overlay {
+.my-modal-overlay {
     background-color: #333;
     opacity: 0.48;
     position: fixed;
@@ -131,7 +134,7 @@ body.ls-modal-open {
     overflow: hidden;
 }
 
-.ls-homonym {
+.my-homonym {
     font-size: 15px;
     line-height: 19px;
     margin-bottom: 6px;
@@ -158,16 +161,53 @@ blockquote {
     padding: 0 0 0 16px;
     margin: 0 0 16px;
     border-left: 3px solid $grey_color;
-
     p:last-child {
         margin-bottom: 0;
     }
 }
 
-.ls-highlight {
+.my-highlight {
     color: white !important;
     background-color: $brand-danger;
     padding-left: 4px;
     padding-right: 4px;
     border-radius: 4px;
+}
+
+.my-scroll-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    background-color: $body_background_color;
+}
+
+#my-content {
+    flex: 1;
+    overflow: auto;
+    padding: 8px 0;
+}
+
+.my-spacer {
+    flex: 1 1 auto;
+}
+
+.my-margin {
+  margin: 16px;
+}
+
+.my-padding {
+  padding: 16px;
+}
+
+.my-text-muted {
+    color: #636c72 !important;
+}
+
+.fa-dimmed {
+    color: gray;
+}
+
+.fa-md {
+    height: auto;
+    vertical-align: middle;
 }

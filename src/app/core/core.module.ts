@@ -1,4 +1,6 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core'
+import { Http, RequestOptions } from '@angular/http'
+import { AuthHttp, AuthConfig } from 'angular2-jwt'
 import 'rxjs/add/observable/of'
 import 'rxjs/add/observable/from'
 import 'rxjs/add/observable/fromEvent'
@@ -16,35 +18,46 @@ import 'rxjs/add/operator/debounceTime'
 import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/catch'
 
-import { AUTH_PROVIDERS } from 'angular2-jwt'
-
 import { UtilityService } from './utility.service'
 import { SpeechService } from './speech.service'
 import { AuthService } from './auth.service'
 import { NavigationService } from './navigation.service'
 import { AuthGuard } from './auth.guard'
 import { CanDeactivateGuard } from './can-deactivate.guard'
+import { AppConstants } from '../app.constants'
+
+export function authHttpServiceFactory(http: Http, options: RequestOptions) {
+  return new AuthHttp(new AuthConfig({
+    tokenName: 'token',
+    tokenGetter: (() => localStorage.getItem(AppConstants.tokenName)),
+    globalHeaders: [{ 'Content-Type': 'application/json' }],
+  }), http, options);
+}
 
 @NgModule({
-    imports: [],
-    exports: [],
-    declarations: [],
-    providers: [
-        UtilityService,
-        SpeechService,
-        AUTH_PROVIDERS,
-        AuthService,
-        NavigationService,
-        AuthGuard,
-        CanDeactivateGuard
-    ]
+  imports: [],
+  exports: [],
+  declarations: [],
+  providers: [
+    UtilityService,
+    SpeechService,
+    AuthService,
+    NavigationService,
+    AuthGuard,
+    CanDeactivateGuard,
+    {
+      provide: AuthHttp,
+      useFactory: authHttpServiceFactory,
+      deps: [Http, RequestOptions]
+    }
+  ]
 })
 export class CoreModule {
 
-    constructor( @Optional() @SkipSelf() parentModule: CoreModule) {
-        if (parentModule) {
-            throw new Error(
-                'CoreModule is already loaded. Import it in the AppModule only');
-        }
+  constructor( @Optional() @SkipSelf() parentModule: CoreModule) {
+    if (parentModule) {
+      throw new Error(
+        'CoreModule is already loaded. Import it in the AppModule only');
     }
+  }
 }

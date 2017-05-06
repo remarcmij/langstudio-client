@@ -1,29 +1,33 @@
 import { Component, ViewContainerRef } from '@angular/core'
+import { MdIconRegistry } from '@angular/material'
 
 import { AuthService } from './core'
 import { SpeechService } from './core'
 
 @Component({
-    selector: 'ls-root',
-    template: `<router-outlet></router-outlet>`,
+  selector: 'my-root',
+  template: `<router-outlet></router-outlet>`,
 })
 export class AppComponent {
-    private viewContainerRef: ViewContainerRef
+  private viewContainerRef: ViewContainerRef
 
-    constructor(
-        viewContainerRef: ViewContainerRef,
-        authService: AuthService,
-        speechService: SpeechService
-    ) {
-        // You need this small hack in order to catch application root view container ref
-        this.viewContainerRef = viewContainerRef
+  constructor(
+    mdIconRegistry: MdIconRegistry,
+    viewContainerRef: ViewContainerRef,
+    authService: AuthService,
+    speechService: SpeechService
+  ) {
+    mdIconRegistry.registerFontClassAlias('fontawesome', 'fa')
 
-        authService.captureTokenCookie()
+    // You need this small hack in order to catch application root view container ref
+    this.viewContainerRef = viewContainerRef
 
-        if (speechService.isSynthesisSupported) {
-            console.log('speech synthesis is available')
-        } else {
-            console.log('speech synthesis is NOT available')
-        }
+    authService.captureTokenCookie()
+
+    if (speechService.isSynthesisSupported) {
+      console.log('speech synthesis is available')
+    } else {
+      console.log('speech synthesis is NOT available')
     }
+  }
 }

@@ -1,14 +1,8 @@
-import { Component, OnInit } from '@angular/core'
+import { Component } from '@angular/core'
 
 @Component({
-    selector: 'ls-admin',
-    templateUrl: './admin.component.html',
-    styles: []
+  selector: 'my-admin',
+  templateUrl: './admin.component.html',
+  styles: []
 })
-export class AdminComponent implements OnInit {
-
-    constructor() { }
-
-    ngOnInit(): void {
-    }
-}
+export class AdminComponent { }

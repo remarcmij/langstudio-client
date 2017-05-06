@@ -1,7 +1,7 @@
 export const AppConstants = {
-    appTitle: 'TaalMap',
-    apiEndPoint: '',
-    tokenName: 'id_token',
+    appTitle: 'TaalMap Indonesisch',
+    apiEndPoint: 'http://localhost:9000',
+    tokenName: 'token',
     foreignLang: 'id',
     baseLang: 'nl'
 }

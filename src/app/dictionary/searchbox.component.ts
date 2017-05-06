@@ -9,7 +9,7 @@ import { UtilityService } from '../core'
 const keyCodeEsc = 27
 
 @Component({
-    selector: 'ls-search-box',
+    selector: 'my-search-box',
     templateUrl: './searchbox.component.html',
     styles: [
         `:host {

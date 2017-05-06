@@ -13,7 +13,7 @@
           </div>
         </div>
         <div class="float-xs-right">
-          <ls-search-box (selectItem)="wordLangSearch($event)"></ls-search-box>
+          <my-search-box (selectItem)="wordLangSearch($event)"></my-search-box>
         </div>
       </div>
     </div>
@@ -21,12 +21,12 @@
 </nav>
 
 <div class="container ">
-  <ls-dict-popover *ngIf="popoverInput" [input]="popoverInput" (shouldHide)="hidePopover()" (wordSearch)="foreignWordSearch($event)" (speakWord)="speakWord($event)">
-  </ls-dict-popover>
+  <my-dict-popover *ngIf="popoverInput" [input]="popoverInput" (shouldHide)="hidePopover()" (wordSearch)="foreignWordSearch($event)" (speakWord)="speakWord($event)">
+  </my-dict-popover>
   <div class="row my-1">
     <div class="offset-lg-2 col-lg-8 col-xs-12">
-      <ls-lemma-group *ngFor="let base of result.bases" [word]="req.word" [base]="base" [lemmas]="result.lemmas(base)" (wordSearch)="foreignWordSearch($event)" (popoverSearch)="popoverSearch($event)">
-      </ls-lemma-group>
+      <my-lemma-group *ngFor="let base of result.bases" [word]="req.word" [base]="base" [lemmas]="result.lemmas(base)" (wordSearch)="foreignWordSearch($event)" (popoverSearch)="popoverSearch($event)">
+      </my-lemma-group>
     </div>
   </div>
 </div>

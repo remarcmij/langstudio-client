@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { Response } from '@angular/http'
 import { Subscription } from 'rxjs/Subscription'
 
-import { LibraryHttpService } from '../library/library-http.service'
+import { ContentHttpService } from '../content/contentHttp.service'
 import { NavigationService } from '../core'
 import { CanComponentDeactivate } from '../core'
 
@@ -20,8 +20,8 @@ export interface HashTagGroup {
 }
 
 @Component({
-    selector: 'ls-hashtag-cloud',
-    templateUrl: 'hashtag-cloud.component.html',
+    selector: 'my-hashtag-cloud',
+    templateUrl: './hashtag-cloud.component.html',
     styles: [
         `.hashtag {
             display: inline-block;
@@ -46,7 +46,7 @@ export class HashTagCloudComponent implements OnInit, OnDestroy, CanComponentDea
     constructor(
         private router: Router,
         private activatedRoute: ActivatedRoute,
-        private httpService: LibraryHttpService,
+        private httpService: ContentHttpService,
         private navigationService: NavigationService
     ) {
     }

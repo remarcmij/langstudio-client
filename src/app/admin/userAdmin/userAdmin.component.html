@@ -1,0 +1,11 @@
+<my-simple-navbar [navTitle]="'User Admin'" [backRoute]="['/']"></my-simple-navbar>
+
+<div class="container ">
+  <div class="row">
+    <ul class="list-group offset-lg-2 col-lg-8 col-xs-12">
+      <a class="list-group-item-action" *ngFor="let user of users" [routerLink]="[user._id]">
+        <my-user-admin-item class="list-group-item" [user]="user"></my-user-admin-item>
+      </a>
+    </ul>
+  </div>
+</div>

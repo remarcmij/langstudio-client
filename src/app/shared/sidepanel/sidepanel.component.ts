@@ -8,8 +8,8 @@ import { Subscription } from 'rxjs/Subscription'
 const leftMargin = 56;
 
 @Component({
-    selector: 'ls-sidepanel',
-    templateUrl: 'sidepanel.component.html',
+    selector: 'my-sidepanel',
+    templateUrl: './sidepanel.component.html',
     styles: [
         `:host {
             position: fixed;
@@ -55,7 +55,7 @@ export class SidePanelComponent implements OnInit, OnDestroy {
         this.renderer.setElementStyle(element, 'width', `${width}px`)
         this.renderer.setElementStyle(element, this.location, `${-width}px`)
 
-        this.renderer.setElementClass(document.body, 'ls-modal-open', true)
+        this.renderer.setElementClass(document.body, 'my-modal-open', true)
 
         let subscription: Subscription
 
@@ -85,6 +85,6 @@ export class SidePanelComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.subscriptions.forEach(subscription => subscription.unsubscribe())
-        this.renderer.setElementClass(document.body, 'ls-modal-open', false)
+        this.renderer.setElementClass(document.body, 'my-modal-open', false)
     }
 }

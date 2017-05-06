@@ -1,13 +1,13 @@
 import { Component, OnInit, Input, HostBinding, ChangeDetectionStrategy } from '@angular/core'
 import { Router } from '@angular/router'
 
-import { HashTagItem } from '../library/article/article.model'
+import { HashTagItem } from '../content/article/article.model'
 import { UtilityService } from '../core'
 import { NavigationService } from '../core'
 
 @Component({
-    selector: 'ls-hashtag-popover-item',
-    templateUrl: 'hashtag-popover-item.component.html',
+    selector: 'my-hashtag-popover-item',
+    templateUrl: './hashtag-popover-item.component.html',
     styles: [],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

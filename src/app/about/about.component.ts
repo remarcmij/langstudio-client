@@ -1,21 +1,14 @@
-import { Component, OnInit } from '@angular/core'
+import { Component } from '@angular/core'
 
 import { AppConstants } from '../app.constants'
 
-
 @Component({
-    selector: 'ls-about',
-    templateUrl: './about.component.html',
-    styles: []
+  selector: 'my-about',
+  templateUrl: './about.component.html',
+  styles: []
 })
-export class AboutComponent implements OnInit {
+export class AboutComponent {
 
-    appTitle = AppConstants.appTitle
+  appTitle = AppConstants.appTitle
 
-    constructor(
-    ) {
-    }
-
-    ngOnInit(): void {
-    }
 }

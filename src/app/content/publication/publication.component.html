@@ -1,0 +1,11 @@
+<my-child-toolbar title="Articles" (action)="onAction($event)"></my-child-toolbar>
+<div id="my-content">
+  <my-flex-container>
+    <md-nav-list *ngIf="indexTopic" class="my-fade-in" [ngClass]="{'my-hide': scrollState === 'busy'}" [ngStyle]="{'text-align': indexTopic.baseLang === 'ar' ? 'right' : 'left'}">
+      <md-list-item *ngFor="let topic of topics" (click)="openArticle(topic)">
+        <h3 md-line> {{topic.title}} </h3>
+        <p md-line *ngIf="topic.subtitle"> {{topic.subtitle}} </p>
+      </md-list-item>
+    </md-nav-list>
+  </my-flex-container>
+</div>

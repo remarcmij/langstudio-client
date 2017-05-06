@@ -9,7 +9,7 @@ import { NavigationService } from '../core'
 import { DictPopoverInput } from '../dictionary/dict-popover.component'
 
 @Component({
-    selector: 'ls-dictionary',
+    selector: 'my-dictionary',
     templateUrl: './dictionary.component.html',
     styles: [
         `.btn {

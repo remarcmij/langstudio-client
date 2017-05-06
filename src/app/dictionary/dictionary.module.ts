@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core'
 import { HttpModule } from '@angular/http'
-import { TypeaheadModule } from 'ng2-bootstrap/ng2-bootstrap'
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead'
 
 import { SharedModule } from '../shared'
 import { DictionaryComponent } from './dictionary.component'
@@ -12,25 +12,25 @@ import { LanguageManager } from '../language/lang-helper-manager'
 import { dictionaryRouting } from './dictionary.routing'
 
 @NgModule({
-    imports: [
-        TypeaheadModule,
-        HttpModule,
-        dictionaryRouting,
-        SharedModule
-    ],
-    declarations: [
-        DictionaryComponent,
-        LemmaGroupComponent,
-        SearchBoxComponent,
-        DictPopoverComponent
-    ],
-    providers: [
-        DictionaryHttpService,
-        LanguageManager
-    ],
-    exports: [
-        DictPopoverComponent
-    ]
+  imports: [
+    HttpModule,
+    TypeaheadModule,
+    dictionaryRouting,
+    SharedModule
+  ],
+  declarations: [
+    DictionaryComponent,
+    LemmaGroupComponent,
+    SearchBoxComponent,
+    DictPopoverComponent
+  ],
+  providers: [
+    DictionaryHttpService,
+    LanguageManager
+  ],
+  exports: [
+    DictPopoverComponent
+  ]
 })
 
 export class DictionaryModule { }

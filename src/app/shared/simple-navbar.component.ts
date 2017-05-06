@@ -8,7 +8,7 @@ export interface NavButton {
 }
 
 @Component({
-    selector: 'ls-simple-navbar',
+    selector: 'my-simple-navbar',
     templateUrl: './simple-navbar.component.html',
     styles: [
         `.btn {

@@ -1,0 +1,35 @@
+<my-simple-navbar [navTitle]="'Flash Cards'" [backRoute]="['/library', publication, chapter]" [navButtons]="navButtons" (handler)="commandHandler($event)">
+</my-simple-navbar>
+
+<div class="container">
+  <div class="row">
+    <div *ngIf="article" class="col-lg-8 offset-lg-2 col-xs-12 p-1">
+
+      <div class="md-whiteframe-3dp p-1">
+        <div>{{article.title}}</div>
+        <div>
+          <h6 class="float-xs-right">{{getFlashCardNumber()}} / {{getFlashCardCount()}}</h6>
+          <h6>{{flashCard.title}}</h6>
+        </div>
+      </div>
+
+      <div class="md-whiteframe-3dp my-1 p-1" (click)="goNext()">
+        <div *ngIf="flashCard" class="flashcard noselect">
+          <h5 [ngClass]="{'text-primary' : flashCard.prompt.isForeign}">{{flashCard.prompt.text}}</h5>
+          <h5 *ngIf="!flashCard.show">&bull;&bull;&bull;</h5>
+          <h5 *ngIf="flashCard.show" [ngClass]="{'text-primary' : flashCard.answer.isForeign}">{{flashCard.answer.text}}</h5>
+        </div>
+      </div>
+
+      <div class="flashcard-controller">
+        <div class="btn-group" role="group" aria-label="Flash Card Controller">
+          <button type="button" class="btn btn-secondary" [disabled]="!canGoPrev()" (click)="goFirst()"><i class="fa fa-fast-backward"></i></button>
+          <button type="button" class="btn btn-secondary" [disabled]="!canGoPrev()" (click)="goPrev()"><i class="fa fa-step-backward"></i></button>
+          <button type="button" class="btn btn-secondary" (click)="autoPlay = !autoPlay"><i class="fa fa-lg" [ngClass]="autoPlay ? 'fa-pause' : 'fa-play'"></i></button>
+          <button type="button" class="btn btn-secondary" [disabled]="!canGoNext()" (click)="goNext()"><i class="fa fa-step-forward"></i></button>
+          <button type="button" class="btn btn-secondary" [disabled]="!canGoNext()" (click)="goLast()"><i class="fa fa-fast-forward"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

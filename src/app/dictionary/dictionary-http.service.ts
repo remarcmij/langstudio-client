@@ -166,7 +166,7 @@ export class DictionaryHttpService {
                 let regexp = new RegExp(`\\*\\*${lemma.word}\\*\\*, *(\\d+)`)
                 return text.replace(regexp, '$1')
             })
-            return '<div class=\'ls-homonym\'>' + texts.join(' ').replace(/;$/, '.') + '</div>'
+            return '<div class=\'my-homonym\'>' + texts.join(' ').replace(/;$/, '.') + '</div>'
         })
 
         let baseWords = uniq(resp.lemmas.map(lemmaData => lemmaData.baseWord))

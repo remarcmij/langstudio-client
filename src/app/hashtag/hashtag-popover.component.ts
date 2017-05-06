@@ -4,14 +4,14 @@ import { Subscription } from 'rxjs/Subscription'
 import { Response } from '@angular/http'
 import { Router } from '@angular/router'
 
-import { LibraryHttpService } from '../library/library-http.service'
-import { HashTagItem } from '../library/article/article.model'
+import { ContentHttpService } from '../content/contentHttp.service'
+import { HashTagItem } from '../content/article/article.model'
 
 const scrollDistBeforeHide = 16
 
 @Component({
-    selector: 'ls-hashtag-popover',
-    templateUrl: 'hashtag-popover.component.html',
+    selector: 'my-hashtag-popover',
+    templateUrl: './hashtag-popover.component.html',
     styles: []
 })
 export class HashTagPopoverComponent implements OnInit, OnDestroy {
@@ -31,7 +31,7 @@ export class HashTagPopoverComponent implements OnInit, OnDestroy {
     constructor(
         private elementRef: ElementRef,
         private router: Router,
-        private httpService: LibraryHttpService
+        private httpService: ContentHttpService
     ) {
     }
 

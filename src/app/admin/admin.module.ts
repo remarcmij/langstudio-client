@@ -1,40 +1,40 @@
 import { NgModule } from '@angular/core'
 import { HttpModule } from '@angular/http'
 import { FileUploadModule } from 'ng2-file-upload'
-import { ModalModule } from 'ng2-bootstrap/ng2-bootstrap'
+import { ModalModule } from 'ngx-bootstrap'
 
 import { SharedModule } from '../shared'
 import { AdminComponent } from './admin.component'
-import { UserAdminComponent } from './user-admin/user-admin.component'
-import { UserAdminItemComponent } from './user-admin/user-admin-item.component'
-import { UserAdminAuthComponent } from './user-admin/user-admin-auth.component'
-import { UserAdminHttpService } from './user-admin/user-admin-http.service'
-import { FileUploadComponent } from './library-admin/file-upload.component'
-import { LibraryAdminComponent } from './library-admin/library-admin.component'
-import { PublicationManagerComponent } from './library-admin/publication-admin.component'
-import { LibraryAdminHttpService } from './library-admin/library-admin-http.service'
+import { UserAdminComponent } from './userAdmin/userAdmin.component'
+import { UserAdminItemComponent } from './userAdmin/userAdminItem.component'
+import { UserAdminAuthComponent } from './userAdmin/userAdminAuth.component'
+import { UserAdminHttpService } from './userAdmin/userAdminHttp.service'
+import { FileUploadComponent } from './contentAdmin/fileUpload.component'
+import { LibraryAdminComponent } from './contentAdmin/libraryAdmin.component'
+import { PublicationAdminComponent } from './contentAdmin/publicationAdmin.component'
+import { ContentAdminHttpService } from './contentAdmin/contentAdminHttp.service'
 import { adminRouting } from './admin.routing'
 
 @NgModule({
-    imports: [
-        HttpModule,
-        FileUploadModule,
-        ModalModule,
-        adminRouting,
-        SharedModule
-    ],
-    declarations: [
-        AdminComponent,
-        UserAdminComponent,
-        UserAdminItemComponent,
-        UserAdminAuthComponent,
-        FileUploadComponent,
-        LibraryAdminComponent,
-        PublicationManagerComponent
-    ],
-    providers: [
-        UserAdminHttpService,
-        LibraryAdminHttpService
-    ]
+  imports: [
+    HttpModule,
+    FileUploadModule,
+    ModalModule,
+    adminRouting,
+    SharedModule
+  ],
+  declarations: [
+    AdminComponent,
+    UserAdminComponent,
+    UserAdminItemComponent,
+    UserAdminAuthComponent,
+    FileUploadComponent,
+    LibraryAdminComponent,
+    PublicationAdminComponent
+  ],
+  providers: [
+    UserAdminHttpService,
+    ContentAdminHttpService
+  ]
 })
 export class AdminModule { }

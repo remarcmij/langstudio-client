@@ -10,8 +10,7 @@
 /bower_components
 
 # IDEs and editors
-.idea/workspace.xml
-.idea/tasks.xml
+.idea
 .project
 .classpath
 *.launch
@@ -30,6 +29,8 @@ testem.log
 # e2e
 /e2e/*.js
 /e2e/*.map
+
+.c9/
 
 #System Files
 .DS_Store

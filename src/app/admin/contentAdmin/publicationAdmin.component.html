@@ -1,0 +1,41 @@
+<my-simple-navbar [navTitle]="'Manage Publication'" [backRoute]="['/admin/library']"></my-simple-navbar>
+
+<div class="container">
+  <div class="row my-1">
+    <div class="offset-lg-2 col-lg-8 col-xs-12">
+
+      <div class="card card-block md-whiteframe-3dp" *ngFor="let topic of topics">
+        <p class="card-text">{{topic.title}}</p>
+        <a class="btn btn-sm btn-danger float-xs-right" [style.color]="'#fff'" (click)="confirmRemoval(topic)">
+                    <i class="fa fa-trash"></i> Remove
+                </a>
+      </div>
+    </div>
+  </div>
+
+  <div bsModal #confirmationModal="bs-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" aria-label="Close" (click)="confirmationModal.hide()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+          <h5 class="modal-title">{{topicToRemove?.title}}</h5>
+        </div>
+        <div class="modal-body">
+          <p>Do you wish to proceed with removing this article?</p>
+          <div class="my-1">
+            <button type="button" class="btn btn-sm btn-danger float-xs-right" (click)="removeArticle()">
+                            <i class="fa fa-trash"></i> Remove
+                        </button>
+            <button type="button" class="btn btn-sm btn-primary" (click)="confirmationModal.hide()">
+                            Cancel
+                        </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
