@@ -9,7 +9,7 @@ import * as equal from 'deep-equal'
 import { Article } from '../article/article.model'
 import { ContentHttpService } from '../contentHttp.service'
 import { FlashCardService, FlashCard } from './flashcard.service'
-import { SpeechService } from '../../core'
+import { SpeechSynthesizer } from '../../core'
 import { NavButton } from '../../shared'
 
 const keyCodeSpace = 32
@@ -62,7 +62,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
         private changeDetector: ChangeDetectorRef,
         private httpService: ContentHttpService,
         private flashCardService: FlashCardService,
-        private speechService: SpeechService
+        private speechSynthesizer: SpeechSynthesizer
     ) {
         this.goIndexDebounced = debounce(this.goIndex.bind(this), buttonDelay)
     }
@@ -163,8 +163,8 @@ export class FlashCardComponent implements OnInit, OnDestroy {
     private updateNavButtons(): NavButton[] {
         let buttons: NavButton[] = []
 
-        if (this.article && this.speechService.canSpeakLanguage(this.article.foreignLang)
-            && this.speechService.canSpeakLanguage(this.article.baseLang)) {
+        if (this.article && this.speechSynthesizer.canSpeakLanguage(this.article.foreignLang)
+            && this.speechSynthesizer.canSpeakLanguage(this.article.baseLang)) {
             buttons.push({
                 faName: this.flashCardService.speechEnabled ? 'fa-volume-up' : 'fa-volume-off',
                 command: this.flashCardService.speechEnabled ? 'speechOff' : 'speechOn'

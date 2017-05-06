@@ -27,7 +27,7 @@ export class ContentHttpService {
   ) { }
 
   getPublications(): Observable<Topic[]> {
-    const url = `${AppConstants.apiEndPoint}/api/topics/${this.auth}`
+    const url = `${AppConstants.API_END_POINT}/api/topics/${this.auth}`
 
     const topics = this.topicCache.get(url)
     if (topics) {
@@ -39,7 +39,7 @@ export class ContentHttpService {
   }
 
   getPublicationTopics(publication: string): Observable<Topic[]> {
-    const url = `${AppConstants.apiEndPoint}/api/topics/${this.auth}/${publication}`
+    const url = `${AppConstants.API_END_POINT}/api/topics/${this.auth}/${publication}`
     const topics = this.topicCache.get(url)
     if (topics) {
       return Observable.of(topics)
@@ -62,7 +62,7 @@ export class ContentHttpService {
     if (hashTags) {
       return Observable.of(hashTags)
     }
-    const url = `${AppConstants.apiEndPoint}/api/article/${this.auth}/hashtag/search?q=${hashTagName}`
+    const url = `${AppConstants.API_END_POINT}/api/article/${this.auth}/hashtag/search?q=${hashTagName}`
     return this.httpGet(url)
       .map(res => <HashTagItem[]>res.json())
       .do(hashTags => this.hashTagCache.set(hashTagName, hashTags))
@@ -73,7 +73,7 @@ export class ContentHttpService {
       return Observable.of(this.allTags)
     }
 
-    const url = `${AppConstants.apiEndPoint}/api/article/${this.auth}/hashtag/all`
+    const url = `${AppConstants.API_END_POINT}/api/article/${this.auth}/hashtag/all`
     return this.httpGet(url)
       .map(res => <string[]>res.json())
       .do(hashTags => this.allTags = hashTags)
@@ -85,7 +85,7 @@ export class ContentHttpService {
       .mergeMap(topics => Observable.from(topics))
       .first(topic => topic.fileName === fileName)
       .mergeMap(topic => {
-        const url = `${AppConstants.apiEndPoint}/api/article/${this.auth}/get/${fileName}/${topic.hash}`
+        const url = `${AppConstants.API_END_POINT}/api/article/${this.auth}/get/${fileName}/${topic.hash}`
         return this.httpGet(url)
           .map(res => <Article>res.json())
           .do(article => {

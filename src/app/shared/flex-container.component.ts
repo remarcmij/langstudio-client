@@ -4,7 +4,7 @@ import { Component } from '@angular/core'
   selector: 'my-flex-container',
   template: `
     <div fxLayout="row">
-      <div fxFlex="100" fxFlexOffset fxFlexOffset.gt-sm="10" fxFlex.gt-sm="80">
+      <div fxFlex="100" fxFlexOffset fxFlexOffset.gt-sm="15" fxFlex.gt-sm="70">
         <ng-content></ng-content>
       </div>
     </div>`

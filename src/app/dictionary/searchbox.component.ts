@@ -3,8 +3,8 @@ import { Observable } from 'rxjs/Observable'
 import { Observer } from 'rxjs/Observer'
 import { Subscription } from 'rxjs/Subscription'
 
-import { DictionaryHttpService, WordLangPair } from './dictionary-http.service'
-import { UtilityService } from '../core'
+import { DictionaryHttp, WordLang } from './dictionary-http.service'
+import * as myUtil from '../core'
 
 const keyCodeEsc = 27
 
@@ -39,15 +39,14 @@ export class SearchBoxComponent implements OnInit, OnDestroy, AfterViewInit {
     typeaheadLoading = false
     typeaheadNoResults = false
 
-    @Output() selectItem = new EventEmitter<WordLangPair>()
+    @Output() selectItem = new EventEmitter<WordLang>()
     @ViewChild('searchField') input: ElementRef
 
     private subscription: Subscription
 
     constructor(
         private renderer: Renderer,
-        private httpService: DictionaryHttpService,
-        private utilityService: UtilityService
+        private httpService: DictionaryHttp
     ) {
     }
 
@@ -78,7 +77,7 @@ export class SearchBoxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        if (!this.utilityService.isMobile()) {
+        if (!myUtil.isMobile()) {
             this.clearInput()
         }
     }

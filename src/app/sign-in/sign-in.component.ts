@@ -34,7 +34,7 @@ export class SignInComponent implements OnInit {
             withCredentials: true
         })
 
-        this.http.post(`${AppConstants.apiEndPoint}/auth/local`, body, options)
+        this.http.post(`${AppConstants.API_END_POINT}/auth/local`, body, options)
             .subscribe(() => {
                 // let cookieHeader = response.headers.get('set-cookie')
                 this.authService.captureTokenCookie()
@@ -46,6 +46,6 @@ export class SignInComponent implements OnInit {
     }
 
     oauthSignIn(provider: string): void {
-        window.location.href = `${AppConstants.apiEndPoint}/auth/${provider}`
+        window.location.href = `${AppConstants.API_END_POINT}/auth/${provider}`
     }
 }

@@ -5,7 +5,7 @@ import * as flatten from 'lodash.flatten'
 import * as shuffle from 'lodash.shuffle'
 
 import { Article } from '../article/article.model'
-import { SpeechService } from '../../core'
+import { SpeechSynthesizer } from '../../core'
 
 const localStorageKey = 'flashcards'
 const beginMarkerRegExp = /<!-- flashcard -->/
@@ -72,11 +72,11 @@ export class FlashCardService {
     private _lastIndex = 0
 
     get speechEnabled(): boolean {
-        return this.speechService.speechEnabled
+        return this.speechSynthesizer.speechEnabled
     }
 
     set speechEnabled(value: boolean) {
-        this.speechService.speechEnabled = value
+        this.speechSynthesizer.speechEnabled = value
     }
 
     get lastIndex(): number {
@@ -102,7 +102,7 @@ export class FlashCardService {
     }
 
     constructor(
-        private speechService: SpeechService
+        private speechSynthesizer: SpeechSynthesizer
     ) {
         this._autoPlay = false
     }
@@ -229,21 +229,21 @@ export class FlashCardService {
     }
 
     private speak(flashCard: FlashCard): Observable<void> {
-        let foreignRate = this.speechService.getSpeechRate()
+        let foreignRate = this.speechSynthesizer.getSpeechRate()
         let observable$: Observable<any>
 
         if (flashCard.show) {
-            observable$ = this.speechService.speakObservable(
+            observable$ = this.speechSynthesizer.speakObservable(
                 flashCard.answer.text, flashCard.answer.lang, {
                     volume: 1,
                     rate: flashCard.answer.isForeign ? foreignRate : 1
                 })
         } else {
-            observable$ = this.speechService.speakObservable(
+            observable$ = this.speechSynthesizer.speakObservable(
                 flashCard.prompt.text, flashCard.prompt.lang, {
                     volume: 1,
                     rate: flashCard.prompt.isForeign ? foreignRate : 1
-                }).concat(this.speechService.speakObservable(
+                }).concat(this.speechSynthesizer.speakObservable(
                     flashCard.answer.text, flashCard.answer.lang, {
                         volume: 0,
                         rate: flashCard.answer.isForeign ? foreignRate : 1

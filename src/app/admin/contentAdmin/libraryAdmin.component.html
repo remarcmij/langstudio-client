@@ -4,7 +4,7 @@
 <div class="container">
   <div class="row my-1">
     <div class="offset-lg-2 col-lg-8 col-xs-12">
-      <div class="card card-block md-whiteframe-3dp" *ngFor="let topic of indexTopics">
+      <div class="card card-block my-whiteframe-3dp" *ngFor="let topic of indexTopics">
         <h4 class="card-title">{{topic.publication}}</h4>
         <p class="card-text">{{topic.title}}</p>
         <a class="btn btn-sm btn-danger float-xs-right" [style.color]="'#fff'" (click)="confirmRemoval(topic.publication)">

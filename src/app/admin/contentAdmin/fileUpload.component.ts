@@ -19,7 +19,7 @@ export class FileUploadComponent implements OnDestroy {
     private httpService: ContentAdminHttpService
   ) {
     this.uploader = new FileUploader({
-      url: AppConstants.apiEndPoint + '/api/upload',
+      url: AppConstants.API_END_POINT + '/api/upload',
       authToken: 'Bearer ' + this.authService.token,
       isHTML5: true
     })

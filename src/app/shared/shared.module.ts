@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core'
 import { CommonModule } from '@angular/common'
-import { FormsModule } from '@angular/forms'
+import { FormsModule, ReactiveFormsModule } from '@angular/forms'
 import { RouterModule } from '@angular/router'
 import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { FlexLayoutModule } from '@angular/flex-layout'
 
-import {MaterialModule} from './material.module'
+import { MaterialModule } from './material.module'
 import { SimpleNavbarComponent } from './simple-navbar.component'
 import { SidePanelComponent } from './sidepanel/sidepanel.component'
 import { FlexContainerComponent } from './flex-container.component'
@@ -14,6 +14,7 @@ import { FlexContainerComponent } from './flex-container.component'
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     NoopAnimationsModule,
     FlexLayoutModule,
@@ -24,11 +25,11 @@ import { FlexContainerComponent } from './flex-container.component'
     SidePanelComponent,
     FlexContainerComponent
   ],
-  providers: [
-  ],
+  providers: [],
   exports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     FlexLayoutModule,
     MaterialModule,
     SimpleNavbarComponent,

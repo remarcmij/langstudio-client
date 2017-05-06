@@ -16,7 +16,7 @@ export class ContentAdminHttpService {
   ) { }
 
   getTopics(): Observable<Topic[]> {
-    const url = `${AppConstants.apiEndPoint}/api/topics/admin`
+    const url = `${AppConstants.API_END_POINT}/api/topics/admin`
     const topics = this.cache.get(url)
     if (topics) {
       return Observable.of(topics)
@@ -27,7 +27,7 @@ export class ContentAdminHttpService {
   }
 
   removeTopic(fileName: string): Observable<boolean> {
-    const url = `${AppConstants.apiEndPoint}/api/topics/admin/${fileName}`
+    const url = `${AppConstants.API_END_POINT}/api/topics/admin/${fileName}`
     return this.authHttp.delete(url)
       .map(response => response.ok)
       .do(() => this.clearCache())

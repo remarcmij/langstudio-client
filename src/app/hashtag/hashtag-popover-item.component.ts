@@ -2,7 +2,7 @@ import { Component, OnInit, Input, HostBinding, ChangeDetectionStrategy } from '
 import { Router } from '@angular/router'
 
 import { HashTagItem } from '../content/article/article.model'
-import { UtilityService } from '../core'
+import * as myUtil from '../core'
 import { NavigationService } from '../core'
 
 @Component({
@@ -17,12 +17,11 @@ export class HashTagPopoverItemComponent implements OnInit {
     @HostBinding('style.cursor') cursor = 'pointer'
 
     get subtitle() {
-        return this.utilityService.tinyMarkdown(this.item.subtitle)
+        return myUtil.tinyMarkdown(this.item.subtitle)
     }
 
     constructor(
         private router: Router,
-        private utilityService: UtilityService,
         private navigationService: NavigationService
     ) {
     }

@@ -1,0 +1,12 @@
+<!--<md-input-container>-->
+  <input type="search" mdInput placeHolder="Search" [mdAutocomplete]="auto" [formControl]="searchCtrl" [(ngModel)]="term" (ngModelChange)="onChange($event)"
+    autofocus autocapitalize="none" autocorrect="none" spellcheck="false">
+<!--</md-input-container>-->
+
+<md-autocomplete #auto="mdAutocomplete">
+  <md-option *ngFor="let item of items$ | async" [value]="item" (onSelectionChange)="onItemSelect(item)">
+    <md-icon *ngIf="item.lang==='id'" fontSet="fa" fontIcon="fa-globe" class="fa-lg fa-fw fa-dimmed"></md-icon>
+    <md-icon *ngIf="item.lang==='nl'" fontSet="fa" fontIcon="fa-home" class="fa-lg fa-fw fa-dimmed"></md-icon>
+    {{ item.word }}
+  </md-option>
+</md-autocomplete>

@@ -9,6 +9,6 @@ import { AppConstants } from '../app.constants'
 })
 export class AboutComponent {
 
-  appTitle = AppConstants.appTitle
+  appTitle = AppConstants.APP_TITLE
 
 }

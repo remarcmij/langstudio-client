@@ -25,7 +25,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   user: User | undefined
   topics: Topic[]
   scrollState = 'busy'
-  readonly title = AppConstants.appTitle
+  readonly title = AppConstants.APP_TITLE
   private subscriptions$: Subscription[] = []
 
   constructor(
@@ -68,7 +68,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   }
 
   search() {
-    this.router.navigate(['/dictionary', AppConstants.foreignLang, AppConstants.baseLang])
+    this.router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
   }
 
   onAction(action: string) {
@@ -92,7 +92,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.manageUsers()
         break
       case 'search':
-        this.router.navigate(['/dictionary', AppConstants.foreignLang, AppConstants.baseLang])
+        this.router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
         break
       case 'about':
         this.router.navigate(['/about'])

@@ -13,7 +13,7 @@
       <md-icon class="md-24">search</md-icon>
     </button>
 
-    <button *ngIf="showMore" md-icon-button [(click)="action.emit('more')">
+    <button *ngIf="showMore" md-icon-button (click)="action.emit('more')">
       <md-icon class="md-24">more_horiz</md-icon>
     </button>
 

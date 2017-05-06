@@ -1,0 +1,11 @@
+<md-card (click)="onClick($event)">
+  <md-card-title *ngIf="base === word">{{base}}</md-card-title>
+  <md-card-content>
+    <p *ngFor="let lemma of lemmas; let idx = index; trackBy: trackByFn" [innerHTML]="convertMarkdown(lemma.text)" [class.homonym-separator]="isNewHomonym(idx)"></p>
+  </md-card-content>
+  <md-card-actions fxLayout="row" fxLayoutAlign="end">
+    <button md-button *ngIf="base !== word" (click)="baseClicked($event, base)">
+      {{base.toUpperCase()}}
+    </button>
+  </md-card-actions>
+</md-card>

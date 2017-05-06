@@ -17,9 +17,9 @@ import 'rxjs/add/operator/mergeAll'
 import 'rxjs/add/operator/debounceTime'
 import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/catch'
+import 'rxjs/add/operator/toPromise'
 
-import { UtilityService } from './utility.service'
-import { SpeechService } from './speech.service'
+import { SpeechSynthesizer } from './speech-synthesizer.service'
 import { AuthService } from './auth.service'
 import { NavigationService } from './navigation.service'
 import { AuthGuard } from './auth.guard'
@@ -29,7 +29,7 @@ import { AppConstants } from '../app.constants'
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig({
     tokenName: 'token',
-    tokenGetter: (() => localStorage.getItem(AppConstants.tokenName)),
+    tokenGetter: (() => localStorage.getItem(AppConstants.TOKEN_NAME)),
     globalHeaders: [{ 'Content-Type': 'application/json' }],
   }), http, options);
 }
@@ -39,8 +39,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   exports: [],
   declarations: [],
   providers: [
-    UtilityService,
-    SpeechService,
+    SpeechSynthesizer,
     AuthService,
     NavigationService,
     AuthGuard,
@@ -53,11 +52,9 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   ]
 })
 export class CoreModule {
-
   constructor( @Optional() @SkipSelf() parentModule: CoreModule) {
     if (parentModule) {
-      throw new Error(
-        'CoreModule is already loaded. Import it in the AppModule only');
+      throw new Error('CoreModule is already loaded. Import it in the AppModule only');
     }
   }
 }

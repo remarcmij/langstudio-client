@@ -19,7 +19,7 @@ export class User {
 export class AuthService implements OnInit {
 
     get user() { return this._user }
-    get token() { return localStorage.getItem(AppConstants.tokenName) }
+    get token() { return localStorage.getItem(AppConstants.TOKEN_NAME) }
 
     private jwtHelper = new JwtHelper()
     private headers = new Headers()
@@ -34,7 +34,7 @@ export class AuthService implements OnInit {
 
     ngOnInit(): void {
         this.headers.append('Content-Type', 'application/json')
-        this.http.get(`${AppConstants.apiEndPoint}/api/users/me`)
+        this.http.get(`${AppConstants.API_END_POINT}/api/users/me`)
     }
 
     isTokenValid(): boolean {
@@ -43,7 +43,7 @@ export class AuthService implements OnInit {
             return false
         }
         if (this.jwtHelper.isTokenExpired(token)) {
-            localStorage.removeItem(AppConstants.tokenName)
+            localStorage.removeItem(AppConstants.TOKEN_NAME)
             return false
         }
         return true
@@ -54,7 +54,7 @@ export class AuthService implements OnInit {
             return Observable.of(this._user)
         }
         if (this.isTokenValid()) {
-            return this.authHttp.get(`${AppConstants.apiEndPoint}/api/users/me`, {
+            return this.authHttp.get(`${AppConstants.API_END_POINT}/api/users/me`, {
                 headers: this.headers
             }).map(response => response.json())
                 .do((user: User) => this._user = user)
@@ -65,7 +65,7 @@ export class AuthService implements OnInit {
 
     signOut(): void {
         document.cookie = 'token=;expires=Thu, 01 Jan 1970 00:00:01 GMT;'
-        localStorage.removeItem(AppConstants.tokenName)
+        localStorage.removeItem(AppConstants.TOKEN_NAME)
         this._user = undefined
         this.router.navigate(['/'])
     }
@@ -73,7 +73,7 @@ export class AuthService implements OnInit {
     captureTokenCookie(): void {
         let token = this.getCookie('token')
         if (token) {
-            localStorage.setItem(AppConstants.tokenName, token.slice(1, -1))
+            localStorage.setItem(AppConstants.TOKEN_NAME, token.slice(1, -1))
         }
     }
 

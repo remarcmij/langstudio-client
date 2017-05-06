@@ -1,32 +1,25 @@
-<nav class="navbar navbar-fixed-top navbar-dark bg-primary">
-  <div class="container">
-    <div class="row">
-      <div class="offset-lg-2 col-lg-8 col-xs-12">
-        <div class="nav navbar-nav">
-          <div class="nav-item">
-            <button type="button" class="btn btn-primary" (click)="goBack()">
-              <i class="fa fa-fw fa-chevron-left"></i>
-            </button>
-          </div>
-          <div class="nav-item ml-0 hidden-xs-down">
-            <p class="nav-title"> Dictionary</p>
-          </div>
-        </div>
-        <div class="float-xs-right">
-          <my-search-box (selectItem)="wordLangSearch($event)"></my-search-box>
-        </div>
-      </div>
-    </div>
-  </div>
-</nav>
+<div class="my-scroll-container">
+  <my-flex-container>
+    <md-toolbar color="primary">
+      <button md-icon-button (click)="goBack()">
+        <md-icon class="md-24">arrow_back</md-icon>
+      </button>
+      <span>Search</span>
+      <span class="my-spacer"></span>
+      <my-dict-autocomplete (onSelect)="wordLangSearch($event)"></my-dict-autocomplete>
+    </md-toolbar>
+  </my-flex-container>
 
-<div class="container ">
-  <my-dict-popover *ngIf="popoverInput" [input]="popoverInput" (shouldHide)="hidePopover()" (wordSearch)="foreignWordSearch($event)" (speakWord)="speakWord($event)">
-  </my-dict-popover>
-  <div class="row my-1">
-    <div class="offset-lg-2 col-lg-8 col-xs-12">
-      <my-lemma-group *ngFor="let base of result.bases" [word]="req.word" [base]="base" [lemmas]="result.lemmas(base)" (wordSearch)="foreignWordSearch($event)" (popoverSearch)="popoverSearch($event)">
+  <my-flex-container id="my-content">
+    <div fxLayout="column" fxLayoutGap="10px">
+      <my-lemma-group *ngFor="let base of result.bases" [word]="req.word" [base]="base" [lemmas]="result.lemmas(base)" (wordSearch)="foreignWordSearch($event)"
+        (popoverSearch)="popoverSearch($event)">
       </my-lemma-group>
     </div>
-  </div>
+  </my-flex-container>
+
 </div>
+
+<my-dict-popover *ngIf="popoverInput" [input]="popoverInput" (shouldHide)="hidePopover()" (wordSearch)="foreignWordSearch($event)"
+  (speakWord)="speakWord($event)">
+</my-dict-popover>

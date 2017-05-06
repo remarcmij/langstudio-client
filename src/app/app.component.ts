@@ -2,7 +2,7 @@ import { Component, ViewContainerRef } from '@angular/core'
 import { MdIconRegistry } from '@angular/material'
 
 import { AuthService } from './core'
-import { SpeechService } from './core'
+import { SpeechSynthesizer } from './core'
 
 @Component({
   selector: 'my-root',
@@ -15,7 +15,7 @@ export class AppComponent {
     mdIconRegistry: MdIconRegistry,
     viewContainerRef: ViewContainerRef,
     authService: AuthService,
-    speechService: SpeechService
+    speechSynthesizer: SpeechSynthesizer
   ) {
     mdIconRegistry.registerFontClassAlias('fontawesome', 'fa')
 
@@ -24,7 +24,7 @@ export class AppComponent {
 
     authService.captureTokenCookie()
 
-    if (speechService.isSynthesisSupported) {
+    if (speechSynthesizer.isSynthesisSupported) {
       console.log('speech synthesis is available')
     } else {
       console.log('speech synthesis is NOT available')

@@ -8,6 +8,7 @@ import { LibraryItemComponent } from './library/library-item.component'
 import { PublicationComponent } from './publication/publication.component'
 import { ArticleComponent } from './article/article.component'
 import { ArticleCoreComponent } from './article/article-core.component'
+import { ArticleResolver } from './article/article.resolver'
 import { FlashCardComponent } from './flashcard/flashcard.component'
 import { FlashCardService } from './flashcard/flashcard.service'
 import { contentRouting } from './content.routing'
@@ -34,7 +35,8 @@ import { NavigationModule } from '../navigation/navigation.module'
   providers: [
     ContentService,
     ContentHttpService,
-    FlashCardService
+    FlashCardService,
+    ArticleResolver
   ]
 })
 

@@ -2,7 +2,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
 import { Router } from '@angular/router'
 
 import { Topic } from '../../shared'
-import { UtilityService } from '../../core'
+import * as myUtil from '../../core'
 import { NavigationService } from '../../core'
 
 @Component({
@@ -28,12 +28,11 @@ export class LibraryItemComponent {
   @Input() topic: Topic
 
   get subtitle() {
-    return this.utilityService.tinyMarkdown(this.topic.subtitle)
+    return myUtil.tinyMarkdown(this.topic.subtitle)
   }
 
   constructor(
     private router: Router,
-    private utilityService: UtilityService,
     private navigationService: NavigationService
   ) {
   }

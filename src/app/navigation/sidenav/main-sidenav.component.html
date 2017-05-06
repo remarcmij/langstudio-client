@@ -21,6 +21,7 @@
       </div>
 
       <div *ngIf="user && user.role === 'admin'">
+        <md-divider></md-divider>
         <h3 md-subheader>System Management</h3>
         <a md-list-item (click)="action.emit('upload')">
           <md-icon md-list-icon fontSet="fa" fontIcon="fa-upload" class="fa-fw fa-dimmed"></md-icon>
@@ -36,6 +37,7 @@
         </a>
       </div>
 
+      <md-divider></md-divider>
       <h3 md-subheader>Info</h3>
       <a md-list-item (click)="action.emit('about')">
         <md-icon md-list-icon fontSet="fa" fontIcon="fa-info-circle" class="fa-fw fa-dimmed"></md-icon>

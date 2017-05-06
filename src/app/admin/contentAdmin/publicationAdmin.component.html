@@ -4,7 +4,7 @@
   <div class="row my-1">
     <div class="offset-lg-2 col-lg-8 col-xs-12">
 
-      <div class="card card-block md-whiteframe-3dp" *ngFor="let topic of topics">
+      <div class="card card-block my-whiteframe-3dp" *ngFor="let topic of topics">
         <p class="card-text">{{topic.title}}</p>
         <a class="btn btn-sm btn-danger float-xs-right" [style.color]="'#fff'" (click)="confirmRemoval(topic)">
                     <i class="fa fa-trash"></i> Remove

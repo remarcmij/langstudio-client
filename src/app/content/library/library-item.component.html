@@ -1,4 +1,4 @@
-<div class="md-whiteframe-3dp library-item" (click)="openPublication()">
+<div class="my-whiteframe-3dp library-item" (click)="openPublication()">
   <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="space-between">
     <div>
       <h6>{{topic.title}}</h6>
@@ -8,6 +8,6 @@
       <p *ngIf="topic.pubDate" class="caption">{{topic.pubDate}}></p>
       <p *ngIf="topic.isbn" class="caption">ISBN {{topic.isbn}}</p>
     </div>
-    <img fxFlex="104px" class="md-whiteframe-2dp" [src]="getImagePath()" height="150"alt="{{topic.publication}}" />
+    <img fxFlex="104px" class="my-whiteframe-2dp" [src]="getImagePath()" height="150"alt="{{topic.publication}}" />
   </div>
 </div>
