@@ -3,19 +3,17 @@ import { Resolve, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/r
 import { Observable } from 'rxjs/Observable'
 
 import { ContentHttp } from '../content-http.service'
-import { Article, AnchorInfo } from './article.model'
+import { Article } from './article.model'
 
 @Injectable()
 export class ArticleResolver implements Resolve<Article> {
 
   constructor(
-    private httpService: ContentHttp
-  ) {
-    this.httpService = httpService
-  }
+    private _contentHttp: ContentHttp
+  ) { }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Article> | Promise<Article> | Article {
-    return this.httpService.getArticle(route.params['publication'], route.params['chapter'])
+    return this._contentHttp.getArticle(route.params['publication'], route.params['chapter'])
   }
 
 }

@@ -4,7 +4,7 @@ import { ModalDirective } from 'ngx-bootstrap'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 
-import { ContentAdminHttpService } from './contentAdminHttp.service'
+import { ContentAdminHttp } from './contentAdminHttp.service'
 import { Topic } from '../../shared'
 
 @Component({
@@ -24,11 +24,11 @@ export class PublicationAdminComponent implements OnInit, OnDestroy {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private httpService: ContentAdminHttpService
+    private httpService: ContentAdminHttp
   ) {
   }
 
-  ngOnInit(): void {
+  ngOnInit() {
     let subscription = this.activatedRoute.params
       .mergeMap(params => {
         this.publication = params['publication']
@@ -43,7 +43,7 @@ export class PublicationAdminComponent implements OnInit, OnDestroy {
     this.combinedSubscription.unsubscribe()
   }
 
-  confirmRemoval(topic: Topic): void {
+  confirmRemoval(topic: Topic) {
     if (window.confirm(`Remove publication ${topic.title}?`)) {
       this.topicToRemove = topic
       this.removeArticle()
@@ -53,7 +53,7 @@ export class PublicationAdminComponent implements OnInit, OnDestroy {
     // this.showConfirmationModal()
   }
 
-  removeArticle(): void {
+  removeArticle() {
     // this.confirmationModal.hide()
     let subscription = this.httpService.removeTopic(this.topicToRemove.fileName)
       .mergeMap(() => {
@@ -69,11 +69,11 @@ export class PublicationAdminComponent implements OnInit, OnDestroy {
     this.combinedSubscription.add(subscription)
   }
 
-  showConfirmationModal(): void {
+  showConfirmationModal() {
     this.confirmationModal.show()
   }
 
-  hideConfirmationModal(): void {
+  hideConfirmationModal() {
     this.confirmationModal.hide()
   }
 

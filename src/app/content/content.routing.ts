@@ -1,4 +1,3 @@
-import { ModuleWithProviders } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
 
 import { LibraryComponent } from './library/library.component'
@@ -33,4 +32,4 @@ const contentRoutes: Routes = [
   }
 ]
 
-export const contentRouting: ModuleWithProviders = RouterModule.forChild(contentRoutes)
+export const contentRouting = RouterModule.forChild(contentRoutes)

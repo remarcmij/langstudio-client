@@ -9,20 +9,19 @@ export class NavigationService {
   public topMap: { [key: string]: number } = {}
 
   constructor(
-    private zone: NgZone
-  ) {
-  }
+    private _zone: NgZone
+  ) { }
 
-  saveTop(key: string): void {
+  saveTop(key: string) {
     this.topMap[key] = document.querySelector('#my-content').scrollTop
     this.popTopEmitter.emit('busy')
   }
 
-  restoreTop(key: string): void {
+  restoreTop(key: string) {
     const top = this.topMap[key] || 0
-    this.zone.runOutsideAngular(() => {
+    this._zone.runOutsideAngular(() => {
       setTimeout(() => {
-        this.zone.run(() => {
+        this._zone.run(() => {
           document.querySelector('#my-content').scrollTop = top
           this.popTopEmitter.emit('ready')
         })
@@ -30,7 +29,7 @@ export class NavigationService {
     })
   }
 
-  clearTop(key: string): void {
+  clearTop(key: string) {
     this.topMap[key] = 0
   }
 

@@ -8,7 +8,7 @@ export class MainToolbarComponent {
   @Input() title: string
   @Output() action = new EventEmitter<string>()
 
-  visitMainSite(): void {
+  visitMainSite() {
     window.open('http://www.hackyourfuture.net/', '_blank').focus()
   }
 }

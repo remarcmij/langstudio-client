@@ -1,51 +1,53 @@
-import { Component, OnInit } from '@angular/core'
+import { Component, OnDestroy } from '@angular/core'
 import { NgForm } from '@angular/forms'
 import { Http, Headers, RequestOptions } from '@angular/http'
 import { Router } from '@angular/router'
+import { Subject } from 'rxjs/Subject'
 
 import { AuthService } from '../core'
-import { AppConstants } from '../app.constants'
+import { environment } from '../../environments/environment'
 
 @Component({
-    selector: 'my-sign-in',
-    templateUrl: './sign-in.component.html',
-    styles: []
+  selector: 'my-sign-in',
+  templateUrl: './sign-in.component.html',
+  styles: []
 })
-export class SignInComponent implements OnInit {
+export class SignInComponent implements OnDestroy {
 
-    constructor(
-        private http: Http,
-        private router: Router,
-        private authService: AuthService,
-    ) { }
+  private _ngUnsubscribe = new Subject<void>()
 
-    ngOnInit(): void {
-    }
+  constructor(
+    private _http: Http,
+    private _router: Router,
+    private _authService: AuthService,
+  ) { }
 
-    onSubmit(form: NgForm): void {
-        let body = JSON.stringify(form.value.userCredentials)
+  ngOnDestroy() {
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
+  }
 
-        let headers = new Headers({
-            'Content-Type': 'application/json'
-        })
+  onSubmit(form: NgForm) {
+    const body = JSON.stringify(form.value.userCredentials)
 
-        let options = new RequestOptions({
-            headers,
-            withCredentials: true
-        })
+    const options = new RequestOptions({
+      headers: new Headers({ 'Content-Type': 'application/json' }),
+      withCredentials: true
+    })
 
-        this.http.post(`${AppConstants.API_END_POINT}/auth/local`, body, options)
-            .subscribe(() => {
-                // let cookieHeader = response.headers.get('set-cookie')
-                this.authService.captureTokenCookie()
-                this.router.navigateByUrl('/')
-            }, error => {
-                window.alert(error.text())
-                console.error(error.text())
-            })
-    }
+    this._http.post(`${environment.api.host}$/auth/local`, body, options)
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => {
+        // let cookieHeader = response.headers.get('set-cookie')
+        this._authService.captureTokenCookie()
+        this._router.navigateByUrl('/')
+      }, error => {
+        window.alert(error.text())
+        console.error(error.text())
+      })
+  }
 
-    oauthSignIn(provider: string): void {
-        window.location.href = `${AppConstants.API_END_POINT}/auth/${provider}`
-    }
+  oauthSignIn(provider: string) {
+    window.location.href = `${environment.api.host}$/auth/${provider}`
+  }
 }

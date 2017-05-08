@@ -1,20 +1,20 @@
 <div #popover class="card card-block" [style.opacity]="scrollState === 'busy' ? 0 : 1">
-    <div *ngIf="!errorText">
-        <h5 class="card-title">
-            <span *ngIf="input.word !== resolvedWord">{{input.word}} ‣</span>
-            <span *ngIf="resolvedWord !== baseList">{{resolvedWord}} ‣</span> {{baseList}}
-        </h5>
-        <div class="card-text mb-1" [innerHtml]="safeHtml"></div>
-        <button *ngIf="canSpeak()" type="button" class="btn btn-outline-primary btn-sm" (click)="onSpeakWordClick($event, input.word)">
+  <div *ngIf="!errorText">
+    <h5 class="card-title">
+      <span *ngIf="input.word !== resolvedWord">{{input.word}} ‣</span>
+      <span *ngIf="resolvedWord !== baseList">{{resolvedWord}} ‣</span> {{baseList}}
+    </h5>
+    <div class="card-text mb-1" [innerHtml]="safeHtml"></div>
+    <button *ngIf="canSpeak()" type="button" class="btn btn-outline-primary btn-sm" (click)="onSpeakWordClick($event, input.word)">
             <i class="fa fa-volume-up"></i>
             {{input.word}}
         </button>
-        <div class="float-xs-right">
-            <button *ngIf="resolvedWord" type="button" class="btn btn-outline-primary btn-sm" (click)="onSearchWordClick($event, resolvedWord)">{{resolvedWord}}</button>
-        </div>
+    <div class="float-xs-right">
+      <button *ngIf="resolvedWord" type="button" class="btn btn-outline-primary btn-sm" (click)="onSearchWordClick($event, resolvedWord)">{{resolvedWord}}</button>
     </div>
-    <div *ngIf="errorText">
-        <h5 class="card-title text-warning">{{input.word}}</h5>
-        <p class="card-text">{{errorText}}</p>
-    </div>
+  </div>
+  <div *ngIf="errorText">
+    <h5 class="card-title text-warning">{{input.word}}</h5>
+    <p class="card-text">{{errorText}}</p>
+  </div>
 </div>

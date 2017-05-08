@@ -14,15 +14,9 @@ import { User } from '../../core'
   ]
 })
 export class MainSidenavComponent {
-
   @Input() open = false
   @Input() title = ''
   @Input() user: User
   @Output() close = new EventEmitter<void>()
   @Output() action = new EventEmitter<string>()
-
-  constructor(
-  ) {
-  }
-
 }

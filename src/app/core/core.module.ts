@@ -17,6 +17,7 @@ import 'rxjs/add/operator/mergeAll'
 import 'rxjs/add/operator/debounceTime'
 import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/catch'
+import 'rxjs/add/operator/takeUntil'
 import 'rxjs/add/operator/toPromise'
 
 import { SpeechSynthesizer } from './speech-synthesizer.service'
@@ -29,7 +30,7 @@ import { AppConstants } from '../app.constants'
 export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   return new AuthHttp(new AuthConfig({
     tokenName: 'token',
-    tokenGetter: (() => localStorage.getItem(AppConstants.TOKEN_NAME)),
+    tokenGetter: (() => localStorage.getItem('token')),
     globalHeaders: [{ 'Content-Type': 'application/json' }],
   }), http, options);
 }

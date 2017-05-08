@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core'
 import { Location } from '@angular/common'
 import { Router, ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs/Subscription'
+import { Subject } from 'rxjs/Subject'
 
 import { DictionaryHttp, WordLang, SearchRequest, SearchResult } from './dictionary-http.service'
 import { SpeechSynthesizer } from '../core'
@@ -13,9 +14,9 @@ import { DictPopoverInput } from './dict-popover/dict-popover.component'
   templateUrl: './dictionary.component.html',
   styles: [
     `.btn {
-            padding-left: 10px;
-            padding-right: 10px;
-        }`
+      padding-left: 10px;
+      padding-right: 10px;
+    }`
   ]
 })
 export class DictionaryComponent implements OnInit, OnDestroy {
@@ -36,7 +37,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
 
   foreignLang: string
   baseLang: string
-  subscriptions$: Subscription[] = []
+  private _ngUnsubscribe = new Subject<void>()
 
   constructor(
     private router: Router,
@@ -50,20 +51,22 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const sub$ = this.activatedRoute.params.subscribe((params: any) => {
-      this.foreignLang = params['foreign']
-      this.baseLang = params['base']
-      this.req.word = params['word'] || this.req.word
-      this.req.lang = this.foreignLang
-      if (this.req.word) {
-        this.wordLangSearch({ word: this.req.word, lang: this.req.lang })
-      }
-    })
-    this.subscriptions$.push(sub$)
+    this.activatedRoute.params
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe((params: any) => {
+        this.foreignLang = params['foreign']
+        this.baseLang = params['base']
+        this.req.word = params['word'] || this.req.word
+        this.req.lang = this.foreignLang
+        if (this.req.word) {
+          this.wordLangSearch({ word: this.req.word, lang: this.req.lang })
+        }
+      })
   }
 
   ngOnDestroy() {
-    this.subscriptions$.forEach(sub$ => sub$.unsubscribe)
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   popoverSearch(event: any) {
@@ -124,7 +127,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
 
   private _searchMore() {
     this.dictHttp.searchWord(this.result, this.req)
-      .then(result => {
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(result => {
         this.result = result
         if (result.haveMore) {
           this.req.chunk += 1

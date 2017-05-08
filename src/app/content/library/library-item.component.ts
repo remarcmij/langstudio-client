@@ -32,8 +32,8 @@ export class LibraryItemComponent {
   }
 
   constructor(
-    private router: Router,
-    private navigationService: NavigationService
+    private _router: Router,
+    private _navigationService: NavigationService
   ) {
   }
 
@@ -41,8 +41,8 @@ export class LibraryItemComponent {
     return `/assets/product-images/${this.topic.publication}.jpg`
   }
 
-  openPublication(): void {
-    this.navigationService.clearTop('publication')
-    this.router.navigate(['/library', this.topic.publication])
+  openPublication() {
+    this._navigationService.clearTop('publication')
+    this._router.navigate(['/library', this.topic.publication])
   }
 }

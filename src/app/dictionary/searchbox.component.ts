@@ -50,7 +50,7 @@ export class SearchBoxComponent implements OnInit, OnDestroy, AfterViewInit {
     ) {
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
         this.dataSource = Observable.create((observer: Observer<string>) => {
             // Runs on every search
             observer.next(this.asyncSelected.toLowerCase())
@@ -76,26 +76,26 @@ export class SearchBoxComponent implements OnInit, OnDestroy, AfterViewInit {
         this.subscription.unsubscribe()
     }
 
-    ngAfterViewInit(): void {
+    ngAfterViewInit() {
         if (!myUtil.isMobile()) {
             this.clearInput()
         }
     }
 
-    clearInput(): void {
+    clearInput() {
         this.asyncSelected = ''
         this.renderer.invokeElementMethod(this.input.nativeElement, 'focus')
     }
 
-    changeTypeaheadLoading(e: boolean): void {
+    changeTypeaheadLoading(e: boolean) {
         this.typeaheadLoading = e
     }
 
-    changeTypeaheadNoResults(e: boolean): void {
+    changeTypeaheadNoResults(e: boolean) {
         this.typeaheadNoResults = e
     }
 
-    typeaheadOnSelect(e: any): void {
+    typeaheadOnSelect(e: any) {
         this.selectItem.emit(e.item)
     }
 }

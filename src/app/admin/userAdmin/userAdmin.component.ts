@@ -19,7 +19,7 @@ export class UserAdminComponent implements OnInit, OnDestroy {
     private adminHttpService: UserAdminHttpService
   ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.subscription = this.adminHttpService.getUsers()
       .subscribe(users => {
         this.users = users

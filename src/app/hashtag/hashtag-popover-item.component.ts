@@ -6,31 +6,31 @@ import * as myUtil from '../core'
 import { NavigationService } from '../core'
 
 @Component({
-    selector: 'my-hashtag-popover-item',
-    templateUrl: './hashtag-popover-item.component.html',
-    styles: [],
-    changeDetection: ChangeDetectionStrategy.OnPush
+  selector: 'my-hashtag-popover-item',
+  templateUrl: './hashtag-popover-item.component.html',
+  styles: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HashTagPopoverItemComponent implements OnInit {
-    @Input() tag: string
-    @Input() item: HashTagItem
-    @HostBinding('style.cursor') cursor = 'pointer'
+  @Input() tag: string
+  @Input() item: HashTagItem
+  @HostBinding('style.cursor') cursor = 'pointer'
 
-    get subtitle() {
-        return myUtil.tinyMarkdown(this.item.subtitle)
-    }
+  get subtitle() {
+    return myUtil.tinyMarkdown(this.item.subtitle)
+  }
 
-    constructor(
-        private router: Router,
-        private navigationService: NavigationService
-    ) {
-    }
+  constructor(
+    private _router: Router,
+    private _navigationService: NavigationService
+  ) {
+  }
 
-    ngOnInit(): void {
-    }
+  ngOnInit() {
+  }
 
-    openArticle(): void {
-        this.navigationService.clearTop('article')
-        this.router.navigate(['/library', this.item.publication, this.item.chapter, { tag: this.tag }])
-    }
+  openArticle() {
+    this._navigationService.clearTop('article')
+    this._router.navigate(['/library', this.item.publication, this.item.chapter, { tag: this.tag }])
+  }
 }

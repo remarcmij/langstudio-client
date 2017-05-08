@@ -12,7 +12,7 @@ import { UserAdminHttpService } from './userAdmin/userAdminHttp.service'
 import { FileUploadComponent } from './contentAdmin/fileUpload.component'
 import { LibraryAdminComponent } from './contentAdmin/libraryAdmin.component'
 import { PublicationAdminComponent } from './contentAdmin/publicationAdmin.component'
-import { ContentAdminHttpService } from './contentAdmin/contentAdminHttp.service'
+import { ContentAdminHttp } from './contentAdmin/contentAdminHttp.service'
 import { adminRouting } from './admin.routing'
 
 @NgModule({
@@ -34,7 +34,7 @@ import { adminRouting } from './admin.routing'
   ],
   providers: [
     UserAdminHttpService,
-    ContentAdminHttpService
+    ContentAdminHttp
   ]
 })
 export class AdminModule { }

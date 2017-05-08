@@ -34,17 +34,15 @@ const MAX_ITEMS = 20
 })
 export class DictAutocompleteComponent {
 
-  searchCtrl: FormControl
+  searchCtrl = new FormControl()
   term: string
   items$: Observable<any>
   @ViewChild(MdAutocompleteTrigger) trigger: MdAutocompleteTrigger
   @Output() onSelect = new EventEmitter<WordLang>()
 
   constructor(
-    private dictService: DictionaryHttp
-  ) {
-    this.searchCtrl = new FormControl()
-  }
+    private _dictHttp: DictionaryHttp
+  ) { }
 
   onItemSelect(item: WordLang) {
     this.items$ = Observable.from([])
@@ -59,7 +57,7 @@ export class DictAutocompleteComponent {
     }
     ev = ev.toLowerCase().trim()
     if (ev.length > 0) {
-      this.items$ = this.dictService
+      this.items$ = this._dictHttp
         .autoCompleteSearch(ev)
         .map(items => items.slice(0, MAX_ITEMS))
         .catch(err => {

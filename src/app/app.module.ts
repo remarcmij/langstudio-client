@@ -1,6 +1,3 @@
-// require('!style!css!../../node_modules/font-awesome/css/font-awesome.min.css')
-// require('!style!css!../assets/css/app.css')
-
 import 'hammerjs'
 import { BrowserModule } from '@angular/platform-browser'
 import { NgModule } from '@angular/core'

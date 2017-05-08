@@ -5,15 +5,15 @@ import { SharedModule } from '../shared'
 import { SignInComponent } from './sign-in.component'
 
 @NgModule({
-    imports: [
-        HttpModule,
-        SharedModule
-    ],
-    declarations: [
-        SignInComponent,
-    ],
-    providers: [
-    ]
+  imports: [
+    HttpModule,
+    SharedModule
+  ],
+  declarations: [
+    SignInComponent,
+  ],
+  providers: [
+  ]
 })
 
 export class SignInModule { }

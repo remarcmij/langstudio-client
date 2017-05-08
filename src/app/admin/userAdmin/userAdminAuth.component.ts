@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs/Subscription'
 
 import { UserAdminHttpService, Group } from './userAdminHttp.service'
-import { ContentAdminHttpService } from '../contentAdmin/contentAdminHttp.service'
+import { ContentAdminHttp } from '../contentAdmin/contentAdminHttp.service'
 import { Topic } from '../../shared'
 import { User } from '../../core'
 
@@ -35,10 +35,10 @@ export class UserAdminAuthComponent implements OnInit, OnDestroy {
   constructor(
     private activatedRoute: ActivatedRoute,
     private adminHttpService: UserAdminHttpService,
-    private libraryHttpService: ContentAdminHttpService
+    private libraryHttpService: ContentAdminHttp
   ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.subscription = this.activatedRoute.params
       .mergeMap(params => this.adminHttpService.getUser(params['id']))
       .mergeMap(user => this.adminHttpService.getGroups().map(groups => ({ groups, user })))
@@ -58,7 +58,7 @@ export class UserAdminAuthComponent implements OnInit, OnDestroy {
       }, () => this.httpError = true)
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.subscription.unsubscribe()
 
     if (!this.isDirty) {
@@ -83,24 +83,24 @@ export class UserAdminAuthComponent implements OnInit, OnDestroy {
       })
   }
 
-  restoreSelection(): void {
+  restoreSelection() {
     this.groups.forEach(group => group.selected = this.wasSelected(group.name))
     this.isDirty = false
   }
 
-  selectAll(): void {
+  selectAll() {
     this.groups.forEach(group => group.selected = true)
     this.onModelChange()
   }
 
-  selectNone(): void {
+  selectNone() {
     this.groups
       .filter(group => group.name !== 'public')
       .forEach(group => group.selected = false)
     this.onModelChange()
   }
 
-  onModelChange(): void {
+  onModelChange() {
     this.isDirty = false
     this.groups.forEach(group => {
       if (group.selected !== this.wasSelected(group.name)) {
@@ -113,7 +113,7 @@ export class UserAdminAuthComponent implements OnInit, OnDestroy {
     return this.user.groups.indexOf(groupName) !== -1
   }
 
-  private errorAlert(): void {
+  private errorAlert() {
     window.alert('Could not save authorization changes.')
   }
 }

@@ -1,6 +1,7 @@
 import { Component, ElementRef, OnInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
+import { Subject } from 'rxjs/Subject'
 import { Response } from '@angular/http'
 import { Router } from '@angular/router'
 
@@ -10,86 +11,87 @@ import { HashTagItem } from '../content/article/article.model'
 const scrollDistBeforeHide = 16
 
 @Component({
-    selector: 'my-hashtag-popover',
-    templateUrl: './hashtag-popover.component.html',
-    styles: []
+  selector: 'my-hashtag-popover',
+  templateUrl: './hashtag-popover.component.html',
+  styles: []
 })
 export class HashTagPopoverComponent implements OnInit, OnDestroy {
 
-    @Input() hashTag: string
-    @Input() publication: string
-    @Input() chapter: string
-    @Output() shouldHide = new EventEmitter<void>()
+  @Input() hashTag: string
+  @Input() publication: string
+  @Input() chapter: string
+  @Output() shouldHide = new EventEmitter<void>()
 
-    items: HashTagItem[] = []
-    errorText: string
-    scrollState: string
+  items: HashTagItem[] = []
+  errorText: string
+  scrollState: string
 
-    private combinedSubscription = new Subscription()
-    private prevScrollTop = -1
+  private _ngUnsubscribe = new Subject<void>()
+  private _prevScrollTop = -1
 
-    constructor(
-        private elementRef: ElementRef,
-        private router: Router,
-        private httpService: ContentHttp
-    ) {
-    }
+  constructor(
+    private _elementRef: ElementRef,
+    private _router: Router,
+    private _contentHttp: ContentHttp
+  ) {
+  }
 
-    ngOnInit(): void {
-        this.scrollState = 'busy'
+  ngOnInit() {
+    this.scrollState = 'busy'
 
-        let subscription = this.httpService.getHashTagItems(this.hashTag)
-            .subscribe(items => {
-                items.forEach(item => {
-                    item.active = item.publication === this.publication && item.chapter === this.chapter
-                })
-                this.items = items
-                this.scrollState = 'ready'
-            }, (err: Response) => {
-                if (err.status === 401) {
-                    this.router.navigate(['/signin'])
-                } else {
-                    window.alert(`Network Error: ${err.statusText}`)
-                }
-            })
-        this.combinedSubscription.add(subscription)
+    this._contentHttp.getHashTagItems(this.hashTag)
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(items => {
+        items.forEach(item => {
+          item.active = item.publication === this.publication && item.chapter === this.chapter
+        })
+        this.items = items
+        this.scrollState = 'ready'
+      }, (err: Response) => {
+        if (err.status === 401) {
+          this._router.navigate(['/signin'])
+        } else {
+          window.alert(`Network Error: ${err.statusText}`)
+        }
+      })
 
-        subscription = Observable.fromEvent(window, 'scroll')
-            .subscribe(() => {
-                let scrollTop = document.body.scrollTop
-                if (this.prevScrollTop === -1) {
-                    this.prevScrollTop = scrollTop
-                } else if (Math.abs(this.prevScrollTop - scrollTop) >= scrollDistBeforeHide) {
-                    this.shouldHide.emit()
-                }
-            })
-        this.combinedSubscription.add(subscription)
+    Observable.fromEvent(window, 'scroll')
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => {
+        const scrollTop = document.body.scrollTop
+        if (this._prevScrollTop === -1) {
+          this._prevScrollTop = scrollTop
+        } else if (Math.abs(this._prevScrollTop - scrollTop) >= scrollDistBeforeHide) {
+          this.shouldHide.emit()
+        }
+      })
 
-        // ignore clicks on popover body
-        subscription = Observable.fromEvent(this.elementRef.nativeElement, 'click')
-            .subscribe((ev: MouseEvent) => {
-                ev.preventDefault()
-                ev.stopPropagation()
-            })
-        this.combinedSubscription.add(subscription)
+    // ignore clicks on popover body
+    Observable.fromEvent(this._elementRef.nativeElement, 'click')
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe((ev: MouseEvent) => {
+        ev.preventDefault()
+        ev.stopPropagation()
+      })
 
-        // hide on clicks outside the popover
-        subscription = Observable.fromEvent(window, 'click')
-            .subscribe((ev: MouseEvent) => {
-                ev.preventDefault()
-                ev.stopPropagation()
-                this.shouldHide.emit()
-            })
-        this.combinedSubscription.add(subscription)
+    // hide on clicks outside the popover
+    Observable.fromEvent(window, 'click')
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe((ev: MouseEvent) => {
+        ev.preventDefault()
+        ev.stopPropagation()
+        this.shouldHide.emit()
+      })
 
-        subscription = Observable.fromEvent(window, 'touchmove')
-            .subscribe(() => {
-                this.shouldHide.emit()
-            })
-        this.combinedSubscription.add(subscription)
-    }
+    Observable.fromEvent(window, 'touchmove')
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => {
+        this.shouldHide.emit()
+      })
+  }
 
-    ngOnDestroy(): void {
-        this.combinedSubscription.unsubscribe()
-    }
+  ngOnDestroy() {
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
+  }
 }

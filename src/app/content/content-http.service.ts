@@ -6,45 +6,44 @@ import * as LRU from 'lru-cache'
 
 import { Topic } from '../shared'
 import { Article, HashTagItem } from './article/article.model'
-import { AppConstants } from '../app.constants'
 import { AuthService } from '../core'
+import { environment } from '../../environments/environment'
 
 @Injectable()
 export class ContentHttp {
 
-  private readonly topicCache = LRU<Topic[]>({ max: 100, maxAge: 1000 * 60 * 60 })
-  private readonly hashTagCache = LRU<HashTagItem[]>({ max: 100, maxAge: 1000 * 60 * 60 })
-  private allTags: any[]
+  private readonly _topicCache = LRU<Topic[]>({ max: 100, maxAge: 1000 * 60 * 60 })
+  private readonly _hashTagCache = LRU<HashTagItem[]>({ max: 100, maxAge: 1000 * 60 * 60 })
+  private _allTags: any[]
 
-  private get auth(): string {
-    return this.authService.isTokenValid() ? 'authed' : 'public'
+  private get _auth(): string {
+    return this._authService.isTokenValid() ? 'authed' : 'public'
   }
 
   constructor(
-    private http: Http,
-    private authHttp: AuthHttp,
-    private authService: AuthService
+    private _http: Http,
+    private _authHttp: AuthHttp,
+    private _authService: AuthService
   ) { }
 
   getPublications(): Observable<Topic[]> {
-    const url = `${AppConstants.API_END_POINT}/api/topics/${this.auth}`
-
-    const topics = this.topicCache.get(url)
+    const url = `${environment.api.host}${environment.api.path}/topics/${this._auth}`
+    const topics = this._topicCache.get(url)
     if (topics) {
       return Observable.of(topics)
     }
-    return this.httpGet(url)
+    return this._httpGet(url)
       .map(res => <Topic[]>res.json())
-      .do(topics => this.topicCache.set(url, topics))
+      .do(topics => this._topicCache.set(url, topics))
   }
 
   getPublicationTopics(publication: string): Observable<Topic[]> {
-    const url = `${AppConstants.API_END_POINT}/api/topics/${this.auth}/${publication}`
-    const topics = this.topicCache.get(url)
+    const url = `${environment.api.host}${environment.api.path}/topics/${this._auth}/${publication}`
+    const topics = this._topicCache.get(url)
     if (topics) {
       return Observable.of(topics)
     }
-    return this.httpGet(url)
+    return this._httpGet(url)
       .map(res => <Topic[]>res.json())
       .do(topics => {
         const indexTopic = topics.filter(topic => topic.chapter === 'index')[0]
@@ -53,30 +52,29 @@ export class ContentHttp {
           topic.baseLang = topic.baseLang || indexTopic.baseLang
           return topic
         })
-        this.topicCache.set(url, topics)
+        this._topicCache.set(url, topics)
       })
   }
 
   getHashTagItems(hashTagName: string): Observable<HashTagItem[]> {
-    const hashTags = this.hashTagCache.get(hashTagName)
+    const hashTags = this._hashTagCache.get(hashTagName)
     if (hashTags) {
       return Observable.of(hashTags)
     }
-    const url = `${AppConstants.API_END_POINT}/api/article/${this.auth}/hashtag/search?q=${hashTagName}`
-    return this.httpGet(url)
+    const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/hashtag/search?q=${hashTagName}`
+    return this._httpGet(url)
       .map(res => <HashTagItem[]>res.json())
-      .do(hashTags => this.hashTagCache.set(hashTagName, hashTags))
+      .do(hashTags => this._hashTagCache.set(hashTagName, hashTags))
   }
 
   getAllHashTags(): Observable<any[]> {
-    if (this.allTags) {
-      return Observable.of(this.allTags)
+    if (this._allTags) {
+      return Observable.of(this._allTags)
     }
-
-    const url = `${AppConstants.API_END_POINT}/api/article/${this.auth}/hashtag/all`
-    return this.httpGet(url)
+    const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/hashtag/all`
+    return this._httpGet(url)
       .map(res => <string[]>res.json())
-      .do(hashTags => this.allTags = hashTags)
+      .do(hashTags => this._allTags = hashTags)
   }
 
   getArticle(publication: string, chapter: string): Observable<Article> {
@@ -85,8 +83,8 @@ export class ContentHttp {
       .mergeMap(topics => Observable.from(topics))
       .first(topic => topic.fileName === fileName)
       .mergeMap(topic => {
-        const url = `${AppConstants.API_END_POINT}/api/article/${this.auth}/get/${fileName}/${topic.hash}`
-        return this.httpGet(url)
+        const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/get/${fileName}/${topic.hash}`
+        return this._httpGet(url)
           .map(res => <Article>res.json())
           .do(article => {
             article.foreignLang = topic.foreignLang
@@ -95,13 +93,13 @@ export class ContentHttp {
       })
   }
 
-  clearCache(): void {
-    this.topicCache.reset()
-    this.allTags = undefined
+  clearCache() {
+    this._topicCache.reset()
+    this._allTags = undefined
   }
 
-  httpGet(url: string): Observable<Response> {
-    const httpProvider = this.authService.isTokenValid() ? this.authHttp : this.http
+  private _httpGet(url: string): Observable<Response> {
+    const httpProvider = this._authService.isTokenValid() ? this._authHttp : this._http
     return httpProvider.get(url)
   }
 

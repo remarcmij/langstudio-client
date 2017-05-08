@@ -67,7 +67,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
         this.goIndexDebounced = debounce(this.goIndex.bind(this), buttonDelay)
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
 
         this.updateNavButtons()
 
@@ -105,18 +105,18 @@ export class FlashCardComponent implements OnInit, OnDestroy {
         this.combinedSubscription.add(subscription)
     }
 
-    ngOnDestroy(): void {
+    ngOnDestroy() {
         this.combinedSubscription.unsubscribe()
         this.flashCardService.stop()
     }
 
-    goNext(): void {
+    goNext() {
         if (this.canGoNext()) {
             this.goIndexDebounced(this.flashCardService.lastIndex + 1)
         }
     }
 
-    goLast(): void {
+    goLast() {
         this.goIndexDebounced(this.flashCardService.getFlashCardCount() * 2 - 1)
     }
 
@@ -129,7 +129,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
         return this.flashCardService.lastIndex > 0
     }
 
-    goPrev(): void {
+    goPrev() {
         if (this.canGoPrev()) {
             this.goIndexDebounced(Math.max(this.flashCardService.lastIndex - 1, 0))
         }
@@ -144,7 +144,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
         this.flashCardService.lastIndex = index
     }
 
-    flashCardCallback(flashCard: FlashCard): void {
+    flashCardCallback(flashCard: FlashCard) {
         this.flashCard = flashCard
         this.sliderIndex = this.flashCardService.lastIndex
 
@@ -182,7 +182,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
         return this.navButtons;
     }
 
-    commandHandler(command: string): void {
+    commandHandler(command: string) {
         switch (command) {
 
             case 'play':

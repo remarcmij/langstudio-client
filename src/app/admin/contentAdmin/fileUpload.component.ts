@@ -2,8 +2,8 @@ import { Component, OnDestroy } from '@angular/core'
 import { FileUploader } from 'ng2-file-upload'
 
 import { AuthService } from '../../core'
-import { ContentAdminHttpService } from './contentAdminHttp.service'
-import { AppConstants } from '../../app.constants'
+import { ContentAdminHttp } from './contentAdminHttp.service'
+import { environment } from '../../../environments/environment'
 
 @Component({
   selector: 'my-file-upload',
@@ -16,24 +16,24 @@ export class FileUploadComponent implements OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private httpService: ContentAdminHttpService
+    private httpService: ContentAdminHttp
   ) {
     this.uploader = new FileUploader({
-      url: AppConstants.API_END_POINT + '/api/upload',
+      url: `${environment.api.host}${environment.api.path}/upload`,
       authToken: 'Bearer ' + this.authService.token,
       isHTML5: true
     })
   }
 
-  fileOverBase(e: any): void {
+  fileOverBase(e: any) {
     this.hasBaseDropZoneOver = e
   }
 
-  fileOverAnother(e: any): void {
+  fileOverAnother(e: any) {
     this.hasAnotherDropZoneOver = e
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.httpService.clearCache()
   }
 }

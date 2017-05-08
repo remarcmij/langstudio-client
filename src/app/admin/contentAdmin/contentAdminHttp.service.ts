@@ -4,36 +4,36 @@ import { AuthHttp } from 'angular2-jwt'
 import * as LRU from 'lru-cache'
 
 import { Topic } from '../../shared'
-import { AppConstants } from '../../app.constants'
+import { environment } from '../../../environments/environment'
 
 @Injectable()
-export class ContentAdminHttpService {
+export class ContentAdminHttp {
 
-  private readonly cache = LRU<Topic[]>({ max: 500, maxAge: 1000 * 60 * 60 })
+  private readonly _cache = LRU<Topic[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
   constructor(
     private authHttp: AuthHttp
   ) { }
 
   getTopics(): Observable<Topic[]> {
-    const url = `${AppConstants.API_END_POINT}/api/topics/admin`
-    const topics = this.cache.get(url)
+    const url = `${environment.api.host}${environment.api.path}/topics/admin`
+    const topics = this._cache.get(url)
     if (topics) {
       return Observable.of(topics)
     }
     return this.authHttp.get(url)
-      .map(response => response.json())
-      .do((data: Topic[]) => this.cache.set(url, data))
+      .map(response => <Topic[]>response.json())
+      .do(data => this._cache.set(url, data))
   }
 
   removeTopic(fileName: string): Observable<boolean> {
-    const url = `${AppConstants.API_END_POINT}/api/topics/admin/${fileName}`
+    const url = `${environment.api.host}${environment.api.path}/topics/admin/${fileName}`
     return this.authHttp.delete(url)
       .map(response => response.ok)
       .do(() => this.clearCache())
   }
 
-  clearCache(): void {
-    this.cache.reset()
+  clearCache() {
+    this._cache.reset()
   }
 }

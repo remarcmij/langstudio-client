@@ -13,14 +13,8 @@ import { Router } from '@angular/router'
   ]
 })
 export class SecondarySidenavComponent {
-
   @Input() open = false
   @Input() title = ''
   @Output() close = new EventEmitter<void>()
   @Output() action = new EventEmitter<string>()
-
-  constructor(
-  ) {
-  }
-
 }

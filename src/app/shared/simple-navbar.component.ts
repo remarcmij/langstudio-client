@@ -30,7 +30,7 @@ export class SimpleNavbarComponent {
     ) {
     }
 
-    goBack(): void {
+    goBack() {
         if (this.backRoute) {
             this.router.navigate(this.backRoute)
         } else {

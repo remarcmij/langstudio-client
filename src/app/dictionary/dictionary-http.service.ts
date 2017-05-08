@@ -7,10 +7,9 @@ import * as groupBy from 'lodash.groupby'
 import * as uniq from 'lodash.uniq'
 
 import { Lemma } from './lemma-group/lemma.model'
-import { AppConstants } from '../app.constants'
 import { AuthService } from '../core'
 import { LanguageManager } from '../language/lang-helper-manager'
-
+import { environment } from '../../environments/environment'
 
 export interface SearchRequest {
   word: string
@@ -61,43 +60,42 @@ export interface PopoverResponse {
 @Injectable()
 export class DictionaryHttp {
 
-  readonly searchWordCache = LRU<SearchResult>({ max: 500, maxAge: 1000 * 60 * 60 })
-  readonly autoCompleteCache = LRU<WordLang[]>({ max: 500, maxAge: 1000 * 60 * 60 })
+  private readonly _searchWordCache = LRU<SearchResult>({ max: 500, maxAge: 1000 * 60 * 60 })
+  private readonly _autoCompleteCache = LRU<WordLang[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
   constructor(
-    private http: Http,
-    private authHttp: AuthHttp,
-    private authService: AuthService,
-    private languageManager: LanguageManager
+    private _http: Http,
+    private _authHttp: AuthHttp,
+    private _authService: AuthService,
+    private _languageManager: LanguageManager
   ) {
   }
 
-  searchWord(baseResult: SearchResult, searchRequest: SearchRequest): Promise<SearchResult> {
+  searchWord(baseResult: SearchResult, searchRequest: SearchRequest): Observable<SearchResult> {
     const key = JSON.stringify(searchRequest)
-    const searchResult = this.searchWordCache.get(key)
+    const searchResult = this._searchWordCache.get(key)
     if (searchResult) {
-      return Promise.resolve(searchResult)
+      return Observable.of(searchResult)
     }
 
     return this._sendSearchRequest(searchRequest)
       .map(resp => this._makeSearchResult(resp))
       .map(newResult => this._mergeSearchResult(baseResult, newResult))
-      .do((result: SearchResult) => this.searchWordCache.set(key, result))
-      .toPromise()
+      .do((result: SearchResult) => this._searchWordCache.set(key, result))
   }
 
   autoCompleteSearch(term: string): Observable<WordLang[]> {
-    const items = this.autoCompleteCache.get(term)
+    const items = this._autoCompleteCache.get(term)
     if (items) {
       return Observable.of(items)
     }
-    return this.http.get(`${AppConstants.API_END_POINT}/api/search/autocomplete/${term}`)
+    return this._http.get(`${environment.api.host}${environment.api.path}/search/autocomplete/${term}`)
       .map(res => res.json())
-      .do((result: WordLang[]) => this.autoCompleteCache.set(term, result))
+      .do((result: WordLang[]) => this._autoCompleteCache.set(term, result))
   }
 
-  popoverSearch(word: string, lang: string): Promise<PopoverResponse> {
-    const helper = this.languageManager.getLangHelper(lang)
+  popoverSearch(word: string, lang: string): Observable<PopoverResponse> {
+    const helper = this._languageManager.getLangHelper(lang)
     const variations = helper.getWordVariations(word)
 
     const sr: SearchRequest = {
@@ -113,7 +111,7 @@ export class DictionaryHttp {
           return
         }
         return this._makePopoverResponse(res, lang)
-      }).toPromise()
+      })
   }
 
   private _makeSearchResult(response: DictSearchResponse): SearchResult {
@@ -184,15 +182,15 @@ export class DictionaryHttp {
     let httpProvider: any
     let authed: string
 
-    if (this.authService.isTokenValid()) {
-      httpProvider = this.authHttp
+    if (this._authService.isTokenValid()) {
+      httpProvider = this._authHttp
       authed = 'authed'
     } else {
-      httpProvider = this.http
+      httpProvider = this._http
       authed = 'public'
     }
 
-    let url = `${AppConstants.API_END_POINT}/api/search/${authed}/${sr.word}/${sr.attr}/${sr.chunk}`
+    let url = `${environment.api.host}${environment.api.path}/search/${authed}/${sr.word}/${sr.attr}/${sr.chunk}`
     if (sr.lang) {
       url += `?lang=${sr.lang}`
     }

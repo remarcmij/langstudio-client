@@ -18,8 +18,8 @@ import * as myUtil from '../../core/my-util'
     `.homonym-separator {
       margin-top: 1rem;
     }`
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  ]
+  // changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LemmaGroupComponent {
 
@@ -30,7 +30,7 @@ export class LemmaGroupComponent {
   @Output() wordSearch = new EventEmitter<string>()
   @Output() popoverSearch = new EventEmitter<{}>()
 
-  static handleSpanClick(ev: MouseEvent, cb: (w: string, t: number, h: number) => void) {
+  private static _handleSpanClick(ev: MouseEvent, cb: (w: string, t: number, h: number) => void) {
     const target = <HTMLElement>ev.target
     if (target.tagName === 'SPAN') {
       ev.preventDefault()
@@ -48,8 +48,8 @@ export class LemmaGroupComponent {
     }
   }
 
-  onClick(ev: MouseEvent): void {
-    LemmaGroupComponent.handleSpanClick(ev, (word, top, height) => {
+  onClick(ev: MouseEvent) {
+    LemmaGroupComponent._handleSpanClick(ev, (word, top, height) => {
       this.popoverSearch.emit({ word, top, height })
     })
   }

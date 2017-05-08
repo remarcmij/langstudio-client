@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Router, ActivatedRoute } from '@angular/router'
 import { Response } from '@angular/http'
 import { Subscription } from 'rxjs/Subscription'
+import { Subject } from 'rxjs/Subject'
 
 import { Topic } from '../../shared'
 import { ContentService } from '../content.service'
@@ -20,64 +21,64 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   indexTopic: Topic
   topics: Topic[]
   scrollState = 'busy'
-  private combinedSubscription = new Subscription()
+  private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private libraryService: ContentService,
-    private httpService: ContentHttp,
-    private navigationService: NavigationService
+    private _router: Router,
+    private _route: ActivatedRoute,
+    private _contentService: ContentService,
+    private _contentHttp: ContentHttp,
+    private _navigationService: NavigationService
   ) {
   }
 
   ngOnInit() {
-    let subscription = this.navigationService.popTopEmitter
+    this._navigationService.popTopEmitter
+      .takeUntil(this._ngUnsubscribe)
       .subscribe((scrollState: string) => this.scrollState = scrollState)
-    this.combinedSubscription.add(subscription)
 
-    this.publication = this.route.snapshot.params['publication']
-    subscription = this.httpService.getPublicationTopics(this.publication)
+    this.publication = this._route.snapshot.params['publication']
+    this._contentHttp.getPublicationTopics(this.publication)
+      .takeUntil(this._ngUnsubscribe)
       .subscribe(topics => {
         this.indexTopic = topics.filter(topic => topic.chapter === 'index')[0]
         this.topics = topics.filter(topic => topic.chapter !== 'index')
-        this.navigationService.restoreTop(scrollTopName)
+        this._navigationService.restoreTop(scrollTopName)
       }, (err: Response) => {
         if (err.status === 401) {
-          this.router.navigate(['/signin'])
+          this._router.navigate(['/signin'])
         } else {
           window.alert(`Network Error: ${err.statusText}`)
         }
       })
-    this.combinedSubscription.add(subscription)
 
-    subscription = this.libraryService.handleKeyUp(() => this.onAction('search'))
-    this.combinedSubscription.add(subscription)
+    this._contentService.handleKeyUp(() => this.onAction('search'))
   }
 
   ngOnDestroy() {
-    this.combinedSubscription.unsubscribe()
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   canDeactivate(): boolean {
-    this.navigationService.saveTop(scrollTopName)
+    this._navigationService.saveTop(scrollTopName)
     return true
   }
 
   onAction(action: string) {
     switch (action) {
       case 'back':
-        this.router.navigate(['/library'])
+        this._router.navigate(['/library'])
         break
       case 'search':
-        this.router.navigate(['/dictionary', this.indexTopic.foreignLang, this.indexTopic.baseLang])
+        this._router.navigate(['/dictionary', this.indexTopic.foreignLang, this.indexTopic.baseLang])
         break
     }
   }
 
   openArticle(topic: Topic) {
-    this.navigationService.clearTop('article')
-    this.router.navigate(['/library', topic.publication, topic.chapter])
+    this._navigationService.clearTop('article')
+    this._router.navigate(['/library', topic.publication, topic.chapter])
   }
 
 }

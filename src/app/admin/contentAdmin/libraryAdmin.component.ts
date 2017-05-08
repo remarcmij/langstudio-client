@@ -2,9 +2,8 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core'
 import { ModalDirective } from 'ngx-bootstrap'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
-import 'rxjs/add/operator/toPromise'
 
-import { ContentAdminHttpService } from './contentAdminHttp.service'
+import { ContentAdminHttp } from './contentAdminHttp.service'
 import { Topic } from '../../shared'
 
 @Component({
@@ -21,27 +20,27 @@ export class LibraryAdminComponent implements OnInit, OnDestroy {
   get indexTopics() { return this.topics.filter(topic => topic.chapter === 'index') }
 
   constructor(
-    private httpService: ContentAdminHttpService
+    private httpService: ContentAdminHttp
   ) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     const sub$ = this.getTopics()
       .subscribe(topics => this.topics = topics)
     this.subscriptions$.push(sub$)
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.subscriptions$.forEach(sub$ => sub$.unsubscribe())
   }
 
-  confirmRemoval(publication: string): void {
+  confirmRemoval(publication: string) {
     if (window.confirm(`Remove publication ${publication}?`)) {
       this.publicationToRemove = publication
       this.removePublication()
     }
   }
 
-  removePublication(): void {
+  removePublication() {
     const sub$ = Observable.from(this.topics)
       .filter(topic => topic.publication === this.publicationToRemove)
       .map(topic => this.httpService.removeTopic(topic.fileName))
@@ -58,11 +57,11 @@ export class LibraryAdminComponent implements OnInit, OnDestroy {
     this.subscriptions$.push(sub$)
   }
 
-  showConfirmationModal(): void {
+  showConfirmationModal() {
     this.confirmationModal.show()
   }
 
-  hideConfirmationModal(): void {
+  hideConfirmationModal() {
     this.confirmationModal.hide()
   }
 

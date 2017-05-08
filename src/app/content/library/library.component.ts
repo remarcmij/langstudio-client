@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
-import { Router, ActivatedRoute } from '@angular/router'
+import { Router } from '@angular/router'
 import { Response } from '@angular/http'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
+import { Subject } from 'rxjs/Subject'
 
 import { AuthService, User } from '../../core'
 import { ContentHttp } from '../content-http.service'
@@ -12,10 +13,10 @@ import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
 import { AppConstants } from '../../app.constants'
 
-const scrollTopName = 'library'
+const SELECTOR = 'my-library'
 
 @Component({
-  selector: 'my-library',
+  selector: SELECTOR,
   templateUrl: './library.component.html',
   styles: []
 })
@@ -26,38 +27,36 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   topics: Topic[]
   scrollState = 'busy'
   readonly title = AppConstants.APP_TITLE
-  private subscriptions$: Subscription[] = []
+  private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private authService: AuthService,
-    private httpService: ContentHttp,
-    private navigationService: NavigationService
+    private _router: Router,
+    private _authService: AuthService,
+    private _httpService: ContentHttp,
+    private _navigationService: NavigationService
   ) { }
 
   ngOnInit() {
-    const sub1$ = this.navigationService.popTopEmitter
+    this._navigationService.popTopEmitter
+      .takeUntil(this._ngUnsubscribe)
       .subscribe((scrollState: string) => this.scrollState = scrollState)
-    this.subscriptions$.push(sub1$)
 
-    const sub2$ = this.authService.getUser()
-      .mergeMap(user => {
-        this.user = user
-        return this.getTopics()
-      }).subscribe(() => { }, err => this.httpErrorHandler(err))
-    this.subscriptions$.push(sub2$)
+    this._authService.getUser()
+      .do(user => this.user = user)
+      .mergeMap(() => this._getTopics())
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => { }, err => this._httpErrorHandler(err))
 
-    const sub3$ = myUtil.handleKeyUp(() => this.search())
-    this.subscriptions$.push(sub3$)
+    myUtil.handleKeyUp(() => this.search())
   }
 
   ngOnDestroy() {
-    this.subscriptions$.forEach(sub$ => sub$.unsubscribe())
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
   }
 
   canDeactivate(): boolean {
-    this.navigationService.saveTop(scrollTopName)
+    this._navigationService.saveTop(SELECTOR)
     return true
   }
 
@@ -67,7 +66,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   }
 
   search() {
-    this.router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
+    this._router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
   }
 
   onAction(action: string) {
@@ -76,7 +75,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.sidenav.isOpen = true
         break
       case 'signin':
-        this.router.navigate(['/signin'])
+        this._router.navigate(['/signin'])
         break
       case 'signout':
         this.signOut()
@@ -91,40 +90,40 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.manageUsers()
         break
       case 'search':
-        this.router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
+        this._router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
         break
       case 'about':
-        this.router.navigate(['/about'])
+        this._router.navigate(['/about'])
         break
     }
   }
 
   signOut() {
     this.sidenav.isOpen = false
-    this.authService.signOut()
+    this._authService.signOut()
     this.user = undefined
-    this.httpService.clearCache()
-    const sub$ = this.getTopics()
-      .subscribe(() => { }, err => this.httpErrorHandler(err))
-    this.subscriptions$.push(sub$)
+    this._httpService.clearCache()
+    this._getTopics()
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => { }, err => this._httpErrorHandler(err))
   }
 
   uploadFiles() {
-    this.httpService.clearCache()
-    this.router.navigate(['/admin', 'upload'])
+    this._httpService.clearCache()
+    this._router.navigate(['/admin', 'upload'])
   }
 
   manageContent() {
-    this.httpService.clearCache()
-    this.router.navigate(['/admin', 'library'])
+    this._httpService.clearCache()
+    this._router.navigate(['/admin', 'library'])
   }
 
   manageUsers() {
-    this.httpService.clearCache()
-    this.router.navigate(['/admin', 'user'])
+    this._httpService.clearCache()
+    this._router.navigate(['/admin', 'user'])
   }
 
-  private getTopics(): Observable<Topic[]> {
+  private _getTopics(): Observable<Topic[]> {
 
     function makeSortKey(topic: Topic): string {
       switch (topic.publication) {
@@ -137,15 +136,15 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       }
     }
 
-    return this.httpService.getPublications()
+    return this._httpService.getPublications()
       .map(topics => topics.sort((a, b) => makeSortKey(a).localeCompare(makeSortKey(b))))
       .do((topics: Topic[]) => {
         this.topics = topics
-        this.navigationService.restoreTop(scrollTopName)
+        this._navigationService.restoreTop(SELECTOR)
       })
   }
 
-  private httpErrorHandler(err: Response) {
+  private _httpErrorHandler(err: Response) {
     window.alert(`Network Error: ${err.statusText}`)
   }
 }

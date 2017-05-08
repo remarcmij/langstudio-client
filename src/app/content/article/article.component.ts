@@ -3,6 +3,8 @@ import { Router } from '@angular/router'
 import { ActivatedRoute } from '@angular/router'
 import { Response } from '@angular/http'
 import { Subscription } from 'rxjs/Subscription'
+import { Subject } from 'rxjs/Subject'
+
 import * as equal from 'deep-equal'
 
 import { Article, AnchorInfo } from './article.model'
@@ -35,51 +37,51 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
   anchors: AnchorInfo[] = []
   sidenavOpen = false
   hasFlashCards = false
-  subscriptions$: Subscription[] = []
+  private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private router: Router,
-    private route: ActivatedRoute,
-    private changeDetector: ChangeDetectorRef,
-    private zone: NgZone,
-    private contentService: ContentService,
-    private httpService: ContentHttp,
-    private speechSynthesizer: SpeechSynthesizer,
-    private navigationService: NavigationService,
-    private flashCardService: FlashCardService
+    private _router: Router,
+    private _route: ActivatedRoute,
+    private _changeDetector: ChangeDetectorRef,
+    private _zone: NgZone,
+    private _contentService: ContentService,
+    private _contentHttp: ContentHttp,
+    private _speechSynthesizer: SpeechSynthesizer,
+    private _navigationService: NavigationService,
+    private _flashCardService: FlashCardService
   ) {
   }
 
   ngOnInit() {
-    this.article = this.route.snapshot.data['article']
+    this.article = this._route.snapshot.data['article']
     this.hidePopover()
 
-    const sub1$ = this.navigationService.popTopEmitter
+    this._navigationService.popTopEmitter
+      .takeUntil(this._ngUnsubscribe)
       .subscribe((scrollState: string) => this.scrollState = scrollState)
-    this.subscriptions$.push(sub1$)
 
-    const params = this.route.snapshot.params
+    const params = this._route.snapshot.params
     this.scrollState = 'busy'
     this.publication = params['publication']
     this.chapter = params['chapter']
     this.tag = params['tag']
-    this.hasFlashCards = this.flashCardService.hasFlashCards(this.article)
+    this.hasFlashCards = this._flashCardService.hasFlashCards(this.article)
     if (!this.tag) {
-      this.navigationService.restoreTop(SELECTOR)
+      this._navigationService.restoreTop(SELECTOR)
     }
 
-    const sub2$ = myUtil.handleKeyUp(() => this.onAction('search'))
-    this.subscriptions$.push(sub2$)
+    myUtil.handleKeyUp(() => this.onAction('search'))
 
-    this.changeDetector.markForCheck()
+    this._changeDetector.markForCheck()
   }
 
   ngOnDestroy() {
-    this.subscriptions$.forEach(sub$ => sub$.unsubscribe())
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   canDeactivate(): boolean {
-    this.navigationService.saveTop(SELECTOR)
+    this._navigationService.saveTop(SELECTOR)
     return true
   }
 
@@ -134,17 +136,17 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
   }
 
   onClick(ev: MouseEvent) {
-    if (ev.altKey || this.speechSynthesizer.speechEnabled) {
-      if (this.speechSynthesizer.isSynthesisSupported()) {
+    if (ev.altKey || this._speechSynthesizer.speechEnabled) {
+      if (this._speechSynthesizer.isSynthesisSupported()) {
         let text: string
         if (this.article.foreignLang === this.article.baseLang) {
-          text = this.getClickedParagraphText()
+          text = this._getClickedParagraphText()
         } else {
           const targetElem = <HTMLElement>event.target
           text = targetElem.parentElement.textContent
         }
-        this.speechSynthesizer.speakMulti(text, this.article.foreignLang, {
-          rate: this.speechSynthesizer.getSpeechRate()
+        this._speechSynthesizer.speakMulti(text, this.article.foreignLang, {
+          rate: this._speechSynthesizer.getSpeechRate()
         })
       }
     } else {
@@ -174,13 +176,13 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
       top: top,
       height: height
     }
-    this.changeDetector.detectChanges()
+    this._changeDetector.detectChanges()
   }
 
   hidePopover() {
     this.popoverInput = undefined
     this.hashTag = undefined
-    this.changeDetector.detectChanges()
+    this._changeDetector.detectChanges()
   }
 
   wordSearch(word?: string) {
@@ -188,15 +190,16 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     if (word) {
       params.word = word
     }
-    this.router.navigate(['/dictionary', this.article.foreignLang, this.article.baseLang, params])
+    this._router.navigate(['/dictionary', this.article.foreignLang, this.article.baseLang, params])
   }
 
   speakWord(word: string) {
-    this.speechSynthesizer.speakSingle(word, this.article.foreignLang)
+    this._speechSynthesizer.speakSingle(word, this.article.foreignLang)
   }
 
   hashTagClicked(hashTag: string) {
-    const sub$ = this.httpService.getHashTagItems(hashTag)
+    this._contentHttp.getHashTagItems(hashTag)
+      .takeUntil(this._ngUnsubscribe)
       .subscribe(items => {
         if (items.length === 1 && items[0].publication === this.publication && items[0].chapter === this.chapter) {
           // todo
@@ -205,12 +208,11 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.hashTag = hashTag
       }, (err: Response) => {
         if (err.status === 401) {
-          this.router.navigate(['/signin'])
+          this._router.navigate(['/signin'])
         } else {
           window.alert(`Network Error: ${err.statusText}`)
         }
       })
-    this.subscriptions$.push(sub$)
   }
 
   onAction(action: string) {
@@ -221,7 +223,8 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
         console.log('opening')
         break
       case 'back':
-        this.router.navigate(['/library', this.publication])
+        this._navigationService.clearTop(SELECTOR)
+        this._router.navigate(['/library', this.publication])
         break
       case 'search':
         this.wordSearch()
@@ -230,13 +233,13 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.sidepanel.isopen = true
         break
       case 'flashcards':
-        this.router.navigate(['/library', this.publication, this.chapter, 'flashcards'])
+        this._router.navigate(['/library', this.publication, this.chapter, 'flashcards'])
         break
       case 'toggleSpeech':
-        this.speechSynthesizer.speechEnabled = !this.speechSynthesizer.speechEnabled
+        this._speechSynthesizer.speechEnabled = !this._speechSynthesizer.speechEnabled
         break
       case 'allTags':
-        this.router.navigate(['/hashtag'])
+        this._router.navigate(['/hashtag'])
         break
     }
   }
@@ -245,7 +248,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this.anchors = anchors
   }
 
-  private getClickedParagraphText(): string {
+  private _getClickedParagraphText(): string {
     const s = window.getSelection()
     const range = s.getRangeAt(0)
     const node = s.anchorNode

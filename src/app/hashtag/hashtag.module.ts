@@ -7,18 +7,18 @@ import { HashTagCloudComponent } from './hashtag-cloud.component'
 import { hashTagRouting } from './hashtag.routing'
 
 @NgModule({
-    imports: [
-        SharedModule,
-        hashTagRouting
-    ],
-    declarations: [
-        HashTagPopoverComponent,
-        HashTagPopoverItemComponent,
-        HashTagCloudComponent
-    ],
-    exports: [
-        HashTagPopoverComponent
-    ]
+  imports: [
+    SharedModule,
+    hashTagRouting
+  ],
+  declarations: [
+    HashTagPopoverComponent,
+    HashTagPopoverItemComponent,
+    HashTagCloudComponent
+  ],
+  exports: [
+    HashTagPopoverComponent
+  ]
 })
 
 export class HashTagModule { }

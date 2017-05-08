@@ -12,19 +12,19 @@ export class AppComponent {
   private viewContainerRef: ViewContainerRef
 
   constructor(
-    mdIconRegistry: MdIconRegistry,
-    viewContainerRef: ViewContainerRef,
-    authService: AuthService,
-    speechSynthesizer: SpeechSynthesizer
+    _mdIconRegistry: MdIconRegistry,
+    _viewContainerRef: ViewContainerRef,
+    _authService: AuthService,
+    _speechSynthesizer: SpeechSynthesizer
   ) {
-    mdIconRegistry.registerFontClassAlias('fontawesome', 'fa')
+    _mdIconRegistry.registerFontClassAlias('fontawesome', 'fa')
 
     // You need this small hack in order to catch application root view container ref
-    this.viewContainerRef = viewContainerRef
+    this.viewContainerRef = _viewContainerRef
 
-    authService.captureTokenCookie()
+    _authService.captureTokenCookie()
 
-    if (speechSynthesizer.isSynthesisSupported) {
+    if (_speechSynthesizer.isSynthesisSupported) {
       console.log('speech synthesis is available')
     } else {
       console.log('speech synthesis is NOT available')

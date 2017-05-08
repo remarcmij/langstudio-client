@@ -5,6 +5,7 @@ import {
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
+import { Subject } from 'rxjs/Subject'
 
 import { DictionaryHttp } from '../dictionary-http.service'
 import { SpeechSynthesizer } from '../../core'
@@ -39,16 +40,16 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked
 
   prevScrollTop = -1
   popoverHeight: number
-  subscriptions$: Subscription[] = []
+  private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private elementRef: ElementRef,
-    private httpService: DictionaryHttp,
-    private sanitizer: DomSanitizer,
-    private renderer: Renderer,
-    private zone: NgZone,
-    private cdr: ChangeDetectorRef,
-    private speechSynthesizer: SpeechSynthesizer
+    private _elementRef: ElementRef,
+    private _dictHttp: DictionaryHttp,
+    private _sanitizer: DomSanitizer,
+    private _renderer: Renderer,
+    private _zone: NgZone,
+    private _changeDetector: ChangeDetectorRef,
+    private _speechSynthesizer: SpeechSynthesizer
   ) {
   }
 
@@ -56,23 +57,23 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked
 
     this.scrollState = 'busy'
 
-    this.httpService.popoverSearch(this.input.word, this.input.lang)
-      .then(resp => {
+    this._dictHttp.popoverSearch(this.input.word, this.input.lang)
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(resp => {
         if (!resp) {
           this.errorText = 'Not in in dictionary.'
         } else {
           const htmlText = myUtil.tinyMarkdown(resp.text)
-          this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(htmlText)
+          this.safeHtml = this._sanitizer.bypassSecurityTrustHtml(htmlText)
           this.baseWords = resp.baseWords
           this.baseList = resp.baseWords.join(', ')
           this.resolvedWord = resp.resolvedWord
         }
-      }
-      )
-      .catch(() => this.errorText = 'The server returned an error')
+      }, error => this.errorText = 'The server returned an error')
 
     const scrollDiv = document.querySelector('#my-content')
-    const sub1$ = Observable.fromEvent(scrollDiv, 'scroll')
+    Observable.fromEvent(scrollDiv, 'scroll')
+      .takeUntil(this._ngUnsubscribe)
       .subscribe(() => {
         const scrollTop = scrollDiv.scrollTop
         if (this.prevScrollTop === -1) {
@@ -81,37 +82,37 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked
           this.shouldHide.emit()
         }
       })
-    this.subscriptions$.push(sub1$)
 
     // ignore clicks on popover body
-    const sub2$ = Observable.fromEvent(this.elementRef.nativeElement, 'click')
+    Observable.fromEvent(this._elementRef.nativeElement, 'click')
+      .takeUntil(this._ngUnsubscribe)
       .subscribe((ev: MouseEvent) => {
         ev.preventDefault()
         ev.stopPropagation()
       })
-    this.subscriptions$.push(sub2$)
 
     // hide on clicks outside the popover
-    const sub3$ = Observable.fromEvent(window, 'click')
+    Observable.fromEvent(window, 'click')
+      .takeUntil(this._ngUnsubscribe)
       .subscribe((ev: MouseEvent) => {
         ev.preventDefault()
         ev.stopPropagation()
         this.shouldHide.emit()
       })
-    this.subscriptions$.push(sub3$)
 
-    const sub4$ = Observable.fromEvent(window, 'touchmove')
+    Observable.fromEvent(window, 'touchmove')
+      .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.shouldHide.emit())
-    this.subscriptions$.push(sub4$)
   }
 
   ngOnDestroy() {
-    this.subscriptions$.forEach(subscription => subscription.unsubscribe())
+    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.complete();
   }
 
   ngAfterViewChecked() {
-    if (this.popoverHeight !== this.elementRef.nativeElement.clientHeight) {
-      this.popoverHeight = this.elementRef.nativeElement.clientHeight
+    if (this.popoverHeight !== this._elementRef.nativeElement.clientHeight) {
+      this.popoverHeight = this._elementRef.nativeElement.clientHeight
       let popoverTop = this.input.top - this.popoverHeight
       const navbarElem = <HTMLElement>document.querySelector('md-toolbar')
       if (popoverTop <= navbarElem.offsetHeight) {
@@ -120,13 +121,13 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked
       if (popoverTop + this.popoverHeight > window.innerHeight) {
         popoverTop = navbarElem.offsetHeight + this.input.height
       }
-      this.renderer.setElementStyle(this.elementRef.nativeElement, 'top', `${popoverTop}px`)
+      this._renderer.setElementStyle(this._elementRef.nativeElement, 'top', `${popoverTop}px`)
 
       if (this.safeHtml || this.errorText) {
-        this.zone.runOutsideAngular(() => {
+        this._zone.runOutsideAngular(() => {
           window.requestAnimationFrame(() => {
             this.scrollState = 'ready'
-            this.cdr.detectChanges()
+            this._changeDetector.detectChanges()
           })
         })
       }
@@ -144,6 +145,6 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked
   }
 
   canSpeak(): boolean {
-    return this.speechSynthesizer.canSpeakLanguage(this.input.lang)
+    return this._speechSynthesizer.canSpeakLanguage(this.input.lang)
   }
 }

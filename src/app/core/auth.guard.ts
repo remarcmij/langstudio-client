@@ -7,13 +7,13 @@ import { AuthService } from './auth.service'
 @Injectable()
 export class AuthGuard implements CanActivate {
 
-    constructor(
-        private authService: AuthService
-    ) {
-    }
+  constructor(
+    private _authService: AuthService
+  ) {
+  }
 
-    canActivate(): Observable<boolean> {
-        return this.authService.getUser()
-            .map(user => user && user.role === 'admin')
-    }
+  canActivate(): Observable<boolean> {
+    return this._authService.getUser()
+      .map(user => user && user.role === 'admin')
+  }
 }

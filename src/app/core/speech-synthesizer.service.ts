@@ -161,12 +161,10 @@ const IOS9_VOICES: SpeechSynthesisVoice[] = [
   { name: 'Mei-Jia', voiceURI: 'com.apple.ttsbundle.Mei-Jia-compact', lang: 'zh-TW', localService: true, 'default': true }
 ]
 
-
 const MAX_RETRIES = 3
 const INTER_SENTENCE_PAUSE_MS = 1000
-const localStorageKey = 'speech.settings'
+const LOCAL_STORAGE_KEY = 'speech.settings'
 const DEFAULT_RATE = 0.8
-
 
 export interface SpeakOptions {
   pause?: number
@@ -177,10 +175,11 @@ export interface SpeakOptions {
 @Injectable()
 export class SpeechSynthesizer {
   voicesAvailable: SpeechSynthesisVoice[]
-  _hasSpoken = false; // needed for iOS
+  private _hasSpoken = false; // needed for iOS
   isCancelling = false
   speechSubscription: Subscription
   utterance: any
+  private _speechEnabled = false
 
   settings: SpeechSettings
 
@@ -195,8 +194,6 @@ export class SpeechSynthesizer {
     }
   }
 
-  private _speechEnabled = false
-
   constructor(
   ) {
     this.onInit()
@@ -210,12 +207,12 @@ export class SpeechSynthesizer {
     this.loadVoices()
       .then(voices => {
         this.voicesAvailable = voices.sort((a, b) => a.lang.localeCompare(b.lang))
-        const text = localStorage.getItem(localStorageKey)
+        const text = localStorage.getItem(LOCAL_STORAGE_KEY)
         if (text) {
           this.settings = JSON.parse(text)
         } else {
           this.settings = this.defaultSettings()
-          localStorage.setItem(localStorageKey, JSON.stringify(this.settings))
+          localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this.settings))
         }
       })
   }

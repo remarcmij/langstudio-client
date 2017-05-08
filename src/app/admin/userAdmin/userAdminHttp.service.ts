@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs/Observable'
 import { AuthHttp } from 'angular2-jwt'
 
-import { AppConstants } from '../../app.constants'
+import { environment } from '../../../environments/environment'
 import { User } from '../../core'
 
 export interface Group {
@@ -18,25 +18,25 @@ export class UserAdminHttpService {
   ) { }
 
   getUsers(): Observable<User[]> {
-    let url = `${AppConstants.API_END_POINT}/api/users`
+    const url = `${environment.api.host}${environment.api.path}/users`
     return this.authHttp.get(url)
       .map(response => response.json())
   }
 
   getGroups(): Observable<Group[]> {
-    let url = `${AppConstants.API_END_POINT}/api/topics/groups`
+    const url = `${environment.api.host}${environment.api.path}/topics/groups`
     return this.authHttp.get(url)
       .map(response => response.json())
   }
 
   getUser(id: string): Observable<User> {
-    let url = `${AppConstants.API_END_POINT}/api/users/${id}`
+    const url = `${environment.api.host}${environment.api.path}/users/${id}`
     return this.authHttp.get(url)
       .map(response => response.json())
   }
 
   saveGroups(id: string, groups: string[]): Observable<boolean> {
-    let url = `${AppConstants.API_END_POINT}/api/users/${id}/groups`
+    const url = `${environment.api.host}${environment.api.path}/users/${id}/groups`
     return this.authHttp.put(url, { groups })
       .map(response => response.ok)
   }
