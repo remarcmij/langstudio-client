@@ -11,7 +11,7 @@ import { Article, AnchorInfo } from './article.model'
 import { DictPopoverInput } from '../../dictionary/dict-popover/dict-popover.component'
 import { ContentHttp } from '../content-http.service'
 import { SpeechSynthesizer } from '../../core'
-import * as myUtil from '../../core'
+import { CoreUtil } from '../../core'
 import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
 import { FlashCardService } from '../flashcard/flashcard.service'
@@ -43,6 +43,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private _route: ActivatedRoute,
     private _changeDetector: ChangeDetectorRef,
     private _zone: NgZone,
+    private _coreUtil: CoreUtil,
     private _contentHttp: ContentHttp,
     private _speechSynthesizer: SpeechSynthesizer,
     private _navigationService: NavigationService,
@@ -68,7 +69,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
       this._navigationService.restoreTop(SELECTOR)
     }
 
-    myUtil.onEscKey()
+    this._coreUtil.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.onAction('search'))
 
@@ -158,8 +159,8 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
         if (/^#/.test(text)) {
           this.hashTagClicked(text.slice(1).trim())
         } else {
-          text = myUtil.cleanseTerm(text)
-          const top = myUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
+          text = this._coreUtil.cleanseTerm(text)
+          const top = this._coreUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
           const style = window.getComputedStyle(target)
           const height = parseInt(style.getPropertyValue('line-height'), 10)
           this.showPopover(text, top, height)

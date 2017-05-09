@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core'
 
 import { Lemma } from './lemma.model'
-import * as myUtil from '../../core/my-util'
+import { CoreUtil } from '../../core'
 
 @Component({
   selector: 'my-lemma-group',
@@ -30,28 +30,26 @@ export class LemmaGroupComponent {
   @Output() wordSearch = new EventEmitter<string>()
   @Output() popoverSearch = new EventEmitter<{}>()
 
-  private static _handleSpanClick(ev: MouseEvent, cb: (w: string, t: number, h: number) => void) {
+  constructor(
+    private _coreUtil: CoreUtil
+  ) { }
+
+  onClick(ev: MouseEvent) {
     const target = <HTMLElement>ev.target
     if (target.tagName === 'SPAN') {
       ev.preventDefault()
       ev.stopPropagation()
-      let text = target.innerText.trim()
+      let word = target.innerText.trim()
       if (target.classList.contains('hashtag')) {
-        console.log(`hashtag clicked: ${text}`)
+        console.log(`hashtag clicked: ${word}`)
       } else {
-        text = myUtil.cleanseTerm(text)
-        const top = myUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
+        word = this._coreUtil.cleanseTerm(word)
+        const top = this._coreUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
         const style = window.getComputedStyle(target)
         const height = parseInt(style.getPropertyValue('line-height'), 10)
-        cb(text, top, height)
+        this.popoverSearch.emit({ word, top, height })
       }
     }
-  }
-
-  onClick(ev: MouseEvent) {
-    LemmaGroupComponent._handleSpanClick(ev, (word, top, height) => {
-      this.popoverSearch.emit({ word, top, height })
-    })
   }
 
   baseClicked(ev: MouseEvent, base: string) {
@@ -61,7 +59,7 @@ export class LemmaGroupComponent {
   }
 
   convertMarkdown(text: string): string {
-    return myUtil.insertMarkdownHtml(text).replace(/<\/?p>/g, '')
+    return this._coreUtil.insertMarkdownHtml(text).replace(/<\/?p>/g, '')
   }
 
   isNewHomonym(idx: number): boolean {

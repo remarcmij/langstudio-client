@@ -7,6 +7,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 })
 export class ChildToolbarComponent {
   @Input() showMore = false
+  @Input() hideSearch = false
   @Input() title = ''
   @Output() action = new EventEmitter<string>()
 }

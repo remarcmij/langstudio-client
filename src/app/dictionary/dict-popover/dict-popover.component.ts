@@ -9,7 +9,7 @@ import { Subject } from 'rxjs/Subject'
 
 import { DictionaryHttp } from '../dictionary-http.service'
 import { SpeechSynthesizer } from '../../core'
-import * as myUtil from '../../core'
+import { CoreUtil } from '../../core'
 
 const SCROLL_THRESHOLD = 16
 
@@ -49,6 +49,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
     private _renderer: Renderer,
     private _zone: NgZone,
     private _changeDetector: ChangeDetectorRef,
+    private _coreUtil: CoreUtil,
     private _speechSynthesizer: SpeechSynthesizer
   ) {
   }
@@ -61,7 +62,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
         if (!resp) {
           this.errorText = 'Not in in dictionary.'
         } else {
-          const htmlText = myUtil.tinyMarkdown(resp.text)
+          const htmlText = this._coreUtil.tinyMarkdown(resp.text)
           this.safeHtml = this._sanitizer.bypassSecurityTrustHtml(htmlText)
           this.baseWords = resp.baseWords
           this.baseList = resp.baseWords.join(', ')
@@ -73,7 +74,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   ngAfterViewInit() {
 
-    myUtil.scrollDetectObservableFor(document.querySelector('#my-content'))
+    this._coreUtil.scrollDetectObservableFor(document.querySelector('#my-content'))
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.shouldHide.emit())
 

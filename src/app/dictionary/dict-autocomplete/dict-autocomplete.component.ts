@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
 import { DictionaryHttp, WordLang } from '../dictionary-http.service'
-import * as myUtil from '../../core'
+import { CoreUtil } from '../../core'
 
 const MAX_ITEMS = 20
 const SCROLL_THRESHOLD = 16
@@ -35,6 +35,7 @@ export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestr
 
   constructor(
     private _renderer: Renderer,
+    private _coreUtil: CoreUtil,
     private _dictHttp: DictionaryHttp
   ) { }
 
@@ -42,7 +43,7 @@ export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestr
   }
 
   ngAfterViewInit() {
-    myUtil.onEscKey()
+    this._coreUtil.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => {
         this.trigger.closePanel()
@@ -61,7 +62,7 @@ export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestr
         }
       })
 
-    myUtil.scrollDetectObservableFor(document.querySelector('#my-content'))
+    this._coreUtil.scrollDetectObservableFor(document.querySelector('#my-content'))
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.trigger.closePanel())
   }

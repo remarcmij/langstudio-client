@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core'
 
 import { AppComponent } from './app.component'
 import { CoreModule } from './core'
+import { NavigationModule}  from './navigation/navigation.module'
 import { ContentModule } from './content/content.module'
 import { HashTagModule } from './hashtag/hashtag.module'
 import { DictionaryModule } from './dictionary/dictionary.module'
@@ -22,12 +23,13 @@ import { AboutComponent } from './about/about.component'
     BrowserModule,
     SharedModule,
     routing,
+    CoreModule,
+    NavigationModule,
     ContentModule,
     HashTagModule,
     DictionaryModule,
     AdminModule,
-    SignInModule,
-    CoreModule
+    SignInModule
   ],
   providers: [
     appRoutingProviders

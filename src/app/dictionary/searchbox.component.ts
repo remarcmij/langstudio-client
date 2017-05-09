@@ -4,7 +4,7 @@ import { Observer } from 'rxjs/Observer'
 import { Subscription } from 'rxjs/Subscription'
 
 import { DictionaryHttp, WordLang } from './dictionary-http.service'
-import * as myUtil from '../core'
+import {CoreUtil} from '../core'
 
 const keyCodeEsc = 27
 
@@ -46,6 +46,7 @@ export class SearchBoxComponent implements OnInit, OnDestroy, AfterViewInit {
 
     constructor(
         private renderer: Renderer,
+        private _coreUtil: CoreUtil,
         private httpService: DictionaryHttp
     ) {
     }
@@ -77,7 +78,7 @@ export class SearchBoxComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     ngAfterViewInit() {
-        if (!myUtil.isMobile()) {
+        if (!this._coreUtil.isMobile()) {
             this.clearInput()
         }
     }

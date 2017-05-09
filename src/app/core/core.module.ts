@@ -22,6 +22,7 @@ import 'rxjs/add/operator/toPromise'
 
 import { SpeechSynthesizer } from './speech-synthesizer.service'
 import { AuthService } from './auth.service'
+import { CoreUtil } from './core-util.service'
 import { NavigationService } from './navigation.service'
 import { AuthGuard } from './auth.guard'
 import { CanDeactivateGuard } from './can-deactivate.guard'
@@ -40,6 +41,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
   exports: [],
   declarations: [],
   providers: [
+    CoreUtil,
     SpeechSynthesizer,
     AuthService,
     NavigationService,

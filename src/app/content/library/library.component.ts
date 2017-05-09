@@ -7,7 +7,7 @@ import { Subject } from 'rxjs/Subject'
 
 import { AuthService, User } from '../../core'
 import { ContentHttp } from '../content-http.service'
-import * as myUtil from '../../core'
+import { CoreUtil } from '../../core'
 import { Topic } from '../../shared'
 import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
@@ -31,6 +31,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
   constructor(
     private _router: Router,
+    private _coreUtil: CoreUtil,
     private _authService: AuthService,
     private _contentService: ContentHttp,
     private _navigationService: NavigationService
@@ -47,7 +48,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => { }, err => this._httpErrorHandler(err))
 
-    myUtil.onEscKey()
+    this._coreUtil.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.onAction('search'))
   }

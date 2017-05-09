@@ -8,7 +8,7 @@ import { Topic } from '../../shared'
 import { ContentHttp } from '../content-http.service'
 import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
-import * as myUtil from '../../core'
+import { CoreUtil} from '../../core'
 
 const scrollTopName = 'publication'
 
@@ -26,10 +26,10 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   constructor(
     private _router: Router,
     private _route: ActivatedRoute,
+    private _coreUtil: CoreUtil,
     private _contentHttp: ContentHttp,
     private _navigationService: NavigationService
-  ) {
-  }
+  ) { }
 
   ngOnInit() {
     this._navigationService.popTopEmitter
@@ -51,7 +51,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
         }
       })
 
-    myUtil.onEscKey()
+    this._coreUtil.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.onAction('search'))
   }
