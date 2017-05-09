@@ -32,7 +32,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   constructor(
     private _router: Router,
     private _authService: AuthService,
-    private _httpService: ContentHttp,
+    private _contentService: ContentHttp,
     private _navigationService: NavigationService
   ) { }
 
@@ -47,7 +47,9 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => { }, err => this._httpErrorHandler(err))
 
-    myUtil.handleKeyUp(() => this.search())
+    myUtil.onEscKey()
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => this.onAction('search'))
   }
 
   ngOnDestroy() {
@@ -102,24 +104,24 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this.sidenav.isOpen = false
     this._authService.signOut()
     this.user = undefined
-    this._httpService.clearCache()
+    this._contentService.clearCache()
     this._getTopics()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => { }, err => this._httpErrorHandler(err))
   }
 
   uploadFiles() {
-    this._httpService.clearCache()
+    this._contentService.clearCache()
     this._router.navigate(['/admin', 'upload'])
   }
 
   manageContent() {
-    this._httpService.clearCache()
+    this._contentService.clearCache()
     this._router.navigate(['/admin', 'library'])
   }
 
   manageUsers() {
-    this._httpService.clearCache()
+    this._contentService.clearCache()
     this._router.navigate(['/admin', 'user'])
   }
 
@@ -136,7 +138,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       }
     }
 
-    return this._httpService.getPublications()
+    return this._contentService.getPublications()
       .map(topics => topics.sort((a, b) => makeSortKey(a).localeCompare(makeSortKey(b))))
       .do((topics: Topic[]) => {
         this.topics = topics

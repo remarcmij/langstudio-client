@@ -5,10 +5,10 @@ import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
 import { Topic } from '../../shared'
-import { ContentService } from '../content.service'
 import { ContentHttp } from '../content-http.service'
 import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
+import * as myUtil from '../../core'
 
 const scrollTopName = 'publication'
 
@@ -26,7 +26,6 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   constructor(
     private _router: Router,
     private _route: ActivatedRoute,
-    private _contentService: ContentService,
     private _contentHttp: ContentHttp,
     private _navigationService: NavigationService
   ) {
@@ -52,7 +51,9 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
         }
       })
 
-    this._contentService.handleKeyUp(() => this.onAction('search'))
+    myUtil.onEscKey()
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => this.onAction('search'))
   }
 
   ngOnDestroy() {

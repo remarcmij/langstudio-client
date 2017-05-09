@@ -1,5 +1,5 @@
 import {
-  Component, ElementRef, OnInit, OnDestroy, AfterViewChecked, Input, Output, EventEmitter,
+  Component, ElementRef, OnInit, AfterViewInit, OnDestroy, AfterViewChecked, Input, Output, EventEmitter,
   Renderer, ChangeDetectorRef, NgZone
 } from '@angular/core'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
@@ -11,7 +11,7 @@ import { DictionaryHttp } from '../dictionary-http.service'
 import { SpeechSynthesizer } from '../../core'
 import * as myUtil from '../../core'
 
-const scrollDistBeforeHide = 16
+const SCROLL_THRESHOLD = 16
 
 export interface DictPopoverInput {
   word: string
@@ -25,7 +25,7 @@ export interface DictPopoverInput {
   templateUrl: './dict-popover.component.html',
   styles: []
 })
-export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked {
+export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
   @Input() input: DictPopoverInput
   @Output() wordSearch = new EventEmitter<string>()
   @Output() speakWord = new EventEmitter<string>()
@@ -55,8 +55,6 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked
 
   ngOnInit() {
 
-    this.scrollState = 'busy'
-
     this._dictHttp.popoverSearch(this.input.word, this.input.lang)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(resp => {
@@ -71,17 +69,13 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked
         }
       }, error => this.errorText = 'The server returned an error')
 
-    const scrollDiv = document.querySelector('#my-content')
-    Observable.fromEvent(scrollDiv, 'scroll')
+  }
+
+  ngAfterViewInit() {
+
+    myUtil.scrollDetectObservableFor(document.querySelector('#my-content'))
       .takeUntil(this._ngUnsubscribe)
-      .subscribe(() => {
-        const scrollTop = scrollDiv.scrollTop
-        if (this.prevScrollTop === -1) {
-          this.prevScrollTop = scrollTop
-        } else if (Math.abs(this.prevScrollTop - scrollTop) >= scrollDistBeforeHide) {
-          this.shouldHide.emit()
-        }
-      })
+      .subscribe(() => this.shouldHide.emit())
 
     // ignore clicks on popover body
     Observable.fromEvent(this._elementRef.nativeElement, 'click')
@@ -103,6 +97,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewChecked
     Observable.fromEvent(window, 'touchmove')
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.shouldHide.emit())
+
   }
 
   ngOnDestroy() {

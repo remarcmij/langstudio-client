@@ -4,11 +4,10 @@ import * as latinize from 'latinize'
 
 const ESC_KEYCODE = 27
 
-const FOREIGN_WORD_REGEXP = /[-'()a-zA-Z\u00C0-\u00FF]{2,}/g
-const FOREIGN_FRAGMENT_REGEXP = /\*{1,2}.+?\*{1,2}/g
+const foreignWordRegExp = /[-'()a-zA-Z\u00C0-\u00FF]{2,}/g
 
 export function cleanseTerm(term: string): string {
-  const match = term.match(FOREIGN_WORD_REGEXP)
+  const match = term.match(foreignWordRegExp)
   if (match) {
     term = match[0]
   }
@@ -28,34 +27,32 @@ export function cumulativeTop(element: HTMLElement) {
 }
 
 export function insertMarkdownHtml(text: string): string {
+  const foreignFragmentRegExp = /\*{1,2}.+?\*{1,2}/g
   let buffer = ''
   let startPos = 0
   let endPos: number
-  FOREIGN_FRAGMENT_REGEXP.lastIndex = 0
-  let match = FOREIGN_FRAGMENT_REGEXP.exec(text)
   let fragment: string
+  let match = foreignFragmentRegExp.exec(text)
 
   while (match) {
     fragment = match[0]
-
-    endPos = FOREIGN_FRAGMENT_REGEXP.lastIndex - fragment.length
+    endPos = foreignFragmentRegExp.lastIndex - fragment.length
     buffer = buffer.concat(text.substring(startPos, endPos))
-    startPos = FOREIGN_FRAGMENT_REGEXP.lastIndex
+    startPos = foreignFragmentRegExp.lastIndex
 
     let startPos2 = 0
-    FOREIGN_WORD_REGEXP.lastIndex = 0
-    let match2 = FOREIGN_WORD_REGEXP.exec(fragment)
+    foreignWordRegExp.lastIndex = 0
+    let match2 = foreignWordRegExp.exec(fragment)
     while (match2) {
       const term = match2[0]
-      const endPos2 = FOREIGN_WORD_REGEXP.lastIndex - term.length
+      const endPos2 = foreignWordRegExp.lastIndex - term.length
       buffer = buffer.concat(fragment.substring(startPos2, endPos2))
-      startPos2 = FOREIGN_WORD_REGEXP.lastIndex
+      startPos2 = foreignWordRegExp.lastIndex
       buffer = buffer.concat(`<span>${match2[0]}</span>`)
-      match2 = FOREIGN_WORD_REGEXP.exec(fragment)
+      match2 = foreignWordRegExp.exec(fragment)
     }
     buffer = buffer.concat(fragment.substring(startPos2))
-
-    match = FOREIGN_FRAGMENT_REGEXP.exec(text)
+    match = foreignFragmentRegExp.exec(text)
   }
 
   buffer = buffer.concat(text.substring(startPos))
@@ -63,8 +60,8 @@ export function insertMarkdownHtml(text: string): string {
   return tinyMarkdown(buffer)
 }
 
-export function tinyMarkdown(text: string): string {
-  return text
+export function tinyMarkdown(mdText: string): string {
+  return mdText
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</span></strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</span></em>')
     .replace(/__(.+?)__/g, '<strong>$1</strong>')
@@ -76,13 +73,26 @@ export function isMobile(): boolean {
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
 }
 
-export function handleKeyUp(cb: () => void): Subscription {
+export function onEscKey(): Observable<KeyboardEvent> {
   return Observable.fromEvent(document.body, 'keyup')
-    .subscribe((ev: KeyboardEvent) => {
-      if (ev.keyCode === ESC_KEYCODE) {
-        ev.preventDefault()
-        ev.stopPropagation()
-        cb()
-      }
+    .filter((ev: KeyboardEvent) => ev.keyCode === ESC_KEYCODE)
+    .do((ev: KeyboardEvent) => {
+      ev.preventDefault()
+      ev.stopPropagation()
     })
 }
+
+export function scrollDetectObservableFor(targetElem: Element): Observable<Event> {
+  const scrollThreshold = 16
+  let prevScrollTop = -1
+  return Observable.fromEvent(targetElem, 'scroll')
+    .filter((ev: Event) => {
+      const scrollTop = (<HTMLElement>ev.target).scrollTop
+      if (prevScrollTop === -1) {
+        prevScrollTop = scrollTop
+        return false
+      }
+      return Math.abs(prevScrollTop - scrollTop) >= scrollThreshold
+    })
+}
+

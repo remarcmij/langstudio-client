@@ -9,7 +9,6 @@ import * as equal from 'deep-equal'
 
 import { Article, AnchorInfo } from './article.model'
 import { DictPopoverInput } from '../../dictionary/dict-popover/dict-popover.component'
-import { ContentService } from '../content.service'
 import { ContentHttp } from '../content-http.service'
 import { SpeechSynthesizer } from '../../core'
 import * as myUtil from '../../core'
@@ -44,7 +43,6 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private _route: ActivatedRoute,
     private _changeDetector: ChangeDetectorRef,
     private _zone: NgZone,
-    private _contentService: ContentService,
     private _contentHttp: ContentHttp,
     private _speechSynthesizer: SpeechSynthesizer,
     private _navigationService: NavigationService,
@@ -70,7 +68,9 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
       this._navigationService.restoreTop(SELECTOR)
     }
 
-    myUtil.handleKeyUp(() => this.onAction('search'))
+    myUtil.onEscKey()
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => this.onAction('search'))
 
     this._changeDetector.markForCheck()
   }

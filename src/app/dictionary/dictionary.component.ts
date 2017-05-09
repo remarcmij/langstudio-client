@@ -108,6 +108,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   wordLangSearch(item: WordLang) {
+    this._ngUnsubscribe.next();
+
     this.hidePopover()
 
     this.req.word = item.word

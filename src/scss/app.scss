@@ -4,12 +4,10 @@
 
 @import "bootstrap";
 @import "material";
-
 @import "dictionary";
 @import "article";
 @import "flashcard";
 @import "side-panel";
-
 $fa-font-path: "../../node_modules/font-awesome/fonts";
 @import "../../node_modules/font-awesome/scss/font-awesome.scss";
 
@@ -195,15 +193,15 @@ blockquote {
 }
 
 .my-margin {
-  margin: 16px;
+    margin: 16px;
 }
 
 .my-padding {
-  padding: 16px;
+    padding: 16px;
 }
 
 .my-padding-2 {
-  padding: 32px;
+    padding: 32px;
 }
 
 .my-text-muted {

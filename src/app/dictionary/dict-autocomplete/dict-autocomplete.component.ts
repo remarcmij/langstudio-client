@@ -1,51 +1,78 @@
-import { Component, ViewChild, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, OnDestroy, AfterViewInit, Output, EventEmitter, Renderer, ViewChild, ElementRef } from '@angular/core';
 import { FormControl } from '@angular/forms'
 import { MdAutocompleteTrigger } from '@angular/material'
 import { Observable } from 'rxjs/Observable'
 import { Observer } from 'rxjs/Observer'
 import { Subscription } from 'rxjs/Subscription'
+import { Subject } from 'rxjs/Subject'
 
 import { DictionaryHttp, WordLang } from '../dictionary-http.service'
+import * as myUtil from '../../core'
 
 const MAX_ITEMS = 20
+const SCROLL_THRESHOLD = 16
 
 @Component({
   selector: 'my-dict-autocomplete',
   templateUrl: './dict-autocomplete.component.html',
   styles: [
     `:host {
-        vertical-align: middle;
-    }`,
-    `input[type="search"] {
-        width: 180px;
-        font-size: 15px;
-        box-sizing: border-box;
-        border: none;
-        border-radius: 2px;
-        box-shadow: none;
-        padding: 0 15px;
-        line-height: 40px;
-        height: 40px;
-    }`,
-    `input[type="search"]:focus {
-        outline: 0;
+      margin-left: 8px;
+      font-size: 16px;
     }`
   ]
 })
-export class DictAutocompleteComponent {
+export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   searchCtrl = new FormControl()
   term: string
-  items$: Observable<any>
+  items$: Observable<WordLang>
+  items: WordLang[] = []
   @ViewChild(MdAutocompleteTrigger) trigger: MdAutocompleteTrigger
+  @ViewChild('searchField') input: ElementRef
   @Output() onSelect = new EventEmitter<WordLang>()
+  private _ngUnsubscribe = new Subject<void>()
 
   constructor(
+    private _renderer: Renderer,
     private _dictHttp: DictionaryHttp
   ) { }
 
+  ngOnInit() {
+  }
+
+  ngAfterViewInit() {
+    myUtil.onEscKey()
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => {
+        this.trigger.closePanel()
+        this.term = ''
+        this._renderer.invokeElementMethod(this.input.nativeElement, 'focus')
+      })
+
+    Observable.fromEvent(this.input.nativeElement, 'keyup')
+      .filter((ev: KeyboardEvent) => ev.key === 'Enter')
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe((ev: KeyboardEvent) => {
+        if (this.items.length > 0) {
+          ev.preventDefault()
+          ev.stopPropagation()
+          this.onItemSelect(this.items[0])
+        }
+      })
+
+    myUtil.scrollDetectObservableFor(document.querySelector('#my-content'))
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(() => this.trigger.closePanel())
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
+  }
+
   onItemSelect(item: WordLang) {
-    this.items$ = Observable.from([])
+    this.items = []
     this.term = ''
     this.onSelect.emit(item)
   }
@@ -57,14 +84,16 @@ export class DictAutocompleteComponent {
     }
     ev = ev.toLowerCase().trim()
     if (ev.length > 0) {
-      this.items$ = this._dictHttp
+      this._dictHttp
         .autoCompleteSearch(ev)
         .map(items => items.slice(0, MAX_ITEMS))
-        .catch(err => {
-          console.error(err)
-          return []
-        })
+        .takeUntil(this._ngUnsubscribe)
+        .subscribe(items => {
+          this.items = items
+          if (items.length > 0) {
+            this.onSelect.emit(items[0])
+          }
+        }, err => console.error(err))
     }
   }
-
 }

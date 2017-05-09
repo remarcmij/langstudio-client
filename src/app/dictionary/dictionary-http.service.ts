@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core'
-import { Http, Response } from '@angular/http'
+import { Http, Response, URLSearchParams } from '@angular/http'
 import { Observable } from 'rxjs/Observable'
 import { AuthHttp } from 'angular2-jwt'
 import * as LRU from 'lru-cache'
@@ -82,6 +82,7 @@ export class DictionaryHttp {
       .map(resp => this._makeSearchResult(resp))
       .map(newResult => this._mergeSearchResult(baseResult, newResult))
       .do((result: SearchResult) => this._searchWordCache.set(key, result))
+      .catch(this._handleError)
   }
 
   autoCompleteSearch(term: string): Observable<WordLang[]> {
@@ -89,22 +90,23 @@ export class DictionaryHttp {
     if (items) {
       return Observable.of(items)
     }
-    return this._http.get(`${environment.api.host}${environment.api.path}/search/autocomplete/${term}`)
+    const search = new URLSearchParams()
+    search.set('term', term)
+    return this._http.get(`${environment.api.host}${environment.api.path}/search/autocomplete`, { search })
       .map(res => res.json())
       .do((result: WordLang[]) => this._autoCompleteCache.set(term, result))
+      .catch(this._handleError)
   }
 
   popoverSearch(word: string, lang: string): Observable<PopoverResponse> {
     const helper = this._languageManager.getLangHelper(lang)
     const variations = helper.getWordVariations(word)
-
     const sr: SearchRequest = {
       word: variations.join(','),
       lang: lang,
       attr: 'k',
       chunk: -1
     }
-
     return this._sendSearchRequest(sr)
       .map(res => {
         if (!res || res.lemmas.length === 0) {
@@ -179,26 +181,34 @@ export class DictionaryHttp {
   }
 
   private _sendSearchRequest(sr: SearchRequest): Observable<DictSearchResponse> {
-    let httpProvider: any
-    let authed: string
+    const [httpProvider, authed] = this._authService.isTokenValid()
+      ? [this._authHttp, 'authed']
+      : [this._http, 'public']
 
-    if (this._authService.isTokenValid()) {
-      httpProvider = this._authHttp
-      authed = 'authed'
-    } else {
-      httpProvider = this._http
-      authed = 'public'
-    }
-
-    let url = `${environment.api.host}${environment.api.path}/search/${authed}/${sr.word}/${sr.attr}/${sr.chunk}`
+    const search = new URLSearchParams()
+    search.set('word', sr.word)
+    search.set('attr', sr.attr)
+    search.set('chunk', sr.chunk.toString())
     if (sr.lang) {
-      url += `?lang=${sr.lang}`
+      search.set('lang', sr.lang)
     }
-    return httpProvider.get(url)
+
+    return httpProvider.get(`${environment.api.host}${environment.api.path}/search/${authed}`, { search })
       .map((res: Response) => res.json())
-      .catch((err: any) => {
-        console.error(`server error: ${err}`)
-        return Observable.throw(err)
-      })
+      .catch(this._handleError)
+  }
+
+  private _handleError(error: Response | any) {
+    // In a real world app, you might use a remote logging infrastructure
+    let errMsg: string;
+    if (error instanceof Response) {
+      const body = error.json() || '';
+      const err = body.error || JSON.stringify(body);
+      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+    } else {
+      errMsg = error.message ? error.message : error.toString();
+    }
+    console.error(errMsg);
+    return Observable.throw(errMsg);
   }
 }

@@ -12,7 +12,6 @@ import { ArticleResolver } from './article/article.resolver'
 import { FlashCardComponent } from './flashcard/flashcard.component'
 import { FlashCardService } from './flashcard/flashcard.service'
 import { contentRouting } from './content.routing'
-import { ContentService } from './content.service'
 import { ContentHttp } from './content-http.service'
 import { NavigationModule } from '../navigation/navigation.module'
 
@@ -33,7 +32,6 @@ import { NavigationModule } from '../navigation/navigation.module'
     FlashCardComponent,
   ],
   providers: [
-    ContentService,
     ContentHttp,
     FlashCardService,
     ArticleResolver
