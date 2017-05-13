@@ -1,5 +1,5 @@
 <div class="my-scroll-container">
-  <my-child-toolbar title="Articles" (action)="onAction($event)"></my-child-toolbar>
+  <my-child-toolbar title="Articles" (action)="onAction($event)" showSearch="true"></my-child-toolbar>
   <div id="my-content">
     <my-flex-container>
       <md-nav-list *ngIf="indexTopic" class="my-whiteframe-2dp my-fade-in" [ngClass]="{'my-hide': scrollState === 'busy'}" [ngStyle]="{'text-align': indexTopic.BASE_LANG === 'ar' ? 'right' : 'left'}">

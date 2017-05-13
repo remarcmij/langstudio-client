@@ -85,7 +85,7 @@ export class CoreUtil {
       })
   }
 
-  scrollDetectObservableFor(targetElem: Element): Observable<Event> {
+  scrollDetectorFor(targetElem: Element): Observable<Event> {
     const scrollThreshold = 16
     let prevScrollTop = -1
     return Observable.fromEvent(targetElem, 'scroll')

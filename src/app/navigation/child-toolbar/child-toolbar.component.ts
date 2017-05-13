@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core'
 
 @Component({
   selector: 'my-child-toolbar',
@@ -8,6 +8,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export class ChildToolbarComponent {
   @Input() showMore = false
   @Input() hideSearch = false
+  @Input() showSearch = false
   @Input() title = ''
   @Output() action = new EventEmitter<string>()
 }

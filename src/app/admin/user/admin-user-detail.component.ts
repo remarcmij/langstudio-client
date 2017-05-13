@@ -1,9 +1,9 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core'
 import { ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs/Subscription'
 
-import { UserAdminHttpService, Group } from './userAdminHttp.service'
-import { ContentAdminHttp } from '../contentAdmin/contentAdminHttp.service'
+import { AdminUserHttp, Group } from './admin-user-http.service'
+import { AdminContentHttp } from '../content/admin-content-http.service'
 import { Topic } from '../../shared'
 import { User } from '../../core'
 
@@ -19,11 +19,11 @@ interface IntermediateResult {
 }
 
 @Component({
-  selector: 'my-user-admin-auth',
-  templateUrl: './userAdminAuth.component.html',
+  selector: 'my-admin-user-detail',
+  templateUrl: './admin-user-detail.component.html',
   styles: []
 })
-export class UserAdminAuthComponent implements OnInit, OnDestroy {
+export class AdminUserDetailComponent implements OnInit, OnDestroy {
 
   user: User
   groups: TopicGroup[]
@@ -34,8 +34,8 @@ export class UserAdminAuthComponent implements OnInit, OnDestroy {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private adminHttpService: UserAdminHttpService,
-    private libraryHttpService: ContentAdminHttp
+    private adminHttpService: AdminUserHttp,
+    private libraryHttpService: AdminContentHttp
   ) { }
 
   ngOnInit() {

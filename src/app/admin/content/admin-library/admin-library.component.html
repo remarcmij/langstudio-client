@@ -1,0 +1,18 @@
+<div class="my-scroll-container">
+  <my-child-toolbar title="Content Admin" (action)="onAction($event)"></my-child-toolbar>
+  <div id="my-content">
+    <my-flex-container>
+      <md-nav-list class="my-whiteframe-2dp">
+        <md-list-item *ngFor="let topic of indexTopics" (click)="openPublication(topic.publication)">
+          <h3 md-line>{{topic.title}}</h3>
+          <p md-line *ngIf="topic.subtitle">{{topic.subtitle}}</p>
+          <p md-line>Publication Name: {{topic.publication}}</p>
+          <p md-line>Group Name: {{topic.groupName}}</p>
+          <button md-button color="warn" (click)="confirmDelete($event, topic.publication)">
+            <md-icon>delete</md-icon>
+          </button>
+        </md-list-item>
+      </md-nav-list>
+    </my-flex-container>
+  </div>
+</div>

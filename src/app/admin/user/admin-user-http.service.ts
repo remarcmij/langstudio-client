@@ -11,7 +11,7 @@ export interface Group {
 }
 
 @Injectable()
-export class UserAdminHttpService {
+export class AdminUserHttp {
 
   constructor(
     private authHttp: AuthHttp

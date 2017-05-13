@@ -5,9 +5,8 @@ import { MdButtonModule } from '@angular/material'
 import { MdIconModule } from '@angular/material'
 import { MdMenuModule } from '@angular/material'
 import { MdListModule } from '@angular/material'
-import { MdAutocompleteModule } from '@angular/material'
 import { MdInputModule } from '@angular/material'
-import {MdCardModule} from '@angular/material'
+import { MdCardModule } from '@angular/material'
 
 @NgModule({
   imports: [
@@ -17,7 +16,6 @@ import {MdCardModule} from '@angular/material'
     MdIconModule,
     MdMenuModule,
     MdListModule,
-    MdAutocompleteModule,
     MdInputModule,
     MdCardModule
   ],
@@ -28,7 +26,6 @@ import {MdCardModule} from '@angular/material'
     MdIconModule,
     MdMenuModule,
     MdListModule,
-    MdAutocompleteModule,
     MdInputModule,
     MdCardModule
   ]

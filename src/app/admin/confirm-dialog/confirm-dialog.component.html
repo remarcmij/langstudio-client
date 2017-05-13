@@ -1,0 +1,6 @@
+<h1 md-dialog-title>{{data.title}}</h1>
+<div md-dialog-content>{{data.message}}</div>
+<div md-dialog-actions>
+  <button md-button color="warn" (click)="dialogRef.close('confirm')">{{data.confirmButtonLabel}}</button>
+  <button md-button (click)="dialogRef.close('cancel')">CANCEL</button>
+</div>

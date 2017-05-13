@@ -23,7 +23,7 @@ export interface DictPopoverInput {
 @Component({
   selector: 'my-dict-popover',
   templateUrl: './dict-popover.component.html',
-  styles: []
+  styleUrls: ['./dict-popover.component.scss']
 })
 export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
   @Input() input: DictPopoverInput
@@ -74,7 +74,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   ngAfterViewInit() {
 
-    this._coreUtil.scrollDetectObservableFor(document.querySelector('#my-content'))
+    this._coreUtil.scrollDetectorFor(document.querySelector('#my-content'))
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.shouldHide.emit())
 

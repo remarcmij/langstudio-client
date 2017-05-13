@@ -1,0 +1,22 @@
+<div class="my-scroll-container">
+  <my-child-toolbar title="User Admin" (action)="onAction($event)"></my-child-toolbar>
+  <div id="my-content">
+    <my-flex-container>
+      <md-nav-list class="my-whiteframe-2dp">
+        <md-list-item *ngFor="let user of users" (click)="gotoUserDetail(user._id)">
+          <h3 md-line>
+            <span [ngSwitch]="user.provider">
+              <i *ngSwitchCase="'google'" class="fa fa-google fa-lg fa-dimmed fa-fw"></i>
+              <i *ngSwitchCase="'local'" class="fa fa-user fa-lg fa-dimmed fa-fw"></i>
+            </span>
+            {{user.email}}
+          </h3>
+          <p md-line>Name: {{user.name}}</p>
+          <p md-line>Role: {{user.role}}</p>
+          <p md-line>Created: {{user.created | date:'d MMMM y'}}</p>
+          <p md-line>Last access: {{user.lastAccessed | date:'d MMMM y HH:mm'}}</p>
+        </md-list-item>
+      </md-nav-list>
+    </my-flex-container>
+  </div>
+</div>

@@ -11,8 +11,8 @@ import { DictionaryModule } from './dictionary/dictionary.module'
 import { AdminModule } from './admin/admin.module'
 import { SignInModule } from './sign-in/sign-in.module'
 import { SharedModule } from './shared'
-import { routing, appRoutingProviders } from './app.routing'
 import { AboutComponent } from './about/about.component'
+import { routing, appRoutingProviders } from './app.routing'
 
 @NgModule({
   declarations: [

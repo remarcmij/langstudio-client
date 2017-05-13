@@ -5,8 +5,6 @@ import { Response } from '@angular/http'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import * as equal from 'deep-equal'
-
 import { Article, AnchorInfo } from './article.model'
 import { DictPopoverInput } from '../../dictionary/dict-popover/dict-popover.component'
 import { ContentHttp } from '../content-http.service'

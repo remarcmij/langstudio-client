@@ -2,7 +2,7 @@
 
 /*@import "../../node_modules/bootstrap/scss/bootstrap";*/
 
-@import "bootstrap";
+// @import "bootstrap";
 @import "material";
 @import "dictionary";
 @import "article";
@@ -49,38 +49,6 @@ button:focus {
 .navbar {
     padding-left: 0;
     padding-right: 0;
-}
-
-my-dict-popover {
-    position: fixed;
-    width: 100%;
-    left: 0;
-    z-index: 1000;
-    transform: translateZ(0);
-    background-color: transparent;
-    padding: 8px;
-    .card {
-        max-width: 480px;
-        margin: 0 auto;
-        border: 2px solid #444;
-    }
-    .card-block {
-        padding: 0.75rem;
-    }
-    .card-title {
-        font-variant: small-caps;
-        font-size: 90%;
-    }
-    .card-text {
-        font-size: 90%;
-    }
-    button {
-        font-variant: small-caps;
-        font-size: 90%;
-    }
-    @media not screen {
-        display: none;
-    }
 }
 
 my-hashtag-popover {
@@ -157,15 +125,15 @@ body.my-modal-open {
                                   not supported by any browser */
 }
 
-blockquote {
-    font-size: $font-size-base;
-    padding: 0 0 0 16px;
-    margin: 0 0 16px;
-    border-left: 3px solid $grey_color;
-    p:last-child {
-        margin-bottom: 0;
-    }
-}
+// blockquote {
+//     font-size: $font-size-base;
+//     padding: 0 0 0 16px;
+//     margin: 0 0 16px;
+//     border-left: 3px solid $grey_color;
+//     p:last-child {
+//         margin-bottom: 0;
+//     }
+// }
 
 .my-highlight {
     color: white !important;
@@ -213,6 +181,6 @@ blockquote {
 }
 
 .fa-md {
-    height: auto;
+    height: auto !important;
     vertical-align: middle;
 }

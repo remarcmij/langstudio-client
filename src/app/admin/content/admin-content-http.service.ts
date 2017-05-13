@@ -7,7 +7,7 @@ import { Topic } from '../../shared'
 import { environment } from '../../../environments/environment'
 
 @Injectable()
-export class ContentAdminHttp {
+export class AdminContentHttp {
 
   private readonly _cache = LRU<Topic[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
@@ -26,7 +26,7 @@ export class ContentAdminHttp {
       .do(data => this._cache.set(url, data))
   }
 
-  removeTopic(fileName: string): Observable<boolean> {
+  deleteTopic(fileName: string): Observable<boolean> {
     const url = `${environment.api.host}${environment.api.path}/topics/admin/${fileName}`
     return this.authHttp.delete(url)
       .map(response => response.ok)

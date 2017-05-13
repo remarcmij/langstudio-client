@@ -1,19 +1,18 @@
-import { ModuleWithProviders } from '@angular/core'
 import { Routes, RouterModule } from '@angular/router'
 
-import { UserAdminComponent } from './userAdmin/userAdmin.component'
-import { UserAdminAuthComponent } from './userAdmin/userAdminAuth.component'
-import { FileUploadComponent } from './contentAdmin/fileUpload.component'
-import { LibraryAdminComponent } from './contentAdmin/libraryAdmin.component'
-import { PublicationAdminComponent } from './contentAdmin/publicationAdmin.component'
-// import { AuthGuard } from '../core'
+import { AdminUserComponent } from './user/admin-user.component'
+import { AdminUserDetailComponent } from './user/admin-user-detail.component'
+import { FileUploadComponent } from './content/file-upload/file-upload.component'
+import { AdminLibraryComponent } from './content/admin-library/admin-library.component'
+import { AdminPublicationComponent } from './content/admin-publication/admin-publication.component'
+import { AuthGuard } from '../core'
 
 const adminRoutes: Routes = [
-  { path: 'admin/user/:id', component: UserAdminAuthComponent },
-  { path: 'admin/user', component: UserAdminComponent },
-  { path: 'admin/upload', component: FileUploadComponent },
-  { path: 'admin/library/:publication', component: PublicationAdminComponent },
-  { path: 'admin/library', component: LibraryAdminComponent }
+  { path: 'admin/user/:id', component: AdminUserDetailComponent, canActivate: [AuthGuard] },
+  { path: 'admin/user', component: AdminUserComponent, canActivate: [AuthGuard] },
+  { path: 'admin/upload', component: FileUploadComponent, canActivate: [AuthGuard] },
+  { path: 'admin/library/:publication', component: AdminPublicationComponent, canActivate: [AuthGuard] },
+  { path: 'admin/library', component: AdminLibraryComponent, canActivate: [AuthGuard] }
 ]
 
-export const adminRouting: ModuleWithProviders = RouterModule.forChild(adminRoutes)
+export const adminRouting = RouterModule.forChild(adminRoutes)

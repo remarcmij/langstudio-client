@@ -375,10 +375,8 @@ export class SpeechSynthesizer {
   }
 
   selectVoice(lang: string): SpeechSynthesisVoice {
-    const langRegExp = new RegExp(`^${lang}-`, 'i')
-
     const fallbackVoices = this.voicesAvailable
-      .filter(voice => langRegExp.test(voice.lang) || langRegExp.test(ANDROID_LANG_MAPPINGS[voice.lang]))
+      .filter(voice => voice.lang === lang || !!ANDROID_LANG_MAPPINGS[voice.lang])
 
     const prefVoiceURI = this.settings.preferredVoices[lang]
 

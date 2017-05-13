@@ -17,7 +17,7 @@
   </md-sidenav>
 
   <div class="my-scroll-container">
-    <my-child-toolbar title="Article" (action)="onAction($event)" showMore="true"></my-child-toolbar>
+    <my-child-toolbar title="Article" (action)="onAction($event)" showSearch="true" showMore="true"></my-child-toolbar>
     <div id="my-content">
       <my-flex-container>
         <div [ngClass]="{'my-hide': scrollState === 'busy'}">

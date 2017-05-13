@@ -1,40 +1,43 @@
 import { NgModule } from '@angular/core'
 import { HttpModule } from '@angular/http'
 import { FileUploadModule } from 'ng2-file-upload'
-import { ModalModule } from 'ngx-bootstrap'
+import { MdDialogModule } from '@angular/material'
 
 import { SharedModule } from '../shared'
-import { AdminComponent } from './admin.component'
-import { UserAdminComponent } from './userAdmin/userAdmin.component'
-import { UserAdminItemComponent } from './userAdmin/userAdminItem.component'
-import { UserAdminAuthComponent } from './userAdmin/userAdminAuth.component'
-import { UserAdminHttpService } from './userAdmin/userAdminHttp.service'
-import { FileUploadComponent } from './contentAdmin/fileUpload.component'
-import { LibraryAdminComponent } from './contentAdmin/libraryAdmin.component'
-import { PublicationAdminComponent } from './contentAdmin/publicationAdmin.component'
-import { ContentAdminHttp } from './contentAdmin/contentAdminHttp.service'
+import { NavigationModule } from '../navigation/navigation.module'
+import { AdminUserComponent } from './user/admin-user.component'
+import { AdminUserDetailComponent } from './user/admin-user-detail.component'
+import { AdminUserHttp } from './user/admin-user-http.service'
+import { FileUploadComponent } from './content/file-upload/file-upload.component'
+import { AdminLibraryComponent } from './content/admin-library/admin-library.component'
+import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component'
+import { AdminPublicationComponent } from './content/admin-publication/admin-publication.component'
+import { AdminContentHttp } from './content/admin-content-http.service'
 import { adminRouting } from './admin.routing'
 
 @NgModule({
   imports: [
     HttpModule,
     FileUploadModule,
-    ModalModule,
-    adminRouting,
-    SharedModule
+    MdDialogModule,
+    SharedModule,
+    NavigationModule,
+    adminRouting
   ],
   declarations: [
-    AdminComponent,
-    UserAdminComponent,
-    UserAdminItemComponent,
-    UserAdminAuthComponent,
+    AdminUserComponent,
+    AdminUserDetailComponent,
     FileUploadComponent,
-    LibraryAdminComponent,
-    PublicationAdminComponent
+    AdminLibraryComponent,
+    AdminPublicationComponent,
+    ConfirmDialogComponent
+  ],
+  entryComponents: [
+    ConfirmDialogComponent
   ],
   providers: [
-    UserAdminHttpService,
-    ContentAdminHttp
+    AdminUserHttp,
+    AdminContentHttp
   ]
 })
 export class AdminModule { }

@@ -13,7 +13,7 @@
 
   <my-flex-container id="my-content">
     <div fxLayout="column" fxLayoutGap="10px">
-      <my-lemma-group *ngFor="let base of result.bases" [word]="req.word" [base]="base" [lemmas]="result.lemmas(base)" (wordSearch)="foreignWordSearch($event)"
+      <my-lemma-group *ngFor="let base of result.bases" [word]="searchRequest.word" [base]="base" [lemmas]="result.lemmas(base)" (wordSearch)="foreignWordSearch($event)"
         (popoverSearch)="popoverSearch($event)">
       </my-lemma-group>
     </div>

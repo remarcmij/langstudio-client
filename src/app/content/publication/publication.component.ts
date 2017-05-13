@@ -57,8 +57,8 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   ngOnDestroy() {
-    this._ngUnsubscribe.next();
-    this._ngUnsubscribe.complete();
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
   }
 
   canDeactivate(): boolean {

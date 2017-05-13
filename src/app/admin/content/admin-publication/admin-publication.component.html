@@ -1,0 +1,16 @@
+<div class="my-scroll-container">
+  <my-child-toolbar title="Articles" (action)="onAction($event)"></my-child-toolbar>
+  <div id="my-content">
+    <my-flex-container>
+      <md-list class="my-whiteframe-2dp">
+        <md-list-item *ngFor="let topic of topics">
+          <h3 md-line >{{topic.title}}</h3>
+          <p md-line *ngIf="topic.subtitle">{{topic.subtitle}}</p>
+          <button md-button color="warn" (click)="confirmDelete($event, topic)">
+            <md-icon>delete</md-icon>
+          </button>
+        </md-list-item>
+      </md-list>
+    </my-flex-container>
+  </div>
+</div>

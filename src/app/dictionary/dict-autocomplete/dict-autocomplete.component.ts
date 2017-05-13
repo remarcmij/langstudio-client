@@ -26,11 +26,10 @@ export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestr
 
   searchCtrl = new FormControl()
   term: string
-  items$: Observable<WordLang>
   items: WordLang[] = []
-  @ViewChild(MdAutocompleteTrigger) trigger: MdAutocompleteTrigger
-  @ViewChild('searchField') input: ElementRef
   @Output() onSelect = new EventEmitter<WordLang>()
+  @ViewChild(MdAutocompleteTrigger) private _trigger: MdAutocompleteTrigger
+  @ViewChild('searchField') private _input: ElementRef
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
@@ -46,12 +45,12 @@ export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestr
     this._coreUtil.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => {
-        this.trigger.closePanel()
+        this._trigger.closePanel()
         this.term = ''
-        this._renderer.invokeElementMethod(this.input.nativeElement, 'focus')
+        this._renderer.invokeElementMethod(this._input.nativeElement, 'focus')
       })
 
-    Observable.fromEvent(this.input.nativeElement, 'keyup')
+    Observable.fromEvent(this._input.nativeElement, 'keyup')
       .filter((ev: KeyboardEvent) => ev.key === 'Enter')
       .takeUntil(this._ngUnsubscribe)
       .subscribe((ev: KeyboardEvent) => {
@@ -62,9 +61,9 @@ export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestr
         }
       })
 
-    this._coreUtil.scrollDetectObservableFor(document.querySelector('#my-content'))
+    this._coreUtil.scrollDetectorFor(document.querySelector('#my-content'))
       .takeUntil(this._ngUnsubscribe)
-      .subscribe(() => this.trigger.closePanel())
+      .subscribe(() => this._trigger.closePanel())
   }
 
   ngOnDestroy() {

@@ -21,45 +21,41 @@ import { DictPopoverInput } from './dict-popover/dict-popover.component'
 })
 export class DictionaryComponent implements OnInit, OnDestroy {
 
-  req: SearchRequest = {
+  result = new SearchResult()
+  popoverInput: DictPopoverInput
+  searchRequest: SearchRequest = {
     word: '',
     lang: '',
     attr: 'r',
     chunk: 0
   }
 
-  result = new SearchResult()
-
-  searchTerm: string
-  disabled = false;
-  status: { isopen: boolean } = { isopen: false }
-  popoverInput: DictPopoverInput
-
-  foreignLang: string
-  baseLang: string
+  private _searchTerm: string
+  private _foreignLang: string
+  private _baseLang: string
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private router: Router,
-    private activatedRoute: ActivatedRoute,
-    private cdr: ChangeDetectorRef,
-    private location: Location,
-    private dictHttp: DictionaryHttp,
-    private speechSynthesizer: SpeechSynthesizer,
-    private navigationService: NavigationService
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute,
+    private _changeDetector: ChangeDetectorRef,
+    private _location: Location,
+    private _dictHttp: DictionaryHttp,
+    private _speechSynthesizer: SpeechSynthesizer,
+    private _navigationService: NavigationService
   ) {
   }
 
   ngOnInit() {
-    this.activatedRoute.params
+    this._activatedRoute.params
       .takeUntil(this._ngUnsubscribe)
       .subscribe((params: any) => {
-        this.foreignLang = params['foreign']
-        this.baseLang = params['base']
-        this.req.word = params['word'] || this.req.word
-        this.req.lang = this.foreignLang
-        if (this.req.word) {
-          this.wordLangSearch({ word: this.req.word, lang: this.req.lang })
+        this._foreignLang = params['foreign']
+        this._baseLang = params['base']
+        this.searchRequest.word = params['word'] || this.searchRequest.word
+        this.searchRequest.lang = this._foreignLang
+        if (this.searchRequest.word) {
+          this.wordLangSearch({ word: this.searchRequest.word, lang: this.searchRequest.lang })
         }
       })
   }
@@ -73,28 +69,27 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     this.hidePopover()
     this.popoverInput = {
       word: event.word,
-      lang: this.foreignLang,
+      lang: this._foreignLang,
       top: event.top,
       height: event.height
     }
-    this.cdr.detectChanges()
+    this._changeDetector.detectChanges()
   }
 
   hidePopover() {
     this.popoverInput = undefined
-    this.cdr.detectChanges()
+    this._changeDetector.detectChanges()
   }
 
   goBack() {
-    this.location.back()
-    // this.router.navigate(this.backRoute)
+    this._location.back()
   }
 
   executeSearch(word: string, event: MouseEvent) {
     if (event.shiftKey) {
-      this.searchTerm = ''
+      this._searchTerm = ''
     } else {
-      this.wordLangSearch({ word, lang: this.foreignLang })
+      this.wordLangSearch({ word, lang: this._foreignLang })
     }
   }
 
@@ -103,37 +98,31 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   foreignWordSearch(word: string) {
-    this.wordLangSearch({ word, lang: this.foreignLang })
-    // this.router.navigate(['/dictionary', this.foreignLang, this.baseLang, { word }])
+    this.wordLangSearch({ word, lang: this._foreignLang })
   }
 
   wordLangSearch(item: WordLang) {
     this._ngUnsubscribe.next();
-
     this.hidePopover()
-
-    this.req.word = item.word
-    this.req.lang = item.lang
-    this.req.chunk = 0
-
+    this.searchRequest.word = item.word
+    this.searchRequest.lang = item.lang
+    this.searchRequest.chunk = 0
     this.result = new SearchResult()
-
     window.scrollTo(0, 0)
-
     this._searchMore()
   }
 
   speakWord(word: string) {
-    this.speechSynthesizer.speakSingle(word, this.foreignLang)
+    this._speechSynthesizer.speakSingle(word, this._foreignLang)
   }
 
   private _searchMore() {
-    this.dictHttp.searchWord(this.result, this.req)
+    this._dictHttp.searchWord(this.result, this.searchRequest)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(result => {
         this.result = result
         if (result.haveMore) {
-          this.req.chunk += 1
+          this.searchRequest.chunk += 1
           this._searchMore()
         }
       })
