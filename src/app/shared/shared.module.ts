@@ -7,7 +7,6 @@ import { FlexLayoutModule } from '@angular/flex-layout'
 
 import { MaterialModule } from './material.module'
 import { SimpleNavbarComponent } from './simple-navbar.component'
-import { SidePanelComponent } from './sidepanel/sidepanel.component'
 import { FlexContainerComponent } from './flex-container.component'
 
 @NgModule({
@@ -22,7 +21,6 @@ import { FlexContainerComponent } from './flex-container.component'
   ],
   declarations: [
     SimpleNavbarComponent,
-    SidePanelComponent,
     FlexContainerComponent
   ],
   providers: [],
@@ -33,7 +31,6 @@ import { FlexContainerComponent } from './flex-container.component'
     FlexLayoutModule,
     MaterialModule,
     SimpleNavbarComponent,
-    SidePanelComponent,
     FlexContainerComponent
   ]
 })

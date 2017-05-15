@@ -1,27 +1,24 @@
-<my-simple-navbar [navTitle]="'User Group Authorizations'" [backRoute]="['/admin/user']"></my-simple-navbar>
-
-<div class="container">
-  <div class="row">
-    <form *ngIf="groups" class="offset-lg-2 col-lg-8 col-xs-12">
-      <!--<div class="list-group">
-        <my-admin-user-item class="list-group-item" [user]="user"></my-admin-user-item>
-      </div>-->
-      <div class="list-group mt-1">
-        <li class="list-group-item">
-          <button class="btn btn-primary" (click)="selectAll()">Select All</button>
-          <button class="btn btn-primary" (click)="selectNone()">Select None</button>
-          <button class="btn btn-primary" *ngIf="isDirty" (click)="restoreSelection()">Reset</button>
-        </li>
-        <li class="list-group-item" *ngFor="let group of groups; let index = $index">
-          <div class="form-check float-xs-right">
-            <input type="checkbox" [name]="group.name" class="form-check-input" [(ngModel)]="group.selected" (ngModelChange)="onModelChange()" [disabled]="group.name==='public'">
-          </div>
-          <h5 class="list-group-item-heading">{{group.name}}</h5>
-          <p class="list-group-item-text" *ngFor="let topic of group.topics">
+<div class="my-scroll-container">
+  <my-child-toolbar title="User Authorizations" (action)="onAction($event)"></my-child-toolbar>
+  <div id="my-content">
+    <my-flex-container *ngIf="user">
+      <div class="my-whiteframe-2dp my-padding my-margin">
+        <h3>{{user.email}}</h3>
+      </div>
+      <div fxLayout="row" fxLayoutGap="10px" class="my-whiteframe-2dp my-padding my-margin">
+        <button md-raised-button (click)="selectAll()">SELECT ALL</button>
+        <button md-raised-button (click)="selectNone()">SELECT NONE</button>
+        <button md-raised-button [disabled]="!isDirty" (click)="restoreSelection()">RESET</button>
+      </div>
+      <md-list class="my-whiteframe-2dp my-padding my-margin">
+        <md-list-item *ngFor="let group of groups; let index = $index">
+          <h3 md-line>{{group.name}}</h3>
+          <p md-line *ngFor="let topic of group?.topics">
             {{topic.title}}
           </p>
-        </li>
-      </div>
-    </form>
+          <md-checkbox [(ngModel)]="group.selected" (ngModelChange)="onModelChange()" [disabled]="group.name==='public'"></md-checkbox>
+        </md-list-item>
+      </md-list>
+    </my-flex-container>
   </div>
 </div>

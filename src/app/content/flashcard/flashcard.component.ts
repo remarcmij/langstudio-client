@@ -179,7 +179,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
             this.navButtons = buttons
         }
 
-        return this.navButtons;
+        return this.navButtons
     }
 
     commandHandler(command: string) {

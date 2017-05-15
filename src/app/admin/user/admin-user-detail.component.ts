@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
-import { ActivatedRoute } from '@angular/router'
-import { Subscription } from 'rxjs/Subscription'
+import { Router, ActivatedRoute } from '@angular/router'
+import { Subject } from 'rxjs/Subject'
 
 import { AdminUserHttp, Group } from './admin-user-http.service'
 import { AdminContentHttp } from '../content/admin-content-http.service'
@@ -30,23 +30,25 @@ export class AdminUserDetailComponent implements OnInit, OnDestroy {
   isDirty = false
   httpError = false
 
-  private subscription: Subscription
+  private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private activatedRoute: ActivatedRoute,
-    private adminHttpService: AdminUserHttp,
-    private libraryHttpService: AdminContentHttp
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute,
+    private _adminUserHttp: AdminUserHttp,
+    private _adminContentHttp: AdminContentHttp
   ) { }
 
   ngOnInit() {
-    this.subscription = this.activatedRoute.params
-      .mergeMap(params => this.adminHttpService.getUser(params['id']))
-      .mergeMap(user => this.adminHttpService.getGroups().map(groups => ({ groups, user })))
+    const params = this._activatedRoute.snapshot.params
+    this._adminUserHttp.getUser(params['id'])
+      .mergeMap(user => this._adminUserHttp.getGroups().map(groups => ({ groups, user })))
       .mergeMap((result: IntermediateResult) =>
-        this.libraryHttpService.getTopics().map(topics => {
+        this._adminContentHttp.getTopics().map(topics => {
           result.topics = topics.filter(topic => topic.chapter === 'index')
           return result
         }))
+      .takeUntil(this._ngUnsubscribe)
       .subscribe((result: IntermediateResult) => {
         this.user = result.user
         this.groups = result.groups.map(group => ({
@@ -59,7 +61,8 @@ export class AdminUserDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.subscription.unsubscribe()
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
 
     if (!this.isDirty) {
       return
@@ -69,22 +72,20 @@ export class AdminUserDetailComponent implements OnInit, OnDestroy {
       .filter(group => group.selected)
       .map(group => group.name)
 
-    const subscription = this.adminHttpService.saveGroups(this.user._id, groupNames)
+    this._adminUserHttp.saveGroups(this.user._id, groupNames)
+      .takeUntil(this._ngUnsubscribe)
       .subscribe(ok => {
         if (!ok) {
-          this.errorAlert()
-        }
-        if (subscription) {
-          subscription.unsubscribe()
+          this._errorAlert()
         }
       }, () => {
         this.httpError = true
-        this.errorAlert()
+        this._errorAlert()
       })
   }
 
   restoreSelection() {
-    this.groups.forEach(group => group.selected = this.wasSelected(group.name))
+    this.groups.forEach(group => group.selected = this._wasSelected(group.name))
     this.isDirty = false
   }
 
@@ -103,17 +104,25 @@ export class AdminUserDetailComponent implements OnInit, OnDestroy {
   onModelChange() {
     this.isDirty = false
     this.groups.forEach(group => {
-      if (group.selected !== this.wasSelected(group.name)) {
+      if (group.selected !== this._wasSelected(group.name)) {
         this.isDirty = true
       }
     })
   }
 
-  private wasSelected(groupName: string): boolean {
+  onAction(action: string) {
+    switch (action) {
+      case 'back':
+        this._router.navigate(['/admin/user'])
+        break
+    }
+  }
+
+  private _wasSelected(groupName: string): boolean {
     return this.user.groups.indexOf(groupName) !== -1
   }
 
-  private errorAlert() {
+  private _errorAlert() {
     window.alert('Could not save authorization changes.')
   }
 }

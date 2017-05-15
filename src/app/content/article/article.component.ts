@@ -75,8 +75,8 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
   }
 
   ngOnDestroy() {
-    this._ngUnsubscribe.next();
-    this._ngUnsubscribe.complete();
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
   }
 
   canDeactivate(): boolean {

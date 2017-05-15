@@ -34,8 +34,7 @@ export class AdminUserComponent implements OnInit, OnDestroy {
   }
 
   gotoUserDetail(userId: string) {
-    // this._router.navigate(['/admin', 'library', publication])
-    console.log(userId)
+    this._router.navigate(['/admin', 'user', userId])
   }
 
   onAction(action: string) {

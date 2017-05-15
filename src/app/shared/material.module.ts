@@ -6,6 +6,7 @@ import { MdIconModule } from '@angular/material'
 import { MdMenuModule } from '@angular/material'
 import { MdListModule } from '@angular/material'
 import { MdInputModule } from '@angular/material'
+import { MdCheckboxModule } from '@angular/material'
 import { MdCardModule } from '@angular/material'
 
 @NgModule({
@@ -17,6 +18,7 @@ import { MdCardModule } from '@angular/material'
     MdMenuModule,
     MdListModule,
     MdInputModule,
+    MdCheckboxModule,
     MdCardModule
   ],
   exports: [
@@ -27,6 +29,7 @@ import { MdCardModule } from '@angular/material'
     MdMenuModule,
     MdListModule,
     MdInputModule,
+    MdCheckboxModule,
     MdCardModule
   ]
 })

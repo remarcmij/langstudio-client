@@ -40,26 +40,3 @@
 </my-dict-popover>
 <my-hashtag-popover *ngIf="hashTag" [hashTag]="hashTag" [publication]="publication" [chapter]="chapter" (shouldHide)="hidePopover()">
 </my-hashtag-popover>
-
-
-
-<!--<div *ngIf="sidepanel.isopen" class="my-modal-overlay"></div>
-
-<my-sidepanel *ngIf="sidepanel.isopen" [location]="'right'" [title]="'Article Menu'" (shouldHide)="sidepanel.isopen = false">
-  <div class="sidepanel-nav-container">
-    <div class="btn-group mt-1" role="group" aria-label="Supplementary article actions">
-      <button *ngIf="hasFlashCards" type="button" class="btn btn-secondary" (click)="commandHandler('flashcards')"><i class="fa fa-fw fa-graduation-cap"></i></button>
-      <button type="button" class="btn btn-secondary" (click)="commandHandler('toggleSpeech')"><i class="fa fa-fw" [ngClass]="speechSynthesizer.speechEnabled ? 'fa-volume-up' : 'fa-volume-off'"></i></button>
-      <button type="button" class="btn btn-secondary" (click)="commandHandler('allTags')"><i class="fa fa-fw fa-hashtag"></i></button>
-    </div>
-  </div>
-  <hr>
-  <div class="m-1">
-    <h3>Table of Contents</h3>
-    <ul class="nav">
-      <li class="nav-item" *ngFor="let anchor of anchors">
-        <a class="nav-link anchor-link text-primary" (click)="jumpToAnchor(anchor.name)">{{anchor.title}}</a>
-      </li>
-    </ul>
-  </div>
-</my-sidepanel>-->
