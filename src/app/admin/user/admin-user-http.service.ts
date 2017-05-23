@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs/Observable'
-import { AuthHttp } from 'angular2-jwt'
+import { Http } from '@angular/http'
 
-import { environment } from '../../../environments/environment'
+import { HttpHelper } from '../../core'
 import { User } from '../../core'
+import { environment } from '../../../environments/environment'
 
 export interface Group {
   name: string
@@ -14,30 +15,35 @@ export interface Group {
 export class AdminUserHttp {
 
   constructor(
-    private authHttp: AuthHttp
+    private _http: Http,
+    private _httpHelper: HttpHelper
   ) { }
 
   getUsers(): Observable<User[]> {
     const url = `${environment.api.host}${environment.api.path}/users`
-    return this.authHttp.get(url)
+    const options = this._httpHelper.getRequestOptions()
+    return this._http.get(url, options)
       .map(response => response.json())
   }
 
   getGroups(): Observable<Group[]> {
     const url = `${environment.api.host}${environment.api.path}/topics/groups`
-    return this.authHttp.get(url)
+    const options = this._httpHelper.getRequestOptions()
+    return this._http.get(url, options)
       .map(response => response.json())
   }
 
   getUser(id: string): Observable<User> {
     const url = `${environment.api.host}${environment.api.path}/users/${id}`
-    return this.authHttp.get(url)
+    const options = this._httpHelper.getRequestOptions()
+    return this._http.get(url, options)
       .map(response => response.json())
   }
 
   saveGroups(id: string, groups: string[]): Observable<boolean> {
     const url = `${environment.api.host}${environment.api.path}/users/${id}/groups`
-    return this.authHttp.put(url, { groups })
+    const options = this._httpHelper.getRequestOptions()
+    return this._http.put(url, { groups }, options)
       .map(response => response.ok)
   }
 }

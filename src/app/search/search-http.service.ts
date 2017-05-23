@@ -7,6 +7,7 @@ import * as uniq from 'lodash.uniq'
 
 import { Lemma } from './dictionary/lemma-group/lemma.model'
 import { AuthService } from '../core'
+import { HttpHelper } from '../core'
 import { LanguageManager } from '../language/lang-helper-manager'
 import { environment } from '../../environments/environment'
 
@@ -64,6 +65,7 @@ export class SearchHttp {
 
   constructor(
     private _http: Http,
+    private _httpHelper: HttpHelper,
     private _authService: AuthService,
     private _languageManager: LanguageManager
   ) {
@@ -80,7 +82,7 @@ export class SearchHttp {
       .map(resp => this._makeSearchResult(resp))
       .map(newResult => this._mergeSearchResult(baseResult, newResult))
       .do((result: SearchResult) => this._searchWordCache.set(key, result))
-      .catch(this._handleError)
+      .catch(this._httpHelper.handleError)
   }
 
   autoCompleteSearch(term: string): Observable<WordLang[]> {
@@ -90,11 +92,11 @@ export class SearchHttp {
     }
     const search = new URLSearchParams()
     search.set('term', term)
-    const options = this._getRequestOptions(search)
+    const options = this._httpHelper.getRequestOptions(search)
     return this._http.get(`${environment.api.host}${environment.api.path}/search/autocomplete`, options)
       .map(res => res.json())
       .do((result: WordLang[]) => this._autoCompleteCache.set(term, result))
-      .catch(this._handleError)
+      .catch(this._httpHelper.handleError)
   }
 
   popoverSearch(word: string, lang: string): Observable<PopoverResponse> {
@@ -187,7 +189,7 @@ export class SearchHttp {
     if (sr.lang) {
       search.set('lang', sr.lang)
     }
-    const options = this._getRequestOptions(search)
+    const options = this._httpHelper.getRequestOptions(search)
 
     let url = `${environment.api.host}${environment.api.path}/search/dict`
     if (this._authService.token) {
@@ -196,33 +198,7 @@ export class SearchHttp {
 
     return this._http.get(url, options)
       .map((res: Response) => res.json())
-      .catch(this._handleError)
+      .catch(this._httpHelper.handleError)
   }
 
-  private _getRequestOptions(searchParams?: URLSearchParams): RequestOptions {
-    const headers = new Headers()
-    headers.append('Content-Type', 'application/json')
-    if (this._authService.token) {
-      headers.append('Authorization', 'Bearer ' + this._authService.token)
-    }
-    const options = new RequestOptions({ headers })
-    if (searchParams) {
-      options.search = searchParams
-    }
-    return options
-  }
-
-  private _handleError(error: Response | any) {
-    // In a real world app, you might use a remote logging infrastructure
-    let errMsg: string
-    if (error instanceof Response) {
-      const body = error.json() || ''
-      const err = body.error || JSON.stringify(body)
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`
-    } else {
-      errMsg = error.message ? error.message : error.toString()
-    }
-    console.error(errMsg)
-    return Observable.throw(errMsg)
-  }
 }

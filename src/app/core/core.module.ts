@@ -1,6 +1,5 @@
 import { NgModule, Optional, SkipSelf } from '@angular/core'
 import { Http, RequestOptions } from '@angular/http'
-import { AuthHttp, AuthConfig } from 'angular2-jwt'
 import 'rxjs/add/observable/of'
 import 'rxjs/add/observable/from'
 import 'rxjs/add/observable/fromEvent'
@@ -24,18 +23,11 @@ import 'rxjs/add/operator/toPromise'
 import { SpeechSynthesizer } from './speech-synthesizer.service'
 import { AuthService } from './auth.service'
 import { CoreUtil } from './core-util.service'
+import { HttpHelper } from './http-helper.service'
 import { NavigationService } from './navigation.service'
 import { AuthGuard } from './auth.guard'
 import { CanDeactivateGuard } from './can-deactivate.guard'
 import { AppConstants } from '../app.constants'
-
-export function authHttpServiceFactory(http: Http, options: RequestOptions) {
-  return new AuthHttp(new AuthConfig({
-    tokenName: 'token',
-    tokenGetter: (() => localStorage.getItem('token')),
-    globalHeaders: [{ 'Content-Type': 'application/json' }],
-  }), http, options)
-}
 
 @NgModule({
   imports: [],
@@ -45,14 +37,10 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     CoreUtil,
     SpeechSynthesizer,
     AuthService,
+    HttpHelper,
     NavigationService,
     AuthGuard,
-    CanDeactivateGuard,
-    {
-      provide: AuthHttp,
-      useFactory: authHttpServiceFactory,
-      deps: [Http, RequestOptions]
-    }
+    CanDeactivateGuard
   ]
 })
 export class CoreModule {

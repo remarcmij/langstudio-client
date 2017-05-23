@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core'
 import { Http, Response } from '@angular/http'
 import { Observable } from 'rxjs/Observable'
-import { AuthHttp } from 'angular2-jwt'
 import * as LRU from 'lru-cache'
 
 import { Topic } from '../shared'
 import { Article, HashTagItem } from './article/article.model'
 import { AuthService } from '../core'
+import { HttpHelper } from '../core'
 import { environment } from '../../environments/environment'
 
 @Injectable()
@@ -17,12 +17,12 @@ export class ContentHttp {
   private _allTags: any[]
 
   private get _auth(): string {
-    return this._authService.token ? 'authed' : 'public'
+    return this._authService.token ? 'auth' : 'pub'
   }
 
   constructor(
     private _http: Http,
-    private _authHttp: AuthHttp,
+    private _httpHelper: HttpHelper,
     private _authService: AuthService
   ) { }
 
@@ -32,7 +32,8 @@ export class ContentHttp {
     if (topics) {
       return Observable.of(topics)
     }
-    return this._httpGet(url)
+    const options = this._httpHelper.getRequestOptions()
+    return this._http.get(url, options)
       .map(res => <Topic[]>res.json())
       .do(topics => this._topicCache.set(url, topics))
   }
@@ -43,7 +44,8 @@ export class ContentHttp {
     if (topics) {
       return Observable.of(topics)
     }
-    return this._httpGet(url)
+    const options = this._httpHelper.getRequestOptions()
+    return this._http.get(url, options)
       .map(res => <Topic[]>res.json())
       .do(topics => {
         const indexTopic = topics.filter(topic => topic.chapter === 'index')[0]
@@ -62,7 +64,7 @@ export class ContentHttp {
       return Observable.of(hashTags)
     }
     const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/hashtag/search?q=${hashTagName}`
-    return this._httpGet(url)
+    return this._http.get(url)
       .map(res => <HashTagItem[]>res.json())
       .do(hashTags => this._hashTagCache.set(hashTagName, hashTags))
   }
@@ -72,7 +74,7 @@ export class ContentHttp {
       return Observable.of(this._allTags)
     }
     const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/hashtag/all`
-    return this._httpGet(url)
+    return this._http.get(url)
       .map(res => <string[]>res.json())
       .do(hashTags => this._allTags = hashTags)
   }
@@ -83,8 +85,9 @@ export class ContentHttp {
       .mergeMap(topics => Observable.from(topics))
       .first(topic => topic.fileName === fileName)
       .mergeMap(topic => {
-        const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/get/${fileName}/${topic.hash}`
-        return this._httpGet(url)
+        const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/${fileName}/${topic.hash}`
+        const options = this._httpHelper.getRequestOptions()
+        return this._http.get(url, options)
           .map(res => <Article>res.json())
           .do(article => {
             article.foreignLang = topic.foreignLang
@@ -97,10 +100,4 @@ export class ContentHttp {
     this._topicCache.reset()
     this._allTags = undefined
   }
-
-  private _httpGet(url: string): Observable<Response> {
-    const httpProvider = this._authService.token ? this._authHttp : this._http
-    return httpProvider.get(url)
-  }
-
 }

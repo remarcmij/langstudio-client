@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs/Observable'
-import { AuthHttp } from 'angular2-jwt'
+import { Http } from '@angular/http'
 import * as LRU from 'lru-cache'
 
 import { Topic } from '../../shared'
+import { HttpHelper } from '../../core'
 import { environment } from '../../../environments/environment'
 
 @Injectable()
@@ -12,7 +13,8 @@ export class AdminContentHttp {
   private readonly _cache = LRU<Topic[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
   constructor(
-    private authHttp: AuthHttp
+    private _http: Http,
+    private _httpHelper: HttpHelper
   ) { }
 
   getTopics(): Observable<Topic[]> {
@@ -21,14 +23,16 @@ export class AdminContentHttp {
     if (topics) {
       return Observable.of(topics)
     }
-    return this.authHttp.get(url)
+    const options = this._httpHelper.getRequestOptions()
+    return this._http.get(url, options)
       .map(response => <Topic[]>response.json())
       .do(data => this._cache.set(url, data))
   }
 
   deleteTopic(fileName: string): Observable<boolean> {
     const url = `${environment.api.host}${environment.api.path}/topics/admin/${fileName}`
-    return this.authHttp.delete(url)
+    const options = this._httpHelper.getRequestOptions()
+    return this._http.delete(url, options)
       .map(response => response.ok)
       .do(() => this.clearCache())
   }
