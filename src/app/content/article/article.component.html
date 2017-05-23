@@ -2,7 +2,7 @@
   <md-sidenav #sidenav align="end" [opened]="sidenavOpen" (close)="sidenavOpen=false">
 
     <md-toolbar>
-      <button md-icon-button>
+      <button *ngIf="hasFlashCards" md-icon-button (click)="onAction('flashcards')">
         <md-icon md-list-icon fontSet="fa" fontIcon="fa-graduation-cap" class="fa-lg fa-dimmed"></md-icon>
       </button>
     </md-toolbar>
@@ -20,14 +20,10 @@
     <my-child-toolbar title="Article" (action)="onAction($event)" showSearch="true" showMore="true"></my-child-toolbar>
     <div id="my-content">
       <my-flex-container>
-        <div [ngClass]="{'my-hide': scrollState === 'busy'}">
-
-          <div *ngIf="article" class="my-whiteframe-2dp my-padding-2" [ngStyle]="{'text-align': article.BASE_LANG === 'ar' ? 'right' : 'left'}">
-            <div class="my-fade-in" [ngClass]="{'my-hide': scrollState === 'busy'}">
-              <my-article-core [article]="article" [hashTag]="tag" (clicked)="onClick($event)" (anchors)="acceptAnchors($event)"></my-article-core>
-            </div>
+        <div *ngIf="article" class="my-whiteframe-2dp my-padding-2" [style.text-align]="article.baseLang.startsWith('ar') ? 'right' : 'left'">
+          <div class="my-fade-in" [class.my-hide]="scrollState === 'busy'">
+            <my-article-core [article]="article" [hashTag]="tag" (clicked)="onClick($event)" (anchors)="acceptAnchors($event)"></my-article-core>
           </div>
-
         </div>
       </my-flex-container>
     </div>
@@ -38,5 +34,5 @@
 <my-dict-popover *ngIf="popoverInput" [input]="popoverInput" (shouldHide)="hidePopover()" (wordSearch)="wordSearch($event)"
   (speakWord)="speakWord($event)">
 </my-dict-popover>
-<my-hashtag-popover *ngIf="hashTag" [hashTag]="hashTag" [publication]="publication" [chapter]="chapter" (shouldHide)="hidePopover()">
-</my-hashtag-popover>
+<!--<my-hashtag-popover *ngIf="hashTag" [hashTag]="hashTag" [publication]="publication" [chapter]="chapter" (shouldHide)="hidePopover()">
+</my-hashtag-popover>-->

@@ -5,7 +5,7 @@
   </md-card-content>
   <md-card-actions fxLayout="row" fxLayoutAlign="end">
     <button md-button *ngIf="base !== word" (click)="baseClicked($event, base)">
-      {{base.toUpperCase()}}
+      {{base | uppercase}}
     </button>
   </md-card-actions>
 </md-card>

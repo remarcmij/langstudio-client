@@ -1,8 +1,7 @@
 import { Injectable, OnInit } from '@angular/core'
-import { Http, Headers } from '@angular/http'
+import { Http, RequestOptions, Headers, URLSearchParams } from '@angular/http'
 import { Router } from '@angular/router'
 import { Observable } from 'rxjs/Observable'
-import { AuthHttp, JwtHelper } from 'angular2-jwt'
 
 import { environment } from '../../environments/environment'
 
@@ -23,13 +22,11 @@ export class AuthService implements OnInit {
   get user() { return this._user }
   get token() { return localStorage.getItem(TOKEN_NAME) }
 
-  private _jwtHelper = new JwtHelper()
   private _headers = new Headers()
   private _user: User | undefined
 
   constructor(
     private _http: Http,
-    private _authHttp: AuthHttp,
     private _router: Router
   ) {
   }
@@ -39,23 +36,14 @@ export class AuthService implements OnInit {
     this._http.get(`${environment.api.host}${environment.api.path}/users/me`)
   }
 
-  isTokenValid(): boolean {
-    const token = this.token
-    if (!token || this._jwtHelper.isTokenExpired(token)) {
-      localStorage.removeItem(TOKEN_NAME)
-      return false
-    }
-    return true
-  }
-
   getUser(): Observable<User> {
     if (this._user) {
       return Observable.of(this._user)
     }
-    if (this.isTokenValid()) {
-      return this._authHttp.get(`${environment.api.host}${environment.api.path}/users/me`, {
-        headers: this._headers
-      }).map(response => response.json())
+    if (this.token) {
+      const options = this._getRequestOptions()
+      return this._http.get(`${environment.api.host}${environment.api.path}/users/me`, options)
+        .map(response => response.json())
         .do((user: User) => this._user = user)
     } else {
       return Observable.of(undefined)
@@ -70,24 +58,31 @@ export class AuthService implements OnInit {
   }
 
   captureTokenCookie() {
-    const token = this.getCookie('token')
+    const token = this._getCookie('token')
     if (token) {
       localStorage.setItem(TOKEN_NAME, token.slice(1, -1))
     }
   }
 
-  private getCookie(name: string): string | undefined {
+  private _getCookie(name: string): string | undefined {
     const ca = document.cookie.split(';')
     const caLen = ca.length
     const cookieName = name + '='
-
     for (let i = 0; i < caLen; i += 1) {
       const c = ca[i].replace(/^\s\+/g, '')
       if (c.indexOf(cookieName) === 0) {
         return decodeURI(c.substring(cookieName.length, c.length))
       }
     }
-
-    return
   }
+
+  private _getRequestOptions(): RequestOptions {
+    const headers = new Headers()
+    headers.append('Content-Type', 'application/json')
+    if (this.token) {
+      headers.append('Authorization', 'Bearer ' + this.token)
+    }
+    return new RequestOptions({ headers })
+  }
+
 }

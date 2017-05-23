@@ -9,4 +9,4 @@ export const environment = {
     host: 'http://localhost:9000',
     path: '/api'
   }
-};
+}

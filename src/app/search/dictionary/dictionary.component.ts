@@ -4,9 +4,9 @@ import { Router, ActivatedRoute } from '@angular/router'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { DictionaryHttp, WordLang, SearchRequest, SearchResult } from './dictionary-http.service'
-import { SpeechSynthesizer } from '../core'
-import { NavigationService } from '../core'
+import { SearchHttp, WordLang, SearchRequest, SearchResult } from '../search-http.service'
+import { SpeechSynthesizer } from '../../core'
+import { NavigationService } from '../../core'
 import { DictPopoverInput } from './dict-popover/dict-popover.component'
 
 @Component({
@@ -40,7 +40,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     private _activatedRoute: ActivatedRoute,
     private _changeDetector: ChangeDetectorRef,
     private _location: Location,
-    private _dictHttp: DictionaryHttp,
+    private _searchHttp: SearchHttp,
     private _speechSynthesizer: SpeechSynthesizer,
     private _navigationService: NavigationService
   ) {
@@ -49,8 +49,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this._activatedRoute.params
       .takeUntil(this._ngUnsubscribe)
-      .subscribe((params: any) => {
-        this._foreignLang = params['foreign']
+      .subscribe(params => {
+        this._foreignLang = params['target']
         this._baseLang = params['base']
         this.searchRequest.word = params['word'] || this.searchRequest.word
         this.searchRequest.lang = this._foreignLang
@@ -61,8 +61,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this._ngUnsubscribe.next();
-    this._ngUnsubscribe.complete();
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
   }
 
   popoverSearch(event: any) {
@@ -102,7 +102,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   wordLangSearch(item: WordLang) {
-    this._ngUnsubscribe.next();
+    this._ngUnsubscribe.next()
     this.hidePopover()
     this.searchRequest.word = item.word
     this.searchRequest.lang = item.lang
@@ -117,7 +117,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   private _searchMore() {
-    this._dictHttp.searchWord(this.result, this.searchRequest)
+    this._searchHttp.searchWord(this.result, this.searchRequest)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(result => {
         this.result = result

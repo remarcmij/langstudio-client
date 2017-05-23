@@ -68,9 +68,9 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this.sidenav.isOpen = true
   }
 
-  search() {
-    this._router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
-  }
+  // search() {
+  //   this._router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
+  // }
 
   onAction(action: string) {
     switch (action) {
@@ -93,10 +93,13 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.manageUsers()
         break
       case 'search':
-        this._router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
+        this._router.navigate(['/dictionary', {target: AppConstants.FOREIGN_LANG, base: AppConstants.BASE_LANG}])
         break
       case 'about':
         this._router.navigate(['/about'])
+        break
+      case 'closeSidenav':
+        this.sidenav.isOpen = false
         break
     }
   }

@@ -1,24 +1,23 @@
 <md-sidenav-container>
 
-  <md-sidenav #sidenav align="start" [opened]="open" (close)="close.emit()">
+  <md-sidenav #sidenav align="start" [opened]="open" (close)="action.emit('closeSidenav')">
     <md-toolbar>{{title}}</md-toolbar>
     <md-nav-list>
 
-      <div *ngIf="!user">
-        <h3 md-subheader>Not signed in</h3>
-        <a md-list-item (click)="action.emit('signin')">
-          <md-icon md-list-icon fontSet="fa" fontIcon="fa-sign-in" class="fa-fw fa-md fa-dimmed"></md-icon>
-          <p md-line>Sign in</p>
-        </a>
-      </div>
-
-      <div *ngIf="user">
+      <div *ngIf="user; else signInBLock">
         <h3 md-subheader>Signed in as: {{user.email}}</h3>
         <a md-list-item (click)="action.emit('signout')">
           <md-icon md-list-icon fontSet="fa" fontIcon="fa-sign-out" class="fa-fw fa-md fa-dimmed"></md-icon>
           <p md-line>Sign out</p>
         </a>
       </div>
+      <ng-template #signInBlock>
+        <h3 md-subheader>Not signed in</h3>
+        <a md-list-item (click)="action.emit('signin')">
+          <md-icon md-list-icon fontSet="fa" fontIcon="fa-sign-in" class="fa-fw fa-md fa-dimmed"></md-icon>
+          <p md-line>Sign in</p>
+        </a>
+      </ng-template>
 
       <div *ngIf="user && user.role === 'admin'">
         <md-divider></md-divider>

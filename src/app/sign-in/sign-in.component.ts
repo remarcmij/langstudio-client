@@ -35,19 +35,28 @@ export class SignInComponent implements OnDestroy {
       withCredentials: true
     })
 
-    this._http.post(`${environment.api.host}$/auth/local`, body, options)
+    this._http.post(`${environment.api.host}/auth/local`, body, options)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => {
         // let cookieHeader = response.headers.get('set-cookie')
         this._authService.captureTokenCookie()
         this._router.navigateByUrl('/')
       }, error => {
-        window.alert(error.text())
-        console.error(error.text())
+        window.alert(error)
+        console.error(error)
       })
   }
 
   oauthSignIn(provider: string) {
-    window.location.href = `${environment.api.host}$/auth/${provider}`
+    window.location.href = `${environment.api.host}/auth/${provider}`
   }
+
+  onAction(action: string) {
+    switch (action) {
+      case 'back':
+        this._router.navigate(['/library'])
+        break
+    }
+  }
+
 }

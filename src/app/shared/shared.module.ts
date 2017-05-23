@@ -6,7 +6,7 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations'
 import { FlexLayoutModule } from '@angular/flex-layout'
 
 import { MaterialModule } from './material.module'
-import { SimpleNavbarComponent } from './simple-navbar.component'
+// import { SimpleNavbarComponent } from './simple-navbar.component'
 import { FlexContainerComponent } from './flex-container.component'
 
 @NgModule({
@@ -20,7 +20,7 @@ import { FlexContainerComponent } from './flex-container.component'
     MaterialModule
   ],
   declarations: [
-    SimpleNavbarComponent,
+    // SimpleNavbarComponent,
     FlexContainerComponent
   ],
   providers: [],
@@ -30,7 +30,7 @@ import { FlexContainerComponent } from './flex-container.component'
     ReactiveFormsModule,
     FlexLayoutModule,
     MaterialModule,
-    SimpleNavbarComponent,
+    // SimpleNavbarComponent,
     FlexContainerComponent
   ]
 })

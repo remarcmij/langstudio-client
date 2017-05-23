@@ -175,7 +175,7 @@ export interface SpeakOptions {
 @Injectable()
 export class SpeechSynthesizer {
   voicesAvailable: SpeechSynthesisVoice[]
-  private _hasSpoken = false; // needed for iOS
+  private _hasSpoken = false // needed for iOS
   isCancelling = false
   speechSubscription: Subscription
   utterance: any
@@ -332,7 +332,7 @@ export class SpeechSynthesizer {
     }
     this.cancel()
     this.isCancelling = false
-    return this.speakObservable(text, lang, options).toPromise();
+    return this.speakObservable(text, lang, options).toPromise()
   }
 
   speakObservable(text: string, lang: string, options: SpeakOptions = {}): Observable<any> {

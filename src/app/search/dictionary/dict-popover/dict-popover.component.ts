@@ -7,9 +7,9 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { DictionaryHttp } from '../dictionary-http.service'
-import { SpeechSynthesizer } from '../../core'
-import { CoreUtil } from '../../core'
+import { SearchHttp } from '../../search-http.service'
+import { SpeechSynthesizer } from '../../../core'
+import { CoreUtil } from '../../../core'
 
 const SCROLL_THRESHOLD = 16
 
@@ -44,7 +44,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   constructor(
     private _elementRef: ElementRef,
-    private _dictHttp: DictionaryHttp,
+    private _searchHttp: SearchHttp,
     private _sanitizer: DomSanitizer,
     private _renderer: Renderer,
     private _zone: NgZone,
@@ -56,7 +56,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   ngOnInit() {
 
-    this._dictHttp.popoverSearch(this.input.word, this.input.lang)
+    this._searchHttp.popoverSearch(this.input.word, this.input.lang)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(resp => {
         if (!resp) {

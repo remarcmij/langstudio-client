@@ -3,7 +3,7 @@
     <my-main-toolbar [title]="title" (action)="onAction($event)"></my-main-toolbar>
     <div id="my-content">
       <my-flex-container>
-        <div fxLayout="row" fxLayoutWrap [ngClass]="{'my-hide': scrollState === 'busy'}">
+        <div fxLayout="row" fxLayoutWrap [class.my-hide]="scrollState === 'busy'">
           <my-library-item fxFlex="50" fxFlex.xs="100" *ngFor="let topic of topics" [topic]="topic"></my-library-item>
         </div>
       </my-flex-container>

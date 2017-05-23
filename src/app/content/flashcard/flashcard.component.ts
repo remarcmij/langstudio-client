@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core'
 import { Router, ActivatedRoute } from '@angular/router'
 import { Response } from '@angular/http'
 import { Observable } from 'rxjs/Observable'
-import { Subscription } from 'rxjs/Subscription'
+import { Subject } from 'rxjs/Subject'
 import * as debounce from 'lodash.debounce'
 import * as equal from 'deep-equal'
 
@@ -20,195 +20,226 @@ const interceptKeyCodes = [keyCodeSpace, keyCodeBackSpace, keyCodeLeftArrow, key
 const buttonDelay = 200
 
 @Component({
-    selector: 'my-flashcard',
-    templateUrl: './flashcard.component.html',
-    styles: [
-        `h5 {
-            margin: 4px;
-            text-align: center;
-        }`,
-        `h6 {
-            font-size: 12px;
-            font-weight: 400;
-        }`
-    ]
+  selector: 'my-flashcard',
+  templateUrl: './flashcard.component.html',
+  styleUrls: ['./flashcard.component.scss']
 })
 export class FlashCardComponent implements OnInit, OnDestroy {
-    article: Article
-    publication: string
-    chapter: string
-    flashCard: FlashCard
-    sliderIndex = 0
+  article: Article
+  publication: string
+  chapter: string
+  flashCard: FlashCard
+  sliderIndex = 0
 
-    currentPage = 0
-    numPages: number
+  currentPage = 0
+  numPages: number
 
-    private navButtons: NavButton[] = []
+  private navButtons: NavButton[] = []
 
-    get autoPlay() {
-        return this.flashCardService.autoPlay
-    }
+  get autoPlay() {
+    return this._flashCardService.autoPlay
+  }
 
-    set autoPlay(value: boolean) {
-        this.flashCardService.autoPlay = value
-    }
+  set autoPlay(value: boolean) {
+    this._flashCardService.autoPlay = value
+  }
 
-    private goIndexDebounced: (index: number) => void
-    private combinedSubscription = new Subscription()
+  get speechEnabled() {
+    return this._flashCardService.speechEnabled
+  }
 
-    constructor(
-        private router: Router,
-        private activatedRoute: ActivatedRoute,
-        private changeDetector: ChangeDetectorRef,
-        private httpService: ContentHttp,
-        private flashCardService: FlashCardService,
-        private speechSynthesizer: SpeechSynthesizer
-    ) {
-        this.goIndexDebounced = debounce(this.goIndex.bind(this), buttonDelay)
-    }
+  set speechEnabled(value: boolean) {
+    this._flashCardService.speechEnabled = value
+  }
 
-    ngOnInit() {
+  private _goIndexDebounced: (index: number) => void
+  private _ngUnsubscribe = new Subject<void>()
 
+  constructor(
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute,
+    private _changeDetector: ChangeDetectorRef,
+    private _contentHttp: ContentHttp,
+    private _flashCardService: FlashCardService,
+    private _speechSynthesizer: SpeechSynthesizer
+  ) {
+    this._goIndexDebounced = debounce(this.goIndex.bind(this), buttonDelay)
+  }
+
+  ngOnInit() {
+
+    this.updateNavButtons()
+
+    const params = this._activatedRoute.snapshot.params
+    this.publication = params['publication']
+    this.chapter = params['chapter']
+    this._contentHttp
+      .getArticle(this.publication, this.chapter)
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(article => {
+        this.article = article
         this.updateNavButtons()
-
-        let subscription = this.activatedRoute.params
-            .mergeMap(params => {
-                this.publication = params['publication']
-                this.chapter = params['chapter']
-                return this.httpService
-                    .getArticle(this.publication, this.chapter)
-            }).subscribe(article => {
-                this.article = article
-                this.updateNavButtons()
-                this.flashCardService.setArticle(article, this.flashCardCallback.bind(this))
-            }, (err: Response) => {
-                if (err.status === 401) {
-                    this.router.navigate(['/signin'])
-                } else {
-                    window.alert(`Network Error: ${err.statusText}`)
-                }
-            })
-        this.combinedSubscription.add(subscription)
-
-        subscription = Observable.fromEvent(document.body, 'keyup')
-            .debounceTime(250)
-            .filter((ev: KeyboardEvent) => interceptKeyCodes.indexOf(ev.keyCode) !== -1)
-            .subscribe((ev: KeyboardEvent) => {
-                ev.preventDefault()
-                ev.stopPropagation()
-                if (ev.keyCode === keyCodeSpace || ev.keyCode === keyCodeRightArrow) {
-                    this.goNext()
-                } else {
-                    this.goPrev()
-                }
-            })
-        this.combinedSubscription.add(subscription)
-    }
-
-    ngOnDestroy() {
-        this.combinedSubscription.unsubscribe()
-        this.flashCardService.stop()
-    }
-
-    goNext() {
-        if (this.canGoNext()) {
-            this.goIndexDebounced(this.flashCardService.lastIndex + 1)
+        this._flashCardService.setArticle(article, this.flashCardCallback.bind(this))
+      }, (err: Response) => {
+        if (err.status === 401) {
+          this._router.navigate(['/signin'])
+        } else {
+          window.alert(`Network Error: ${err.statusText}`)
         }
-    }
+      })
 
-    goLast() {
-        this.goIndexDebounced(this.flashCardService.getFlashCardCount() * 2 - 1)
-    }
-
-    canGoNext(): boolean {
-        return this.flashCardService.lastIndex < this.flashCardService.getFlashCardCount() * 2 - 1
-    }
-
-
-    canGoPrev(): boolean {
-        return this.flashCardService.lastIndex > 0
-    }
-
-    goPrev() {
-        if (this.canGoPrev()) {
-            this.goIndexDebounced(Math.max(this.flashCardService.lastIndex - 1, 0))
+    Observable.fromEvent(document.body, 'keyup')
+      .debounceTime(250)
+      .filter((ev: KeyboardEvent) => interceptKeyCodes.indexOf(ev.keyCode) !== -1)
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe((ev: KeyboardEvent) => {
+        ev.preventDefault()
+        ev.stopPropagation()
+        if (ev.keyCode === keyCodeSpace || ev.keyCode === keyCodeRightArrow) {
+          this.goNext()
+        } else {
+          this.goPrev()
         }
+      })
+  }
+
+  ngOnDestroy() {
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
+    this._flashCardService.stop()
+  }
+
+  goNext() {
+    if (this.canGoNext()) {
+      this._goIndexDebounced(this._flashCardService.lastIndex + 1)
+    }
+  }
+
+  goLast() {
+    this._goIndexDebounced(this._flashCardService.getFlashCardCount() * 2 - 1)
+  }
+
+  canGoNext(): boolean {
+    return this._flashCardService.lastIndex < this._flashCardService.getFlashCardCount() * 2 - 1
+  }
+
+
+  canGoPrev(): boolean {
+    return this._flashCardService.lastIndex > 0
+  }
+
+  goPrev() {
+    if (this.canGoPrev()) {
+      this._goIndexDebounced(Math.max(this._flashCardService.lastIndex - 1, 0))
+    }
+  }
+
+  goFirst() {
+    this._goIndexDebounced(0)
+  }
+
+  goIndex(index: number) {
+    this._flashCardService.autoPlay = false
+    this._flashCardService.lastIndex = index
+  }
+
+  flashCardCallback(flashCard: FlashCard) {
+    this.flashCard = flashCard
+    this.sliderIndex = this._flashCardService.lastIndex
+
+    // needed on iOS
+    this._changeDetector.detectChanges()
+  }
+
+  getFlashCardNumber(): number {
+    return Math.floor(this._flashCardService.lastIndex / 2) + 1
+  }
+
+  getFlashCardCount(): number {
+    return this._flashCardService.getFlashCardCount()
+  }
+
+  private updateNavButtons(): NavButton[] {
+    const buttons: NavButton[] = []
+
+    if (this.article && this._speechSynthesizer.canSpeakLanguage(this.article.foreignLang)
+      && this._speechSynthesizer.canSpeakLanguage(this.article.baseLang)) {
+      buttons.push({
+        faName: this._flashCardService.speechEnabled ? 'fa-volume-up' : 'fa-volume-off',
+        command: this._flashCardService.speechEnabled ? 'speechOff' : 'speechOn'
+      })
+    }
+    buttons.push({
+      faName: 'fa-cog',
+      command: 'settings'
+    })
+
+    if (!equal(this.navButtons, buttons, { strict: true })) {
+      this.navButtons = buttons
     }
 
-    goFirst() {
-        this.goIndexDebounced(0)
+    return this.navButtons
+  }
+
+  commandHandler(command: string) {
+    switch (command) {
+
+      case 'play':
+        this._flashCardService.autoPlay = true
+        break
+
+      case 'pause':
+        this._flashCardService.autoPlay = false
+        break
+
+      case 'speechOff':
+        this._flashCardService.speechEnabled = false
+        this.updateNavButtons()
+        break
+
+      case 'speechOn':
+        this._flashCardService.speechEnabled = true
+        this.updateNavButtons()
+        break
+
+      case 'settings':
+        // FIXME: add code
+        break
+
+      default:
+        throw new Error('unknown NavButton command')
     }
+  }
 
-    goIndex(index: number) {
-        this.flashCardService.autoPlay = false
-        this.flashCardService.lastIndex = index
+  onAction(action: string) {
+    switch (action) {
+      case 'back':
+        this._router.navigate(['/library', this.publication, this.chapter])
+        break
+
+      case 'play':
+        this._flashCardService.autoPlay = true
+        break
+
+      case 'pause':
+        this._flashCardService.autoPlay = false
+        break
+
+      case 'speechOff':
+        this._flashCardService.speechEnabled = false
+        this.updateNavButtons()
+        break
+
+      case 'speechOn':
+        this._flashCardService.speechEnabled = true
+        this.updateNavButtons()
+        break
+
+      case 'settings':
+        // FIXME: add code
+        break
+
     }
+  }
 
-    flashCardCallback(flashCard: FlashCard) {
-        this.flashCard = flashCard
-        this.sliderIndex = this.flashCardService.lastIndex
-
-        // needed on iOS
-        this.changeDetector.detectChanges()
-    }
-
-    getFlashCardNumber(): number {
-        return Math.floor(this.flashCardService.lastIndex / 2) + 1
-    }
-
-    getFlashCardCount(): number {
-        return this.flashCardService.getFlashCardCount()
-    }
-
-    private updateNavButtons(): NavButton[] {
-        let buttons: NavButton[] = []
-
-        if (this.article && this.speechSynthesizer.canSpeakLanguage(this.article.foreignLang)
-            && this.speechSynthesizer.canSpeakLanguage(this.article.baseLang)) {
-            buttons.push({
-                faName: this.flashCardService.speechEnabled ? 'fa-volume-up' : 'fa-volume-off',
-                command: this.flashCardService.speechEnabled ? 'speechOff' : 'speechOn'
-            })
-        }
-        buttons.push({
-            faName: 'fa-cog',
-            command: 'settings'
-        })
-
-        if (!equal(this.navButtons, buttons, { strict: true })) {
-            this.navButtons = buttons
-        }
-
-        return this.navButtons
-    }
-
-    commandHandler(command: string) {
-        switch (command) {
-
-            case 'play':
-                this.flashCardService.autoPlay = true
-                break
-
-            case 'pause':
-                this.flashCardService.autoPlay = false
-                break
-
-            case 'speechOff':
-                this.flashCardService.speechEnabled = false
-                this.updateNavButtons()
-                break
-
-            case 'speechOn':
-                this.flashCardService.speechEnabled = true
-                this.updateNavButtons()
-                break
-
-            case 'settings':
-                // FIXME: add code
-                break
-
-            default:
-                throw new Error('unknown NavButton command')
-        }
-    }
 }

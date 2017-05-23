@@ -1,35 +1,35 @@
-<my-simple-navbar [navTitle]="'Flash Cards'" [backRoute]="['/library', publication, chapter]" [navButtons]="navButtons" (handler)="commandHandler($event)">
-</my-simple-navbar>
+<div class="my-scroll-container">
+  <my-child-toolbar title="Flash Cards" (action)="onAction($event)"></my-child-toolbar>
+  <div id="my-content">
+    <my-flex-container *ngIf="article">
+      <div fxLayout="column" fxLayoutGap="10px">
+        <div fxLayout="column" class="my-whiteframe-3dp my-padding">
+          <div fxLayout="row" fxLayoutAlign="space-between center">
+            <h4>{{article.title}}</h4>
+            <button md-icon-button mdTooltip="Toggle Speech" mdTooltipShowDelay="1000" (click)="speechEnabled=!speechEnabled"><i class="fa fa-lg" [ngClass]="speechEnabled ? 'fa-volume-up' : 'fa-volume-off fa-dimmed'"></i></button>
+          </div>
+          <div fxLayout="row" fxLayoutAlign="space-between">
+            <p>{{flashCard.title}}</p>
+            <p>{{getFlashCardNumber()}} / {{getFlashCardCount()}}</p>
+          </div>
+        </div>
 
-<div class="container">
-  <div class="row">
-    <div *ngIf="article" class="col-lg-8 offset-lg-2 col-xs-12 p-1">
+        <div class="my-whiteframe-3dp my-padding" (click)="goNext()">
+          <div *ngIf="flashCard" class="flashcard">
+            <h3 [class.text-primary]="flashCard.prompt.isForeign">{{flashCard.prompt.text}}</h3>
+            <h3 *ngIf="!flashCard.show">&bull;&bull;&bull;</h3>
+            <h3 *ngIf="flashCard.show" [class.text-primary]="flashCard.answer.isForeign">{{flashCard.answer.text}}</h3>
+          </div>
+        </div>
 
-      <div class="my-whiteframe-3dp p-1">
-        <div>{{article.title}}</div>
-        <div>
-          <h6 class="float-xs-right">{{getFlashCardNumber()}} / {{getFlashCardCount()}}</h6>
-          <h6>{{flashCard.title}}</h6>
+        <div class="my-whiteframe-3dp controller" aria-label="Flash Card Controller">
+          <button md-icon-button [disabled]="!canGoPrev()" (click)="goFirst()"><i class="fa fa-fast-backward"></i></button>
+          <button md-icon-button [disabled]="!canGoPrev()" (click)="goPrev()"><i class="fa fa-step-backward"></i></button>
+          <button md-icon-button (click)="autoPlay=!autoPlay"><i class="fa fa-lg" [ngClass]="autoPlay ? 'fa-pause' : 'fa-play'"></i></button>
+          <button md-icon-button [disabled]="!canGoNext()" (click)="goNext()"><i class="fa fa-step-forward"></i></button>
+          <button md-icon-button [disabled]="!canGoNext()" (click)="goLast()"><i class="fa fa-fast-forward"></i></button>
         </div>
       </div>
-
-      <div class="my-whiteframe-3dp my-1 p-1" (click)="goNext()">
-        <div *ngIf="flashCard" class="flashcard noselect">
-          <h5 [ngClass]="{'text-primary' : flashCard.prompt.isForeign}">{{flashCard.prompt.text}}</h5>
-          <h5 *ngIf="!flashCard.show">&bull;&bull;&bull;</h5>
-          <h5 *ngIf="flashCard.show" [ngClass]="{'text-primary' : flashCard.answer.isForeign}">{{flashCard.answer.text}}</h5>
-        </div>
-      </div>
-
-      <div class="flashcard-controller">
-        <div class="btn-group" role="group" aria-label="Flash Card Controller">
-          <button type="button" class="btn btn-secondary" [disabled]="!canGoPrev()" (click)="goFirst()"><i class="fa fa-fast-backward"></i></button>
-          <button type="button" class="btn btn-secondary" [disabled]="!canGoPrev()" (click)="goPrev()"><i class="fa fa-step-backward"></i></button>
-          <button type="button" class="btn btn-secondary" (click)="autoPlay = !autoPlay"><i class="fa fa-lg" [ngClass]="autoPlay ? 'fa-pause' : 'fa-play'"></i></button>
-          <button type="button" class="btn btn-secondary" [disabled]="!canGoNext()" (click)="goNext()"><i class="fa fa-step-forward"></i></button>
-          <button type="button" class="btn btn-secondary" [disabled]="!canGoNext()" (click)="goLast()"><i class="fa fa-fast-forward"></i></button>
-        </div>
-      </div>
-    </div>
+    </my-flex-container>
   </div>
 </div>

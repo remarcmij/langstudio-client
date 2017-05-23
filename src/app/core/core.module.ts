@@ -18,6 +18,7 @@ import 'rxjs/add/operator/debounceTime'
 import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/catch'
 import 'rxjs/add/operator/takeUntil'
+import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/toPromise'
 
 import { SpeechSynthesizer } from './speech-synthesizer.service'
@@ -33,7 +34,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
     tokenName: 'token',
     tokenGetter: (() => localStorage.getItem('token')),
     globalHeaders: [{ 'Content-Type': 'application/json' }],
-  }), http, options);
+  }), http, options)
 }
 
 @NgModule({
@@ -57,7 +58,7 @@ export function authHttpServiceFactory(http: Http, options: RequestOptions) {
 export class CoreModule {
   constructor( @Optional() @SkipSelf() parentModule: CoreModule) {
     if (parentModule) {
-      throw new Error('CoreModule is already loaded. Import it in the AppModule only');
+      throw new Error('CoreModule is already loaded. Import it in the AppModule only')
     }
   }
 }

@@ -17,7 +17,7 @@ export class ContentHttp {
   private _allTags: any[]
 
   private get _auth(): string {
-    return this._authService.isTokenValid() ? 'authed' : 'public'
+    return this._authService.token ? 'authed' : 'public'
   }
 
   constructor(
@@ -99,7 +99,7 @@ export class ContentHttp {
   }
 
   private _httpGet(url: string): Observable<Response> {
-    const httpProvider = this._authService.isTokenValid() ? this._authHttp : this._http
+    const httpProvider = this._authService.token ? this._authHttp : this._http
     return httpProvider.get(url)
   }
 

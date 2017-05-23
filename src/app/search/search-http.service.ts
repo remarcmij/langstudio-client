@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core'
-import { Http, Response, URLSearchParams } from '@angular/http'
+import { Http, Response, URLSearchParams, Headers, RequestOptions } from '@angular/http'
 import { Observable } from 'rxjs/Observable'
-import { AuthHttp } from 'angular2-jwt'
 import * as LRU from 'lru-cache'
 import * as groupBy from 'lodash.groupby'
 import * as uniq from 'lodash.uniq'
 
-import { Lemma } from './lemma-group/lemma.model'
+import { Lemma } from './dictionary/lemma-group/lemma.model'
 import { AuthService } from '../core'
 import { LanguageManager } from '../language/lang-helper-manager'
 import { environment } from '../../environments/environment'
@@ -58,14 +57,13 @@ export interface PopoverResponse {
 }
 
 @Injectable()
-export class DictionaryHttp {
+export class SearchHttp {
 
   private readonly _searchWordCache = LRU<SearchResult>({ max: 500, maxAge: 1000 * 60 * 60 })
   private readonly _autoCompleteCache = LRU<WordLang[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
   constructor(
     private _http: Http,
-    private _authHttp: AuthHttp,
     private _authService: AuthService,
     private _languageManager: LanguageManager
   ) {
@@ -92,7 +90,8 @@ export class DictionaryHttp {
     }
     const search = new URLSearchParams()
     search.set('term', term)
-    return this._http.get(`${environment.api.host}${environment.api.path}/search/autocomplete`, { search })
+    const options = this._getRequestOptions(search)
+    return this._http.get(`${environment.api.host}${environment.api.path}/search/autocomplete`, options)
       .map(res => res.json())
       .do((result: WordLang[]) => this._autoCompleteCache.set(term, result))
       .catch(this._handleError)
@@ -181,10 +180,6 @@ export class DictionaryHttp {
   }
 
   private _sendSearchRequest(sr: SearchRequest): Observable<DictSearchResponse> {
-    const [httpProvider, authed] = this._authService.isTokenValid()
-      ? [this._authHttp, 'authed']
-      : [this._http, 'public']
-
     const search = new URLSearchParams()
     search.set('word', sr.word)
     search.set('attr', sr.attr)
@@ -192,23 +187,42 @@ export class DictionaryHttp {
     if (sr.lang) {
       search.set('lang', sr.lang)
     }
+    const options = this._getRequestOptions(search)
 
-    return httpProvider.get(`${environment.api.host}${environment.api.path}/search/${authed}`, { search })
+    let url = `${environment.api.host}${environment.api.path}/search/dict`
+    if (this._authService.token) {
+      url += '/auth'
+    }
+
+    return this._http.get(url, options)
       .map((res: Response) => res.json())
       .catch(this._handleError)
   }
 
+  private _getRequestOptions(searchParams?: URLSearchParams): RequestOptions {
+    const headers = new Headers()
+    headers.append('Content-Type', 'application/json')
+    if (this._authService.token) {
+      headers.append('Authorization', 'Bearer ' + this._authService.token)
+    }
+    const options = new RequestOptions({ headers })
+    if (searchParams) {
+      options.search = searchParams
+    }
+    return options
+  }
+
   private _handleError(error: Response | any) {
     // In a real world app, you might use a remote logging infrastructure
-    let errMsg: string;
+    let errMsg: string
     if (error instanceof Response) {
-      const body = error.json() || '';
-      const err = body.error || JSON.stringify(body);
-      errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+      const body = error.json() || ''
+      const err = body.error || JSON.stringify(body)
+      errMsg = `${error.status} - ${error.statusText || ''} ${err}`
     } else {
-      errMsg = error.message ? error.message : error.toString();
+      errMsg = error.message ? error.message : error.toString()
     }
-    console.error(errMsg);
-    return Observable.throw(errMsg);
+    console.error(errMsg)
+    return Observable.throw(errMsg)
   }
 }

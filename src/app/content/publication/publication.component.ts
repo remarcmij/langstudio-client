@@ -72,7 +72,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
         this._router.navigate(['/library'])
         break
       case 'search':
-        this._router.navigate(['/dictionary', this.indexTopic.foreignLang, this.indexTopic.baseLang])
+        this._router.navigate(['/dictionary', { target: this.indexTopic.foreignLang, base: this.indexTopic.baseLang}])
         break
     }
   }

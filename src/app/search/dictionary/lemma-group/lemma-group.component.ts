@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core'
 
 import { Lemma } from './lemma.model'
-import { CoreUtil } from '../../core'
+import { CoreUtil } from '../../../core'
 
 @Component({
   selector: 'my-lemma-group',

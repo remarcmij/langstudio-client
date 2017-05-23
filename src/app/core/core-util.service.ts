@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import * as latinize from 'latinize'
@@ -24,7 +24,7 @@ export class CoreUtil {
     let top = 0
     do {
       top += element.offsetTop || 0
-      element = <HTMLElement>element.offsetParent;
+      element = <HTMLElement>element.offsetParent
     } while (element)
     return top
   }

@@ -6,7 +6,7 @@ import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
 import { Article, AnchorInfo } from './article.model'
-import { DictPopoverInput } from '../../dictionary/dict-popover/dict-popover.component'
+import { DictPopoverInput } from '../../search/dictionary/dict-popover/dict-popover.component'
 import { ContentHttp } from '../content-http.service'
 import { SpeechSynthesizer } from '../../core'
 import { CoreUtil } from '../../core'
@@ -185,11 +185,14 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
   }
 
   wordSearch(word?: string) {
-    const params: any = {}
+    const params: any = {
+      target: this.article.foreignLang,
+      base: this.article.baseLang
+    }
     if (word) {
       params.word = word
     }
-    this._router.navigate(['/dictionary', this.article.foreignLang, this.article.baseLang, params])
+    this._router.navigate(['/dictionary', params])
   }
 
   speakWord(word: string) {

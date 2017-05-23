@@ -1,8 +1,7 @@
 import { NgModule } from '@angular/core'
 
 import { SharedModule } from '../shared'
-import { DictionaryModule } from '../dictionary/dictionary.module'
-import { HashTagModule } from '../hashtag/hashtag.module'
+import { SearchModule } from '../search/search.module'
 import { LibraryComponent } from './library/library.component'
 import { LibraryItemComponent } from './library/library-item.component'
 import { PublicationComponent } from './publication/publication.component'
@@ -17,8 +16,7 @@ import { NavigationModule } from '../navigation/navigation.module'
 
 @NgModule({
   imports: [
-    DictionaryModule,
-    HashTagModule,
+    SearchModule,
     SharedModule,
     NavigationModule,
     contentRouting

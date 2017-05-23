@@ -6,8 +6,7 @@ import { AppComponent } from './app.component'
 import { CoreModule } from './core'
 import { NavigationModule}  from './navigation/navigation.module'
 import { ContentModule } from './content/content.module'
-import { HashTagModule } from './hashtag/hashtag.module'
-import { DictionaryModule } from './dictionary/dictionary.module'
+import { SearchModule } from './search/search.module'
 import { AdminModule } from './admin/admin.module'
 import { SignInModule } from './sign-in/sign-in.module'
 import { SharedModule } from './shared'
@@ -26,8 +25,7 @@ import { routing, appRoutingProviders } from './app.routing'
     CoreModule,
     NavigationModule,
     ContentModule,
-    HashTagModule,
-    DictionaryModule,
+    SearchModule,
     AdminModule,
     SignInModule
   ],
