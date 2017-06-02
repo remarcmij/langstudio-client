@@ -1,4 +1,5 @@
-import { Routes, RouterModule } from '@angular/router'
+import { NgModule } from '@angular/core'
+import { RouterModule, Routes } from '@angular/router'
 
 import { LibraryComponent } from './library/library.component'
 import { PublicationComponent } from './publication/publication.component'
@@ -32,4 +33,12 @@ const contentRoutes: Routes = [
   }
 ]
 
-export const contentRouting = RouterModule.forChild(contentRoutes)
+@NgModule({
+  imports: [
+    RouterModule.forChild(contentRoutes)
+  ],
+  exports: [
+    RouterModule
+  ]
+})
+export class ContentRoutingModule { }

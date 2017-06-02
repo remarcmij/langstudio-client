@@ -1,0 +1,32 @@
+<div class="my-scroll-container">
+  <my-flex-container>
+    <md-toolbar color="primary">
+      <button md-icon-button (click)="goBack()">
+        <md-icon class="md-24">arrow_back</md-icon>
+      </button>
+      <span fxShow [fxShow.xs]="false">Search</span>
+      <nav *ngIf="width>=THRESHOLD">
+        <a md-button routerLink="/search/dict" routerLinkActive="active">Dictionary</a>
+        <a md-button routerLink="/search/para" routerLinkActive="active">Articles</a>
+      </nav>
+      <span class="my-spacer"></span>
+      <md-icon class="md-24">search</md-icon>
+      <my-search-autocomplete></my-search-autocomplete>
+      <md-toolbar-row *ngIf="width<THRESHOLD">
+        <nav>
+          <a md-button routerLink="/search/dict" routerLinkActive="active">Dictionary</a>
+          <a md-button routerLink="/search/para" routerLinkActive="active">Articles</a>
+        </nav>
+      </md-toolbar-row>
+    </md-toolbar>
+  </my-flex-container>
+
+  <my-flex-container id="my-content">
+    <router-outlet></router-outlet>
+  </my-flex-container>
+
+</div>
+
+<my-dict-popover *ngIf="popoverParams" [input]="popoverParams" (shouldHide)="hidePopover()" (wordSearch)="foreignWordSearch($event)"
+  (speakWord)="speakWord($event)">
+</my-dict-popover>

@@ -5,7 +5,7 @@ import * as LRU from 'lru-cache'
 
 import { Topic } from '../shared'
 import { Article, HashTagItem } from './article/article.model'
-import { AuthService } from '../core'
+import { AuthenticationService } from '../core'
 import { HttpHelper } from '../core'
 import { environment } from '../../environments/environment'
 
@@ -23,7 +23,7 @@ export class ContentHttp {
   constructor(
     private _http: Http,
     private _httpHelper: HttpHelper,
-    private _authService: AuthService
+    private _authService: AuthenticationService
   ) { }
 
   getPublications(): Observable<Topic[]> {

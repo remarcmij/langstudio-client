@@ -17,7 +17,7 @@ export class User {
 }
 
 @Injectable()
-export class AuthService implements OnInit {
+export class AuthenticationService implements OnInit {
 
   get user() { return this._user }
   get token() { return localStorage.getItem(TOKEN_NAME) }

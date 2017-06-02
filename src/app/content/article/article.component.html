@@ -31,7 +31,7 @@
 
 </md-sidenav-container>
 
-<my-dict-popover *ngIf="popoverInput" [input]="popoverInput" (shouldHide)="hidePopover()" (wordSearch)="wordSearch($event)"
+<my-dict-popover *ngIf="popoverParams" [input]="popoverParams" (shouldHide)="hidePopover()" (wordSearch)="wordSearch($event)"
   (speakWord)="speakWord($event)">
 </my-dict-popover>
 <!--<my-hashtag-popover *ngIf="hashTag" [hashTag]="hashTag" [publication]="publication" [chapter]="chapter" (shouldHide)="hidePopover()">

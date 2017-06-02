@@ -1,15 +1,26 @@
-import { Injectable } from '@angular/core'
+import { Injectable, EventEmitter } from '@angular/core'
 import { Http, Response, URLSearchParams, Headers, RequestOptions } from '@angular/http'
 import { Observable } from 'rxjs/Observable'
+import { BehaviorSubject } from 'rxjs/BehaviorSubject'
 import * as LRU from 'lru-cache'
 import * as groupBy from 'lodash.groupby'
 import * as uniq from 'lodash.uniq'
 
 import { Lemma } from './dictionary/lemma-group/lemma.model'
-import { AuthService } from '../core'
+import { AuthenticationService } from '../core'
 import { HttpHelper } from '../core'
-import { LanguageManager } from '../language/lang-helper-manager'
+import { LanguageService } from '../language/language.service'
 import { environment } from '../../environments/environment'
+
+export interface SearchParams {
+  word: string
+  lang: string
+}
+
+export interface SearchPopupParams extends SearchParams {
+  top: number
+  height: number
+}
 
 export interface SearchRequest {
   word: string
@@ -40,11 +51,6 @@ export class SearchResult {
   }
 }
 
-export interface WordLang {
-  word: string
-  lang: string
-}
-
 export interface DictSearchResponse {
   lemmas: Lemma[]
   haveMore: boolean
@@ -58,17 +64,25 @@ export interface PopoverResponse {
 }
 
 @Injectable()
-export class SearchHttp {
+export class SearchApi {
+
+  baseLang: string
+  targetLang: string
+
+  readonly popupEmitter = new EventEmitter<SearchPopupParams>()
+  readonly searchEmitter = new EventEmitter<SearchParams>()
+  readonly searchSubject = new BehaviorSubject<SearchParams>(null)
 
   private readonly _searchWordCache = LRU<SearchResult>({ max: 500, maxAge: 1000 * 60 * 60 })
-  private readonly _autoCompleteCache = LRU<WordLang[]>({ max: 500, maxAge: 1000 * 60 * 60 })
+  private readonly _autoCompleteCache = LRU<SearchParams[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
   constructor(
     private _http: Http,
     private _httpHelper: HttpHelper,
-    private _authService: AuthService,
-    private _languageManager: LanguageManager
+    private _auth: AuthenticationService,
+    private _language: LanguageService
   ) {
+    this.searchEmitter.subscribe(this.searchSubject)
   }
 
   searchWord(baseResult: SearchResult, searchRequest: SearchRequest): Observable<SearchResult> {
@@ -85,7 +99,7 @@ export class SearchHttp {
       .catch(this._httpHelper.handleError)
   }
 
-  autoCompleteSearch(term: string): Observable<WordLang[]> {
+  autoCompleteSearch(term: string): Observable<SearchParams[]> {
     const items = this._autoCompleteCache.get(term)
     if (items) {
       return Observable.of(items)
@@ -95,12 +109,12 @@ export class SearchHttp {
     const options = this._httpHelper.getRequestOptions(search)
     return this._http.get(`${environment.api.host}${environment.api.path}/search/autocomplete`, options)
       .map(res => res.json())
-      .do((result: WordLang[]) => this._autoCompleteCache.set(term, result))
+      .do((result: SearchParams[]) => this._autoCompleteCache.set(term, result))
       .catch(this._httpHelper.handleError)
   }
 
   popoverSearch(word: string, lang: string): Observable<PopoverResponse> {
-    const helper = this._languageManager.getLangHelper(lang)
+    const helper = this._language.getLangHelper(lang)
     const variations = helper.getWordVariations(word)
     const sr: SearchRequest = {
       word: variations.join(','),
@@ -192,7 +206,7 @@ export class SearchHttp {
     const options = this._httpHelper.getRequestOptions(search)
 
     let url = `${environment.api.host}${environment.api.path}/search/dict`
-    if (this._authService.token) {
+    if (this._auth.token) {
       url += '/auth'
     }
 

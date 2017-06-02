@@ -10,6 +10,7 @@ import { MdInputModule } from '@angular/material'
 import { MdCheckboxModule } from '@angular/material'
 import { MdCardModule } from '@angular/material'
 import { MdTooltipModule } from '@angular/material'
+import { MdTabsModule } from '@angular/material'
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import { MdTooltipModule } from '@angular/material'
     MdInputModule,
     MdCheckboxModule,
     MdCardModule,
-    MdTooltipModule
+    MdTooltipModule,
+    MdTabsModule
   ],
   exports: [
     MdSidenavModule,
@@ -36,7 +38,8 @@ import { MdTooltipModule } from '@angular/material'
     MdInputModule,
     MdCheckboxModule,
     MdCardModule,
-    MdTooltipModule
+    MdTooltipModule,
+    MdTabsModule
   ]
 })
 

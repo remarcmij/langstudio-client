@@ -1,4 +1,4 @@
-<div class="my-scroll-container">
+<!--<div class="my-scroll-container">
   <my-flex-container>
     <md-toolbar color="primary">
       <button md-icon-button (click)="goBack()">
@@ -7,20 +7,19 @@
       <span fxShow [fxShow.xs]="false">Search</span>
       <span class="my-spacer"></span>
       <md-icon class="md-24">search</md-icon>
-      <my-dict-autocomplete (onSelect)="wordLangSearch($event)"></my-dict-autocomplete>
+      <my-search-autocomplete (onSelect)="wordLangSearch($event)"></my-search-autocomplete>
     </md-toolbar>
   </my-flex-container>
 
-  <my-flex-container id="my-content">
+  <my-flex-container id="my-content">-->
     <div fxLayout="column" fxLayoutGap="10px">
-      <my-lemma-group *ngFor="let base of result.bases" [word]="searchRequest.word" [base]="base" [lemmas]="result.lemmas(base)" (wordSearch)="foreignWordSearch($event)"
-        (popoverSearch)="popoverSearch($event)">
+      <my-lemma-group *ngFor="let base of result.bases" [word]="searchRequest.word" [base]="base" [lemmas]="result.lemmas(base)">
       </my-lemma-group>
     </div>
-  </my-flex-container>
+  <!--</my-flex-container>
 
 </div>
 
-<my-dict-popover *ngIf="popoverInput" [input]="popoverInput" (shouldHide)="hidePopover()" (wordSearch)="foreignWordSearch($event)"
+<my-dict-popover *ngIf="popoverParams" [input]="popoverParams" (shouldHide)="hidePopover()" (wordSearch)="foreignWordSearch($event)"
   (speakWord)="speakWord($event)">
-</my-dict-popover>
+</my-dict-popover>-->

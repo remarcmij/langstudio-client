@@ -21,11 +21,11 @@ import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/toPromise'
 
 import { SpeechSynthesizer } from './speech-synthesizer.service'
-import { AuthService } from './auth.service'
+import { AuthenticationService } from './authentication.service'
 import { CoreUtil } from './core-util.service'
 import { HttpHelper } from './http-helper.service'
-import { NavigationService } from './navigation.service'
-import { AuthGuard } from './auth.guard'
+import { Navigation } from './navigation.service'
+import { AuthGuard } from './auth-guard.service'
 import { CanDeactivateGuard } from './can-deactivate.guard'
 import { AppConstants } from '../app.constants'
 
@@ -36,9 +36,9 @@ import { AppConstants } from '../app.constants'
   providers: [
     CoreUtil,
     SpeechSynthesizer,
-    AuthService,
+    AuthenticationService,
     HttpHelper,
-    NavigationService,
+    Navigation,
     AuthGuard,
     CanDeactivateGuard
   ]

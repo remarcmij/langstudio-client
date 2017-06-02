@@ -13,7 +13,7 @@ import { AdminLibraryComponent } from './content/admin-library/admin-library.com
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component'
 import { AdminPublicationComponent } from './content/admin-publication/admin-publication.component'
 import { AdminContentHttp } from './content/admin-content-http.service'
-import { adminRouting } from './admin.routing'
+import { AdminRoutingModule } from './admin-routing.module'
 
 @NgModule({
   imports: [
@@ -22,7 +22,7 @@ import { adminRouting } from './admin.routing'
     MdDialogModule,
     SharedModule,
     NavigationModule,
-    adminRouting
+    AdminRoutingModule
   ],
   declarations: [
     AdminUserComponent,

@@ -3,7 +3,7 @@ import { Router } from '@angular/router'
 
 import { HashTagItem } from '../content/article/article.model'
 import {CoreUtil} from '../core'
-import { NavigationService } from '../core'
+import { Navigation } from '../core'
 
 @Component({
   selector: 'my-hashtag-popover-item',
@@ -23,7 +23,7 @@ export class HashTagPopoverItemComponent implements OnInit {
   constructor(
     private _router: Router,
     private _coreUtil: CoreUtil,
-    private _navigationService: NavigationService
+    private _navigationService: Navigation
   ) {
   }
 

@@ -6,7 +6,7 @@ import { Subject } from 'rxjs/Subject'
 
 import { Topic } from '../../shared'
 import { ContentHttp } from '../content-http.service'
-import { NavigationService } from '../../core'
+import { Navigation } from '../../core'
 import { CanComponentDeactivate } from '../../core'
 import { CoreUtil} from '../../core'
 
@@ -28,7 +28,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
     private _route: ActivatedRoute,
     private _coreUtil: CoreUtil,
     private _contentHttp: ContentHttp,
-    private _navigationService: NavigationService
+    private _navigationService: Navigation
   ) { }
 
   ngOnInit() {
@@ -72,7 +72,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
         this._router.navigate(['/library'])
         break
       case 'search':
-        this._router.navigate(['/dictionary', { target: this.indexTopic.foreignLang, base: this.indexTopic.baseLang}])
+        this._router.navigate(['/search/dict', { target: this.indexTopic.foreignLang, base: this.indexTopic.baseLang}])
         break
     }
   }

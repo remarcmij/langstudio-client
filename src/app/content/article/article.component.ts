@@ -6,14 +6,13 @@ import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
 import { Article, AnchorInfo } from './article.model'
-import { DictPopoverInput } from '../../search/dictionary/dict-popover/dict-popover.component'
 import { ContentHttp } from '../content-http.service'
 import { SpeechSynthesizer } from '../../core'
 import { CoreUtil } from '../../core'
-import { NavigationService } from '../../core'
+import { Navigation } from '../../core'
 import { CanComponentDeactivate } from '../../core'
 import { FlashCardService } from '../flashcard/flashcard.service'
-import { NavButton } from '../../shared'
+import { SearchApi, SearchPopupParams } from '../../search/search-api.service'
 
 const SELECTOR = 'my-article'
 
@@ -28,7 +27,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
   chapter: string
   tag: string
   hashTag: string
-  popoverInput: DictPopoverInput
+  popoverParams: SearchPopupParams
   scrollState = 'busy'
   sidepanel: { isopen: boolean } = { isopen: false }
   anchors: AnchorInfo[] = []
@@ -41,10 +40,11 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private _route: ActivatedRoute,
     private _changeDetector: ChangeDetectorRef,
     private _zone: NgZone,
+    private _searchApi: SearchApi,
     private _coreUtil: CoreUtil,
     private _contentHttp: ContentHttp,
     private _speechSynthesizer: SpeechSynthesizer,
-    private _navigationService: NavigationService,
+    private _navigation: Navigation,
     private _flashCardService: FlashCardService
   ) {
   }
@@ -53,9 +53,13 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this.article = this._route.snapshot.data['article']
     this.hidePopover()
 
-    this._navigationService.popTopEmitter
+    this._navigation.popTopEmitter
       .takeUntil(this._ngUnsubscribe)
       .subscribe((scrollState: string) => this.scrollState = scrollState)
+
+    this._searchApi.popupEmitter
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(params => this._showPopover(params))
 
     const params = this._route.snapshot.params
     this.scrollState = 'busy'
@@ -64,7 +68,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this.tag = params['tag']
     this.hasFlashCards = this._flashCardService.hasFlashCards(this.article)
     if (!this.tag) {
-      this._navigationService.restoreTop(SELECTOR)
+      this._navigation.restoreTop(SELECTOR)
     }
 
     this._coreUtil.onEscKey()
@@ -80,7 +84,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
   }
 
   canDeactivate(): boolean {
-    this._navigationService.saveTop(SELECTOR)
+    this._navigation.saveTop(SELECTOR)
     return true
   }
 
@@ -153,33 +157,30 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
       if (target.tagName === 'SPAN') {
         ev.preventDefault()
         ev.stopPropagation()
-        let text = target.innerText.trim()
-        if (/^#/.test(text)) {
-          this.hashTagClicked(text.slice(1).trim())
-        } else {
-          text = this._coreUtil.cleanseTerm(text)
-          const top = this._coreUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
-          const style = window.getComputedStyle(target)
-          const height = parseInt(style.getPropertyValue('line-height'), 10)
-          this.showPopover(text, top, height)
-        }
+        let word = target.innerText.trim()
+        word = this._coreUtil.cleanseTerm(word)
+        const top = this._coreUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
+        const style = window.getComputedStyle(target)
+        const height = parseInt(style.getPropertyValue('line-height'), 10)
+        this._searchApi.popupEmitter.emit({
+          word,
+          lang: this.article.foreignLang,
+          top,
+          height
+        })
+        // this.showPopover(word, top, height)
       }
     }
   }
 
-  showPopover(word: string, top: number, height: number) {
+  _showPopover(params: SearchPopupParams) {
     this.hidePopover()
-    this.popoverInput = {
-      word: word,
-      lang: this.article.foreignLang,
-      top: top,
-      height: height
-    }
+    this.popoverParams = params
     this._changeDetector.detectChanges()
   }
 
   hidePopover() {
-    this.popoverInput = undefined
+    this.popoverParams = undefined
     this.hashTag = undefined
     this._changeDetector.detectChanges()
   }
@@ -190,9 +191,9 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
       base: this.article.baseLang
     }
     if (word) {
-      params.word = word
+      this._searchApi.searchEmitter.emit({ word, lang: this.article.foreignLang })
     }
-    this._router.navigate(['/dictionary', params])
+    this._router.navigate(['/search/dict', params])
   }
 
   speakWord(word: string) {
@@ -225,7 +226,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
         console.log('opening')
         break
       case 'back':
-        this._navigationService.clearTop(SELECTOR)
+        this._navigation.clearTop(SELECTOR)
         this._router.navigate(['/library', this.publication])
         break
       case 'search':

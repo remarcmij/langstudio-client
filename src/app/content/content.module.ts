@@ -10,16 +10,16 @@ import { ArticleCoreComponent } from './article/article-core.component'
 import { ArticleResolver } from './article/article.resolver'
 import { FlashCardComponent } from './flashcard/flashcard.component'
 import { FlashCardService } from './flashcard/flashcard.service'
-import { contentRouting } from './content.routing'
 import { ContentHttp } from './content-http.service'
 import { NavigationModule } from '../navigation/navigation.module'
+import { ContentRoutingModule } from './content-routing.module'
 
 @NgModule({
   imports: [
     SearchModule,
     SharedModule,
     NavigationModule,
-    contentRouting
+    ContentRoutingModule
   ],
   declarations: [
     LibraryComponent,

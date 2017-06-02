@@ -1,6 +1,6 @@
 export { CoreModule } from './core.module'
-export { AuthGuard } from './auth.guard'
-export * from './auth.service'
+export { AuthGuard } from './auth-guard.service'
+export * from './authentication.service'
 export * from './can-deactivate.guard'
 export * from './navigation.service'
 export * from './speech-synthesizer.service'

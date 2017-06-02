@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core'
 import { Router } from '@angular/router'
 import { FileUploader } from 'ng2-file-upload'
 
-import { AuthService } from '../../../core'
+import { AuthenticationService } from '../../../core'
 import { AdminContentHttp } from '../admin-content-http.service'
 import { environment } from '../../../../environments/environment'
 
@@ -18,7 +18,7 @@ export class FileUploadComponent implements OnDestroy {
 
   constructor(
     private _router: Router,
-    private _authService: AuthService,
+    private _authService: AuthenticationService,
     private _httpService: AdminContentHttp
   ) {
     this.uploader = new FileUploader({

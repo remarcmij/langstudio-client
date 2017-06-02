@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core'
 import { Http, Response, RequestOptions, URLSearchParams, Headers } from '@angular/http'
 import { Observable } from 'rxjs/Observable'
 
-import { AuthService } from './auth.service'
+import { AuthenticationService } from './authentication.service'
 
 
 @Injectable()
 export class HttpHelper {
 
   constructor(
-    private _authService: AuthService,
+    private _authService: AuthenticationService,
   ) { }
 
   getRequestOptions(searchParams?: URLSearchParams): RequestOptions {

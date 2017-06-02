@@ -3,7 +3,7 @@ import { Injectable, EventEmitter, NgZone } from '@angular/core'
 const delay = 200 // ms
 
 @Injectable()
-export class NavigationService {
+export class Navigation {
 
   popTopEmitter = new EventEmitter<string>()
   public topMap: { [key: string]: number } = {}

@@ -7,18 +7,11 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchHttp } from '../../search-http.service'
+import { SearchApi, SearchPopupParams } from '../../search-api.service'
 import { SpeechSynthesizer } from '../../../core'
 import { CoreUtil } from '../../../core'
 
 const SCROLL_THRESHOLD = 16
-
-export interface DictPopoverInput {
-  word: string
-  lang: string
-  top: number
-  height: number
-}
 
 @Component({
   selector: 'my-dict-popover',
@@ -26,7 +19,7 @@ export interface DictPopoverInput {
   styleUrls: ['./dict-popover.component.scss']
 })
 export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
-  @Input() input: DictPopoverInput
+  @Input() input = <SearchPopupParams>null
   @Output() wordSearch = new EventEmitter<string>()
   @Output() speakWord = new EventEmitter<string>()
   @Output() shouldHide = new EventEmitter<void>()
@@ -44,7 +37,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   constructor(
     private _elementRef: ElementRef,
-    private _searchHttp: SearchHttp,
+    private _searchApi: SearchApi,
     private _sanitizer: DomSanitizer,
     private _renderer: Renderer,
     private _zone: NgZone,
@@ -56,7 +49,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   ngOnInit() {
 
-    this._searchHttp.popoverSearch(this.input.word, this.input.lang)
+    this._searchApi.popoverSearch(this.input.word, this.input.lang)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(resp => {
         if (!resp) {
@@ -102,8 +95,8 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
   }
 
   ngOnDestroy() {
-    this._ngUnsubscribe.next();
-    this._ngUnsubscribe.complete();
+    this._ngUnsubscribe.next()
+    this._ngUnsubscribe.complete()
   }
 
   ngAfterViewChecked() {

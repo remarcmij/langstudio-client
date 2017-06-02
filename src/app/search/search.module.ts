@@ -3,34 +3,36 @@ import { HttpModule } from '@angular/http'
 import { MdAutocompleteModule } from '@angular/material'
 
 import { SharedModule } from '../shared'
+import { SearchComponent } from './search.component'
 import { DictionaryComponent } from './dictionary/dictionary.component'
 import { LemmaGroupComponent } from './dictionary/lemma-group/lemma-group.component'
-import { SearchHttp } from './search-http.service'
+import { SearchApi } from './search-api.service'
 import { DictPopoverComponent } from './dictionary/dict-popover/dict-popover.component'
-import { LanguageManager } from '../language/lang-helper-manager'
-import { searchRouting } from './search.routing'
-import { DictAutocompleteComponent } from './dictionary/dict-autocomplete/dict-autocomplete.component';
-import { ParagraphsComponent } from './paragraphs/paragraphs.component';
+import { LanguageService } from '../language/language.service'
+import { SearchAutocompleteComponent } from './search-autocomplete/search-autocomplete.component'
+import { ParagraphsComponent } from './paragraphs/paragraphs.component'
 import { ParagraphComponent } from './paragraphs/paragraph.component'
+import { SearchRoutingModule } from './search-routing.module'
 
 @NgModule({
   imports: [
     HttpModule,
     SharedModule,
     MdAutocompleteModule,
-    searchRouting
+    SearchRoutingModule
   ],
   declarations: [
+    SearchComponent,
     DictionaryComponent,
     LemmaGroupComponent,
     DictPopoverComponent,
-    DictAutocompleteComponent,
+    SearchAutocompleteComponent,
     ParagraphsComponent,
     ParagraphComponent
   ],
   providers: [
-    SearchHttp,
-    LanguageManager
+    SearchApi,
+    LanguageService
   ],
   exports: [
     DictPopoverComponent

@@ -1,11 +1,11 @@
 import { Component, ViewContainerRef } from '@angular/core'
 import { MdIconRegistry } from '@angular/material'
 
-import { AuthService } from './core'
+import { AuthenticationService } from './core'
 import { SpeechSynthesizer } from './core'
 
 @Component({
-  selector: 'my-root',
+  selector: 'my-app',
   template: `<router-outlet></router-outlet>`,
 })
 export class AppComponent {
@@ -14,7 +14,7 @@ export class AppComponent {
   constructor(
     _mdIconRegistry: MdIconRegistry,
     _viewContainerRef: ViewContainerRef,
-    _authService: AuthService,
+    _authService: AuthenticationService,
     _speechSynthesizer: SpeechSynthesizer
   ) {
     _mdIconRegistry.registerFontClassAlias('fontawesome', 'fa')

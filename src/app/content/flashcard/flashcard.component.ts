@@ -10,7 +10,7 @@ import { Article } from '../article/article.model'
 import { ContentHttp } from '../content-http.service'
 import { FlashCardService, FlashCard } from './flashcard.service'
 import { SpeechSynthesizer } from '../../core'
-import { NavButton } from '../../shared'
+// import { NavButton } from '../../shared'
 
 const keyCodeSpace = 32
 const keyCodeBackSpace = 8
@@ -34,7 +34,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
   currentPage = 0
   numPages: number
 
-  private navButtons: NavButton[] = []
+  // private navButtons: NavButton[] = []
 
   get autoPlay() {
     return this._flashCardService.autoPlay
@@ -68,7 +68,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.updateNavButtons()
+    // this.updateNavButtons()
 
     const params = this._activatedRoute.snapshot.params
     this.publication = params['publication']
@@ -78,7 +78,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
       .takeUntil(this._ngUnsubscribe)
       .subscribe(article => {
         this.article = article
-        this.updateNavButtons()
+        // this.updateNavButtons()
         this._flashCardService.setArticle(article, this.flashCardCallback.bind(this))
       }, (err: Response) => {
         if (err.status === 401) {
@@ -159,27 +159,27 @@ export class FlashCardComponent implements OnInit, OnDestroy {
     return this._flashCardService.getFlashCardCount()
   }
 
-  private updateNavButtons(): NavButton[] {
-    const buttons: NavButton[] = []
+  // private updateNavButtons(): NavButton[] {
+  //   const buttons: NavButton[] = []
 
-    if (this.article && this._speechSynthesizer.canSpeakLanguage(this.article.foreignLang)
-      && this._speechSynthesizer.canSpeakLanguage(this.article.baseLang)) {
-      buttons.push({
-        faName: this._flashCardService.speechEnabled ? 'fa-volume-up' : 'fa-volume-off',
-        command: this._flashCardService.speechEnabled ? 'speechOff' : 'speechOn'
-      })
-    }
-    buttons.push({
-      faName: 'fa-cog',
-      command: 'settings'
-    })
+  //   if (this.article && this._speechSynthesizer.canSpeakLanguage(this.article.foreignLang)
+  //     && this._speechSynthesizer.canSpeakLanguage(this.article.baseLang)) {
+  //     buttons.push({
+  //       faName: this._flashCardService.speechEnabled ? 'fa-volume-up' : 'fa-volume-off',
+  //       command: this._flashCardService.speechEnabled ? 'speechOff' : 'speechOn'
+  //     })
+  //   }
+  //   buttons.push({
+  //     faName: 'fa-cog',
+  //     command: 'settings'
+  //   })
 
-    if (!equal(this.navButtons, buttons, { strict: true })) {
-      this.navButtons = buttons
-    }
+  //   if (!equal(this.navButtons, buttons, { strict: true })) {
+  //     this.navButtons = buttons
+  //   }
 
-    return this.navButtons
-  }
+  //   return this.navButtons
+  // }
 
   commandHandler(command: string) {
     switch (command) {
@@ -194,12 +194,12 @@ export class FlashCardComponent implements OnInit, OnDestroy {
 
       case 'speechOff':
         this._flashCardService.speechEnabled = false
-        this.updateNavButtons()
+        // this.updateNavButtons()
         break
 
       case 'speechOn':
         this._flashCardService.speechEnabled = true
-        this.updateNavButtons()
+        // this.updateNavButtons()
         break
 
       case 'settings':
@@ -227,12 +227,12 @@ export class FlashCardComponent implements OnInit, OnDestroy {
 
       case 'speechOff':
         this._flashCardService.speechEnabled = false
-        this.updateNavButtons()
+        // this.updateNavButtons()
         break
 
       case 'speechOn':
         this._flashCardService.speechEnabled = true
-        this.updateNavButtons()
+        // this.updateNavButtons()
         break
 
       case 'settings':

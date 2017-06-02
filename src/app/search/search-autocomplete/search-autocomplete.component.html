@@ -5,6 +5,6 @@
 
 <md-autocomplete #auto="mdAutocomplete">
   <md-option *ngFor="let item of items" [value]="item" (onSelectionChange)="onItemSelect(item)">
-    <span>{{ item.word }}</span>
+    <span>{{ item.word }}</span><sup>{{ item.lang }}</sup>
   </md-option>
 </md-autocomplete>

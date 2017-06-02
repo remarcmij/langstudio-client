@@ -3,7 +3,7 @@ import { Router } from '@angular/router'
 
 import { Topic } from '../../shared'
 import {CoreUtil } from '../../core'
-import { NavigationService } from '../../core'
+import { Navigation } from '../../core'
 
 @Component({
   selector: 'my-library-item',
@@ -34,7 +34,7 @@ export class LibraryItemComponent {
   constructor(
     private _coreUtil: CoreUtil,
     private _router: Router,
-    private _navigationService: NavigationService
+    private _navigationService: Navigation
   ) {
   }
 

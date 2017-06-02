@@ -1,4 +1,5 @@
-import { Routes, RouterModule } from '@angular/router'
+import { NgModule } from '@angular/core'
+import { RouterModule, Routes } from '@angular/router'
 
 import { AdminUserComponent } from './user/admin-user.component'
 import { AdminUserDetailComponent } from './user/admin-user-detail.component'
@@ -15,4 +16,12 @@ const adminRoutes: Routes = [
   { path: 'admin/library', component: AdminLibraryComponent, canActivate: [AuthGuard] }
 ]
 
-export const adminRouting = RouterModule.forChild(adminRoutes)
+@NgModule({
+  imports: [
+    RouterModule.forChild(adminRoutes)
+  ],
+  exports: [
+    RouterModule
+  ]
+})
+export class AdminRoutingModule { }

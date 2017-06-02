@@ -6,15 +6,15 @@ import { Observer } from 'rxjs/Observer'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchHttp, WordLang } from '../../search-http.service'
-import { CoreUtil } from '../../../core'
+import { SearchApi, SearchParams } from '../search-api.service'
+import { CoreUtil } from '../../core'
 
 const MAX_ITEMS = 20
 const SCROLL_THRESHOLD = 16
 
 @Component({
-  selector: 'my-dict-autocomplete',
-  templateUrl: './dict-autocomplete.component.html',
+  selector: 'my-search-autocomplete',
+  templateUrl: './search-autocomplete.component.html',
   styles: [
     `:host {
       margin-left: 8px;
@@ -22,12 +22,12 @@ const SCROLL_THRESHOLD = 16
     }`
   ]
 })
-export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestroy {
+export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDestroy {
 
   searchCtrl = new FormControl()
   term: string
-  items: WordLang[] = []
-  @Output() onSelect = new EventEmitter<WordLang>()
+  items: SearchParams[] = []
+  // @Output() onSelect = new EventEmitter<WordLang>()
   @ViewChild(MdAutocompleteTrigger) private _trigger: MdAutocompleteTrigger
   @ViewChild('searchField') private _input: ElementRef
   private _ngUnsubscribe = new Subject<void>()
@@ -35,7 +35,7 @@ export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestr
   constructor(
     private _renderer: Renderer,
     private _coreUtil: CoreUtil,
-    private _searchHttp: SearchHttp
+    private _search: SearchApi
   ) { }
 
   ngOnInit() {
@@ -75,10 +75,11 @@ export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestr
     this._ngUnsubscribe.complete()
   }
 
-  onItemSelect(item: WordLang) {
+  onItemSelect(item: SearchParams) {
     this.items = []
     this.term = ''
-    this.onSelect.emit(item)
+    this._search.searchEmitter.emit(item)
+    // this.onSelect.emit(item)
   }
 
   onChange(ev: any) {
@@ -88,14 +89,15 @@ export class DictAutocompleteComponent implements OnInit, AfterViewInit, OnDestr
     }
     ev = ev.toLowerCase().trim()
     if (ev.length > 0) {
-      this._searchHttp
+      this._search
         .autoCompleteSearch(ev)
         .map(items => items.slice(0, MAX_ITEMS))
         .takeUntil(this._ngUnsubscribe)
         .subscribe(items => {
           this.items = items
           if (items.length > 0) {
-            this.onSelect.emit(items[0])
+            this._search.searchEmitter.emit(items[0])
+            // this.onSelect.emit(items[0])
           }
         }, err => console.error(err))
     }

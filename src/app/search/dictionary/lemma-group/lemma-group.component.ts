@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from 
 
 import { Lemma } from './lemma.model'
 import { CoreUtil } from '../../../core'
+import { SearchApi, SearchPopupParams } from '../../search-api.service'
 
 @Component({
   selector: 'my-lemma-group',
@@ -27,12 +28,11 @@ export class LemmaGroupComponent {
   @Input() base: string
   @Input() lemmas: Lemma[]
 
-  @Output() wordSearch = new EventEmitter<string>()
-  @Output() popoverSearch = new EventEmitter<{}>()
-
   constructor(
+    private _searchApi: SearchApi,
     private _coreUtil: CoreUtil
-  ) { }
+  ) {
+  }
 
   onClick(ev: MouseEvent) {
     const target = <HTMLElement>ev.target
@@ -40,22 +40,18 @@ export class LemmaGroupComponent {
       ev.preventDefault()
       ev.stopPropagation()
       let word = target.innerText.trim()
-      if (target.classList.contains('hashtag')) {
-        console.log(`hashtag clicked: ${word}`)
-      } else {
-        word = this._coreUtil.cleanseTerm(word)
-        const top = this._coreUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
-        const style = window.getComputedStyle(target)
-        const height = parseInt(style.getPropertyValue('line-height'), 10)
-        this.popoverSearch.emit({ word, top, height })
-      }
+      word = this._coreUtil.cleanseTerm(word)
+      const top = this._coreUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
+      const style = window.getComputedStyle(target)
+      const height = parseInt(style.getPropertyValue('line-height'), 10)
+      this._searchApi.popupEmitter.emit({ word, top, height, lang: 'id-ID' })
     }
   }
 
   baseClicked(ev: MouseEvent, base: string) {
     ev.preventDefault()
     ev.stopPropagation()
-    this.wordSearch.emit(base)
+    this._searchApi.searchEmitter.emit({word: base, lang: this._searchApi.targetLang})
   }
 
   convertMarkdown(text: string): string {
@@ -70,6 +66,6 @@ export class LemmaGroupComponent {
   }
 
   trackByFn(index: number, lemma: Lemma): string {
-    return lemma._id;
+    return lemma._id
   }
 }

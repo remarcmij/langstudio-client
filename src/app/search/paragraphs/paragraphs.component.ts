@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core'
+import { Subject } from 'rxjs/Subject'
+
+import { SearchApi, SearchRequest, SearchResult, SearchParams } from '../search-api.service'
 
 @Component({
   selector: 'my-paragraphs',
@@ -7,9 +10,23 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ParagraphsComponent implements OnInit {
 
-  constructor() { }
+  private _ngUnsubscribe = new Subject<void>()
 
-  ngOnInit() {
+  constructor(
+    private _search: SearchApi
+  ) {
   }
 
+  ngOnInit() {
+    this._search.searchSubject
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(target => {
+        if (target) {
+          this.wordLangSearch(target)
+        }
+      })
+  }
+
+  wordLangSearch(searchTarget: SearchParams) {
+  }
 }

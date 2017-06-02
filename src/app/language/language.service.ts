@@ -5,7 +5,7 @@ import { LangHelperID } from './lang-helper-id'
 import { LangHelperNL } from './lang-helper-nl'
 
 @Injectable()
-export class LanguageManager {
+export class LanguageService {
 
   private helpers = new Map<string, LangHelper>()
 

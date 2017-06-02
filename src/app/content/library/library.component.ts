@@ -5,11 +5,11 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { AuthService, User } from '../../core'
+import { AuthenticationService, User } from '../../core'
 import { ContentHttp } from '../content-http.service'
 import { CoreUtil } from '../../core'
 import { Topic } from '../../shared'
-import { NavigationService } from '../../core'
+import { Navigation } from '../../core'
 import { CanComponentDeactivate } from '../../core'
 import { AppConstants } from '../../app.constants'
 
@@ -32,9 +32,9 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   constructor(
     private _router: Router,
     private _coreUtil: CoreUtil,
-    private _authService: AuthService,
+    private _authService: AuthenticationService,
     private _contentService: ContentHttp,
-    private _navigationService: NavigationService
+    private _navigationService: Navigation
   ) { }
 
   ngOnInit() {
@@ -68,10 +68,6 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this.sidenav.isOpen = true
   }
 
-  // search() {
-  //   this._router.navigate(['/dictionary', AppConstants.FOREIGN_LANG, AppConstants.BASE_LANG])
-  // }
-
   onAction(action: string) {
     switch (action) {
       case 'openSidenav':
@@ -93,7 +89,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.manageUsers()
         break
       case 'search':
-        this._router.navigate(['/dictionary', {target: AppConstants.FOREIGN_LANG, base: AppConstants.BASE_LANG}])
+        this._router.navigate(['/search/dict', {target: AppConstants.FOREIGN_LANG, base: AppConstants.BASE_LANG}])
         break
       case 'about':
         this._router.navigate(['/about'])

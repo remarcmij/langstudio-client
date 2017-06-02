@@ -4,7 +4,7 @@
     <md-toolbar>{{title}}</md-toolbar>
     <md-nav-list>
 
-      <div *ngIf="user; else signInBLock">
+      <div *ngIf="user; else signInBlock">
         <h3 md-subheader>Signed in as: {{user.email}}</h3>
         <a md-list-item (click)="action.emit('signout')">
           <md-icon md-list-icon fontSet="fa" fontIcon="fa-sign-out" class="fa-fw fa-md fa-dimmed"></md-icon>

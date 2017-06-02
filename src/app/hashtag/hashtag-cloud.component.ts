@@ -5,7 +5,7 @@ import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
 import { ContentHttp } from '../content/content-http.service'
-import { NavigationService } from '../core'
+import { Navigation } from '../core'
 import { CanComponentDeactivate } from '../core'
 
 const SELECTOR = 'my-hashtag-cloud'
@@ -48,7 +48,7 @@ export class HashTagCloudComponent implements OnInit, OnDestroy, CanComponentDea
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
     private _contentHttp: ContentHttp,
-    private _navigationService: NavigationService
+    private _navigationService: Navigation
   ) {
   }
 
