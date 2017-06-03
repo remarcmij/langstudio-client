@@ -11,7 +11,6 @@ import { DictPopoverComponent } from './dictionary/dict-popover/dict-popover.com
 import { LanguageService } from '../language/language.service'
 import { SearchAutocompleteComponent } from './search-autocomplete/search-autocomplete.component'
 import { ParagraphsComponent } from './paragraphs/paragraphs.component'
-import { ParagraphComponent } from './paragraphs/paragraph.component'
 import { SearchRoutingModule } from './search-routing.module'
 
 @NgModule({
@@ -27,8 +26,7 @@ import { SearchRoutingModule } from './search-routing.module'
     LemmaGroupComponent,
     DictPopoverComponent,
     SearchAutocompleteComponent,
-    ParagraphsComponent,
-    ParagraphComponent
+    ParagraphsComponent
   ],
   providers: [
     SearchApi,

@@ -10,10 +10,9 @@ import { Navigation } from '../../core'
 import { CanComponentDeactivate } from '../../core'
 import { CoreUtil} from '../../core'
 
-const scrollTopName = 'publication'
+const SELECTOR = 'publication'
 
 @Component({
-  selector: 'my-publication',
   templateUrl: './publication.component.html'
 })
 export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeactivate {
@@ -42,7 +41,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
       .subscribe(topics => {
         this.indexTopic = topics.filter(topic => topic.chapter === 'index')[0]
         this.topics = topics.filter(topic => topic.chapter !== 'index')
-        this._navigationService.restoreTop(scrollTopName)
+        this._navigationService.restoreTop(SELECTOR)
       }, (err: Response) => {
         if (err.status === 401) {
           this._router.navigate(['/signin'])
@@ -62,7 +61,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   canDeactivate(): boolean {
-    this._navigationService.saveTop(scrollTopName)
+    this._navigationService.saveTop(SELECTOR)
     return true
   }
 

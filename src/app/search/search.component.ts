@@ -10,7 +10,6 @@ import { SpeechSynthesizer } from '../core'
 import { Navigation } from '../core'
 
 @Component({
-  selector: 'my-search',
   templateUrl: './search.component.html'
 })
 export class SearchComponent implements OnInit, OnDestroy {

@@ -4,7 +4,6 @@ import { Router } from '@angular/router'
 import { AppConstants } from '../app.constants'
 
 @Component({
-  selector: 'my-about',
   templateUrl: './about.component.html',
   styles: []
 })

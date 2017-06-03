@@ -14,10 +14,9 @@ import { CanComponentDeactivate } from '../../core'
 import { FlashCardService } from '../flashcard/flashcard.service'
 import { SearchApi, SearchPopupParams } from '../../search/search-api.service'
 
-const SELECTOR = 'my-article'
+const SELECTOR = 'article'
 
 @Component({
-  selector: SELECTOR,
   templateUrl: './article.component.html',
   styleUrls: ['./article.component.scss']
 })

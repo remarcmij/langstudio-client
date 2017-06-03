@@ -13,10 +13,9 @@ import { Navigation } from '../../core'
 import { CanComponentDeactivate } from '../../core'
 import { AppConstants } from '../../app.constants'
 
-const SELECTOR = 'my-library'
+const SELECTOR = 'library'
 
 @Component({
-  selector: SELECTOR,
   templateUrl: './library.component.html',
   styles: []
 })

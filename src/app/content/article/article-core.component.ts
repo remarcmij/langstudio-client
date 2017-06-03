@@ -14,14 +14,14 @@ import { Article, AnchorInfo } from './article.model'
 
 @Component({
   selector: 'my-article-core',
-  template: `<article #articleRef [innerHTML]="_safeHtml" (click)="clicked.emit($event)"></article>`,
+  template: `<article #articleRef [innerHTML]="safeHtml" (click)="clicked.emit($event)"></article>`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ArticleCoreComponent implements AfterViewChecked {
 
   @Input() set article(article: Article) {
     this._articleElement = undefined
-    this._safeHtml = this._sanitizer.bypassSecurityTrustHtml(article.htmlText)
+    this.safeHtml = this._sanitizer.bypassSecurityTrustHtml(article.htmlText)
   }
 
   @Input() hashTag: string
@@ -29,7 +29,7 @@ export class ArticleCoreComponent implements AfterViewChecked {
   @Output() anchors = new EventEmitter<AnchorInfo[]>()
   @ViewChild('articleRef') _articleRef: ElementRef
 
-  private _safeHtml: SafeHtml
+  safeHtml: SafeHtml
   private _articleElement: HTMLElement
 
   constructor(

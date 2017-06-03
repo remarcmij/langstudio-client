@@ -4,7 +4,7 @@ import { RouterModule, Routes } from '@angular/router'
 import { SignInComponent } from './sign-in.component'
 
 const signInRoutes: Routes = [
-  { path: 'signin', component: SignInComponent }
+  { path: '', component: SignInComponent }
 ]
 
 @NgModule({

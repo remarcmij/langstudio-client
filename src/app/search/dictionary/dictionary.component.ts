@@ -8,7 +8,6 @@ import { SpeechSynthesizer } from '../../core'
 import { Navigation } from '../../core'
 
 @Component({
-  selector: 'my-dictionary',
   templateUrl: './dictionary.component.html',
   styles: [
     `.btn {

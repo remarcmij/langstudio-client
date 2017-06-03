@@ -9,11 +9,11 @@ import { AdminPublicationComponent } from './content/admin-publication/admin-pub
 import { AuthGuard } from '../core'
 
 const adminRoutes: Routes = [
-  { path: 'admin/user/:id', component: AdminUserDetailComponent, canActivate: [AuthGuard] },
-  { path: 'admin/user', component: AdminUserComponent, canActivate: [AuthGuard] },
-  { path: 'admin/upload', component: FileUploadComponent, canActivate: [AuthGuard] },
-  { path: 'admin/library/:publication', component: AdminPublicationComponent, canActivate: [AuthGuard] },
-  { path: 'admin/library', component: AdminLibraryComponent, canActivate: [AuthGuard] }
+  { path: 'user/:id', component: AdminUserDetailComponent, canActivate: [AuthGuard] },
+  { path: 'user', component: AdminUserComponent, canActivate: [AuthGuard] },
+  { path: 'upload', component: FileUploadComponent, canActivate: [AuthGuard] },
+  { path: 'library/:publication', component: AdminPublicationComponent, canActivate: [AuthGuard] },
+  { path: 'library', component: AdminLibraryComponent, canActivate: [AuthGuard] }
 ]
 
 @NgModule({

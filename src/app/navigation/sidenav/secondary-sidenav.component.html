@@ -1,9 +1,0 @@
-<md-sidenav-container>
-  <md-sidenav #sidenav align="end" [opened]="open" (close)="close.emit()">
-    <md-toolbar>{{title}}</md-toolbar>
-    <md-nav-list>
-      <a md-list-item (click)="gotoAbout()">About Go Dutch</a>
-    </md-nav-list>
-  </md-sidenav>
-  <ng-content></ng-content>
-</md-sidenav-container>

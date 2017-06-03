@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core'
+// import { CommonModule } from '@angular/common'
 import { HttpModule } from '@angular/http'
 import { FileUploadModule } from 'ng2-file-upload'
 import { MdDialogModule } from '@angular/material'
@@ -21,6 +22,7 @@ import { AdminRoutingModule } from './admin-routing.module'
     FileUploadModule,
     MdDialogModule,
     SharedModule,
+    // CommonModule,
     NavigationModule,
     AdminRoutingModule
   ],
