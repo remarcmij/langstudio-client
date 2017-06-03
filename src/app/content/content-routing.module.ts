@@ -11,9 +11,8 @@ import { CanDeactivateGuard } from '../core'
 
 const contentRoutes: Routes = [
   {
-    path:
-    'library/:publication/:chapter/flashcards',
-    component: FlashCardComponent
+    path: 'flashcards',
+    loadChildren: 'app/content/flashcard/flashcard.module#FlashcardModule'
   },
   {
     path: 'library/:publication/:chapter',

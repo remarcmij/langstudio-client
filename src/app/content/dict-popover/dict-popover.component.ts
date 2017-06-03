@@ -7,9 +7,8 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApi, SearchPopupParams } from '../../search-api.service'
-import { SpeechSynthesizer } from '../../../core'
-import { CoreUtil } from '../../../core'
+import { SearchApi, SearchPopupParams } from '../search-api.service'
+import { SpeechSynthesizer, CoreUtil } from '../../core'
 
 const SCROLL_THRESHOLD = 16
 

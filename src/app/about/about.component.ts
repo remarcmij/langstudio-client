@@ -1,7 +1,7 @@
 import { Component } from '@angular/core'
 import { Router } from '@angular/router'
 
-import { AppConstants } from '../app.constants'
+import { config } from '../app.config'
 
 @Component({
   templateUrl: './about.component.html',
@@ -9,7 +9,7 @@ import { AppConstants } from '../app.constants'
 })
 export class AboutComponent {
 
-  appTitle = AppConstants.APP_TITLE
+  appTitle = config.appTitle
 
   constructor(
     private _router: Router,

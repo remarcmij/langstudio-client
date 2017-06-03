@@ -5,7 +5,8 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApi, SearchParams, SearchPopupParams, SearchRequest, SearchResult } from './search-api.service'
+import { SearchApi, SearchParams, SearchPopupParams, SearchRequest, SearchResult } from '../content/search-api.service'
+import { LanguageService } from '../content/language/language.service'
 import { SpeechSynthesizer } from '../core'
 import { Navigation } from '../core'
 
@@ -36,6 +37,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     private _changeDetector: ChangeDetectorRef,
     private _location: Location,
     private _searchApi: SearchApi,
+    private _language: LanguageService,
     private _speechSynthesizer: SpeechSynthesizer,
     private _navigationService: Navigation
   ) {
@@ -66,12 +68,12 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   speakWord(word: string) {
-    this._speechSynthesizer.speakSingle(word, this._searchApi.targetLang)
+    this._speechSynthesizer.speakSingle(word, this._language.targetLang)
   }
 
   foreignWordSearch(word: string) {
     this.hidePopover()
-    this._searchApi.searchEmitter.emit({ word, lang: this._searchApi.targetLang })
+    this._searchApi.searchEmitter.emit({ word, lang: this._language.targetLang })
   }
 
   private _showPopover(params: SearchPopupParams) {

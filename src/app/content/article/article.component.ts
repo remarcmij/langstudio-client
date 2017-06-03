@@ -6,13 +6,12 @@ import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
 import { Article, AnchorInfo } from './article.model'
-import { ContentHttp } from '../content-http.service'
+import { ContentApi } from '../content-api.service'
 import { SpeechSynthesizer } from '../../core'
 import { CoreUtil } from '../../core'
 import { Navigation } from '../../core'
 import { CanComponentDeactivate } from '../../core'
-import { FlashCardService } from '../flashcard/flashcard.service'
-import { SearchApi, SearchPopupParams } from '../../search/search-api.service'
+import { SearchApi, SearchPopupParams } from '../search-api.service'
 
 const SELECTOR = 'article'
 
@@ -41,10 +40,9 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private _zone: NgZone,
     private _searchApi: SearchApi,
     private _coreUtil: CoreUtil,
-    private _contentHttp: ContentHttp,
+    private _contentHttp: ContentApi,
     private _speechSynthesizer: SpeechSynthesizer,
     private _navigation: Navigation,
-    private _flashCardService: FlashCardService
   ) {
   }
 
@@ -65,7 +63,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this.publication = params['publication']
     this.chapter = params['chapter']
     this.tag = params['tag']
-    this.hasFlashCards = this._flashCardService.hasFlashCards(this.article)
+    this.hasFlashCards = this.article.mdText && this.article.mdText.indexOf(`<!-- flashcard -->`) !== -1
     if (!this.tag) {
       this._navigation.restoreTop(SELECTOR)
     }
@@ -86,6 +84,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this._navigation.saveTop(SELECTOR)
     return true
   }
+
 
   // ngAfterViewChecked() {
   //   let element = document.getElementById('anchor')
@@ -185,14 +184,10 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
   }
 
   wordSearch(word?: string) {
-    const params: any = {
-      target: this.article.foreignLang,
-      base: this.article.baseLang
-    }
     if (word) {
       this._searchApi.searchEmitter.emit({ word, lang: this.article.foreignLang })
     }
-    this._router.navigate(['/search/dict', params])
+    this._router.navigate(['/search/dict'])
   }
 
   speakWord(word: string) {
@@ -235,7 +230,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.sidepanel.isopen = true
         break
       case 'flashcards':
-        this._router.navigate(['/library', this.publication, this.chapter, 'flashcards'])
+        this._router.navigate(['/flashcards', this.publication, this.chapter])
         break
       case 'toggleSpeech':
         this._speechSynthesizer.speechEnabled = !this._speechSynthesizer.speechEnabled

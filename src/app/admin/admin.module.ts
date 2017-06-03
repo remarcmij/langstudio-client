@@ -8,12 +8,12 @@ import { SharedModule } from '../shared'
 import { NavigationModule } from '../navigation/navigation.module'
 import { AdminUserComponent } from './user/admin-user.component'
 import { AdminUserDetailComponent } from './user/admin-user-detail.component'
-import { AdminUserHttp } from './user/admin-user-http.service'
+import { AdminUserApi } from './user/admin-user-api.service'
 import { FileUploadComponent } from './content/file-upload/file-upload.component'
 import { AdminLibraryComponent } from './content/admin-library/admin-library.component'
 import { ConfirmDialogComponent } from './confirm-dialog/confirm-dialog.component'
 import { AdminPublicationComponent } from './content/admin-publication/admin-publication.component'
-import { AdminContentHttp } from './content/admin-content-http.service'
+import { AdminContentApi } from './content/admin-content-api.service'
 import { AdminRoutingModule } from './admin-routing.module'
 
 @NgModule({
@@ -38,8 +38,8 @@ import { AdminRoutingModule } from './admin-routing.module'
     ConfirmDialogComponent
   ],
   providers: [
-    AdminUserHttp,
-    AdminContentHttp
+    AdminUserApi,
+    AdminContentApi
   ]
 })
 export class AdminModule { }

@@ -6,7 +6,7 @@ import { Observer } from 'rxjs/Observer'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApi, SearchParams } from '../search-api.service'
+import { SearchApi, SearchParams } from '../../content/search-api.service'
 import { CoreUtil } from '../../core'
 
 const MAX_ITEMS = 20

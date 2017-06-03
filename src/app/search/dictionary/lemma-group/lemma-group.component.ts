@@ -1,8 +1,9 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core'
 
-import { Lemma } from './lemma.model'
+import { Lemma } from '../../../content/lemma.model'
 import { CoreUtil } from '../../../core'
-import { SearchApi, SearchPopupParams } from '../../search-api.service'
+import { SearchApi, SearchPopupParams } from '../../../content/search-api.service'
+import { LanguageService } from '../../../content/language/language.service'
 
 @Component({
   selector: 'my-lemma-group',
@@ -30,6 +31,7 @@ export class LemmaGroupComponent {
 
   constructor(
     private _searchApi: SearchApi,
+    private _language: LanguageService,
     private _coreUtil: CoreUtil
   ) {
   }
@@ -51,7 +53,7 @@ export class LemmaGroupComponent {
   baseClicked(ev: MouseEvent, base: string) {
     ev.preventDefault()
     ev.stopPropagation()
-    this._searchApi.searchEmitter.emit({word: base, lang: this._searchApi.targetLang})
+    this._searchApi.searchEmitter.emit({word: base, lang: this._language.targetLang})
   }
 
   convertMarkdown(text: string): string {

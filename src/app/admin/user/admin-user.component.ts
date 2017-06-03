@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Router } from '@angular/router'
 import { Subject } from 'rxjs/Subject'
 
-import { AdminUserHttp } from './admin-user-http.service'
+import { AdminUserApi } from './admin-user-api.service'
 import { User } from '../../core'
 
 @Component({
@@ -17,8 +17,9 @@ export class AdminUserComponent implements OnInit, OnDestroy {
 
   constructor(
     private _router: Router,
-    private _adminUserHttp: AdminUserHttp
-  ) { }
+    private _adminUserHttp: AdminUserApi
+  ) {
+  }
 
   ngOnInit() {
     this._adminUserHttp.getUsers()

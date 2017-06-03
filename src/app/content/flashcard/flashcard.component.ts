@@ -7,8 +7,8 @@ import * as debounce from 'lodash.debounce'
 import * as equal from 'deep-equal'
 
 import { Article } from '../article/article.model'
-import { ContentHttp } from '../content-http.service'
-import { FlashCardService, FlashCard } from './flashcard.service'
+import { ContentApi } from '../content-api.service'
+import { FlashcardService, Flashcard } from './flashcard.service'
 import { SpeechSynthesizer } from '../../core'
 // import { NavButton } from '../../shared'
 
@@ -28,7 +28,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
   article: Article
   publication: string
   chapter: string
-  flashCard: FlashCard
+  flashCard: Flashcard
   sliderIndex = 0
 
   currentPage = 0
@@ -59,8 +59,8 @@ export class FlashCardComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
     private _changeDetector: ChangeDetectorRef,
-    private _contentHttp: ContentHttp,
-    private _flashCardService: FlashCardService,
+    private _contentHttp: ContentApi,
+    private _flashCardService: FlashcardService,
     private _speechSynthesizer: SpeechSynthesizer
   ) {
     this._goIndexDebounced = debounce(this.goIndex.bind(this), buttonDelay)
@@ -143,7 +143,7 @@ export class FlashCardComponent implements OnInit, OnDestroy {
     this._flashCardService.lastIndex = index
   }
 
-  flashCardCallback(flashCard: FlashCard) {
+  flashCardCallback(flashCard: Flashcard) {
     this.flashCard = flashCard
     this.sliderIndex = this._flashCardService.lastIndex
 

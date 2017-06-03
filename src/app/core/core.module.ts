@@ -21,13 +21,13 @@ import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/toPromise'
 
 import { SpeechSynthesizer } from './speech-synthesizer.service'
-import { AuthenticationService } from './authentication.service'
+import { AuthService } from './auth.service'
 import { CoreUtil } from './core-util.service'
 import { HttpHelper } from './http-helper.service'
 import { Navigation } from './navigation.service'
 import { AuthGuard } from './auth-guard.service'
 import { CanDeactivateGuard } from './can-deactivate.guard'
-import { AppConstants } from '../app.constants'
+import { config } from '../app.config'
 
 @NgModule({
   imports: [],
@@ -36,7 +36,7 @@ import { AppConstants } from '../app.constants'
   providers: [
     CoreUtil,
     SpeechSynthesizer,
-    AuthenticationService,
+    AuthService,
     HttpHelper,
     Navigation,
     AuthGuard,

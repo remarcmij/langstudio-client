@@ -7,7 +7,6 @@ import { AppComponent } from './app.component'
 import { CoreModule } from './core'
 import { NavigationModule } from './navigation/navigation.module'
 import { ContentModule } from './content/content.module'
-import { SearchModule } from './search/search.module'
 import { SharedModule } from './shared'
 import { AppRoutingModule } from './app-routing.module'
 
@@ -22,7 +21,6 @@ import { AppRoutingModule } from './app-routing.module'
     CoreModule,
     NavigationModule,
     ContentModule,
-    SearchModule,
     AppRoutingModule
   ],
   bootstrap: [AppComponent]

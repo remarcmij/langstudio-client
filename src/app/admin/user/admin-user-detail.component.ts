@@ -2,8 +2,8 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Router, ActivatedRoute } from '@angular/router'
 import { Subject } from 'rxjs/Subject'
 
-import { AdminUserHttp, Group } from './admin-user-http.service'
-import { AdminContentHttp } from '../content/admin-content-http.service'
+import { AdminUserApi, Group } from './admin-user-api.service'
+import { AdminContentApi } from '../content/admin-content-api.service'
 import { Topic } from '../../shared'
 import { User } from '../../core'
 
@@ -35,14 +35,15 @@ export class AdminUserDetailComponent implements OnInit, OnDestroy {
   constructor(
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
-    private _adminUserHttp: AdminUserHttp,
-    private _adminContentHttp: AdminContentHttp
-  ) { }
+    private _adminUserApi: AdminUserApi,
+    private _adminContentHttp: AdminContentApi
+  ) {
+  }
 
   ngOnInit() {
     const params = this._activatedRoute.snapshot.params
-    this._adminUserHttp.getUser(params['id'])
-      .mergeMap(user => this._adminUserHttp.getGroups().map(groups => ({ groups, user })))
+    this._adminUserApi.getUser(params['id'])
+      .mergeMap(user => this._adminUserApi.getGroups().map(groups => ({ groups, user })))
       .mergeMap((result: IntermediateResult) =>
         this._adminContentHttp.getTopics().map(topics => {
           result.topics = topics.filter(topic => topic.chapter === 'index')
@@ -72,7 +73,7 @@ export class AdminUserDetailComponent implements OnInit, OnDestroy {
       .filter(group => group.selected)
       .map(group => group.name)
 
-    this._adminUserHttp.saveGroups(this.user._id, groupNames)
+    this._adminUserApi.saveGroups(this.user._id, groupNames)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(ok => {
         if (!ok) {

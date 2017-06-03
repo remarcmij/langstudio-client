@@ -2,8 +2,8 @@ import { Component, OnDestroy } from '@angular/core'
 import { Router } from '@angular/router'
 import { FileUploader } from 'ng2-file-upload'
 
-import { AuthenticationService } from '../../../core'
-import { AdminContentHttp } from '../admin-content-http.service'
+import { AuthService } from '../../../core'
+import { AdminContentApi } from '../admin-content-api.service'
 import { environment } from '../../../../environments/environment'
 
 @Component({
@@ -18,8 +18,8 @@ export class FileUploadComponent implements OnDestroy {
 
   constructor(
     private _router: Router,
-    private _authService: AuthenticationService,
-    private _httpService: AdminContentHttp
+    private _authService: AuthService,
+    private _adminContentApi: AdminContentApi
   ) {
     this.uploader = new FileUploader({
       url: `${environment.api.host}${environment.api.path}/upload`,
@@ -37,7 +37,7 @@ export class FileUploadComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this._httpService.clearCache()
+    this._adminContentApi.clearCache()
   }
 
   onAction(action: string) {

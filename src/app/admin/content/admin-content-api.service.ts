@@ -8,7 +8,7 @@ import { HttpHelper } from '../../core'
 import { environment } from '../../../environments/environment'
 
 @Injectable()
-export class AdminContentHttp {
+export class AdminContentApi {
 
   private readonly _cache = LRU<Topic[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 

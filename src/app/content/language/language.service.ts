@@ -3,9 +3,13 @@ import { Injectable } from '@angular/core'
 import { LangHelper } from './lang-helper'
 import { LangHelperID } from './lang-helper-id'
 import { LangHelperNL } from './lang-helper-nl'
+import { config } from '../../app.config'
 
 @Injectable()
 export class LanguageService {
+
+  baseLang = config.defaults.baseLang
+  targetLang = config.defaults.targetLang
 
   private helpers = new Map<string, LangHelper>()
 

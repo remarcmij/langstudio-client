@@ -5,13 +5,13 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { AuthenticationService, User } from '../../core'
-import { ContentHttp } from '../content-http.service'
+import { AuthService, User } from '../../core'
+import { ContentApi } from '../content-api.service'
 import { CoreUtil } from '../../core'
 import { Topic } from '../../shared'
 import { Navigation } from '../../core'
 import { CanComponentDeactivate } from '../../core'
-import { AppConstants } from '../../app.constants'
+import { config } from '../../app.config'
 
 const SELECTOR = 'library'
 
@@ -25,14 +25,14 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   user: User | undefined
   topics: Topic[]
   scrollState = 'busy'
-  readonly title = AppConstants.APP_TITLE
+  readonly title = config.appTitle
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
     private _router: Router,
     private _coreUtil: CoreUtil,
-    private _authService: AuthenticationService,
-    private _contentService: ContentHttp,
+    private _authService: AuthService,
+    private _contentService: ContentApi,
     private _navigationService: Navigation
   ) { }
 
@@ -88,7 +88,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.manageUsers()
         break
       case 'search':
-        this._router.navigate(['/search/dict', {target: AppConstants.FOREIGN_LANG, base: AppConstants.BASE_LANG}])
+        this._router.navigate(['/search/dict'])
         break
       case 'about':
         this._router.navigate(['/about'])

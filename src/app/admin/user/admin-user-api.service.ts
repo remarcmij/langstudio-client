@@ -12,7 +12,7 @@ export interface Group {
 }
 
 @Injectable()
-export class AdminUserHttp {
+export class AdminUserApi {
 
   constructor(
     private _http: Http,

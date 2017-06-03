@@ -7,7 +7,7 @@ import { ParagraphsComponent } from './paragraphs/paragraphs.component'
 
 const searchRoutes: Routes = [
   {
-    path: 'search', component: SearchComponent, children: [
+    path: '', component: SearchComponent, children: [
       { path: 'dict', component: DictionaryComponent },
       { path: 'para', component: ParagraphsComponent }
     ]

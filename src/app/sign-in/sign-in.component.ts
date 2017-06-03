@@ -4,7 +4,7 @@ import { Http, Headers, RequestOptions } from '@angular/http'
 import { Router } from '@angular/router'
 import { Subject } from 'rxjs/Subject'
 
-import { AuthenticationService } from '../core'
+import { AuthService } from '../core'
 import { environment } from '../../environments/environment'
 
 @Component({
@@ -19,7 +19,7 @@ export class SignInComponent implements OnDestroy {
   constructor(
     private _http: Http,
     private _router: Router,
-    private _authService: AuthenticationService,
+    private _authService: AuthService,
   ) { }
 
   ngOnDestroy() {

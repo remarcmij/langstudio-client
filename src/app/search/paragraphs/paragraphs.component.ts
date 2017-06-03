@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApi, SearchRequest, SearchResult, SearchParams } from '../search-api.service'
+import { SearchApi, SearchRequest, SearchResult, SearchParams } from '../../content/search-api.service'
 
 @Component({
   selector: 'my-paragraphs',

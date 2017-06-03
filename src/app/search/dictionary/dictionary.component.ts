@@ -3,7 +3,8 @@ import { Location } from '@angular/common'
 import { Router, ActivatedRoute } from '@angular/router'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApi, SearchRequest, SearchResult, SearchParams, SearchPopupParams } from '../search-api.service'
+import { SearchApi, SearchRequest, SearchResult, SearchParams, SearchPopupParams } from '../../content/search-api.service'
+import { LanguageService } from '../../content/language/language.service'
 import { SpeechSynthesizer } from '../../core'
 import { Navigation } from '../../core'
 
@@ -36,6 +37,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     private _changeDetector: ChangeDetectorRef,
     private _location: Location,
     private _searchApi: SearchApi,
+    private _language: LanguageService,
     private _speechSynthesizer: SpeechSynthesizer,
     private _navigation: Navigation
   ) {
@@ -43,10 +45,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     const params = this._activatedRoute.snapshot.params
-    this._searchApi.targetLang = params['target']
-    this._searchApi.baseLang = params['base']
     this.searchRequest.word = params['word'] || this.searchRequest.word
-    this.searchRequest.lang = this._searchApi.targetLang
+    this.searchRequest.lang = this._language.targetLang
     if (this.searchRequest.word) {
       this.wordLangSearch({ word: this.searchRequest.word, lang: this.searchRequest.lang })
     }

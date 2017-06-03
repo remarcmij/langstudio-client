@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable'
 import { Subject } from 'rxjs/Subject'
 
 import { ConfirmDialogComponent } from '../../confirm-dialog/confirm-dialog.component'
-import { AdminContentHttp } from '../admin-content-http.service'
+import { AdminContentApi } from '../admin-content-api.service'
 import { Topic } from '../../../shared'
 
 @Component({
@@ -23,7 +23,7 @@ export class AdminLibraryComponent implements OnInit, OnDestroy {
   constructor(
     private _dialog: MdDialog,
     private _router: Router,
-    private _httpService: AdminContentHttp
+    private _adminContentApi: AdminContentApi
   ) { }
 
   ngOnInit() {
@@ -58,7 +58,7 @@ export class AdminLibraryComponent implements OnInit, OnDestroy {
   deletePublication(publication: string) {
     Observable.from(this.topics)
       .filter(topic => topic.publication === publication)
-      .map(topic => this._httpService.deleteTopic(topic.fileName))
+      .map(topic => this._adminContentApi.deleteTopic(topic.fileName))
       .mergeAll(4)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(success => {
@@ -85,7 +85,7 @@ export class AdminLibraryComponent implements OnInit, OnDestroy {
   }
 
   private _getTopics(): Observable<Topic[]> {
-    return this._httpService.getTopics()
+    return this._adminContentApi.getTopics()
       .map(topics => topics.filter(topic => topic.type === 'article'))
   }
 }

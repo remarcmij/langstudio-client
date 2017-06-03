@@ -6,10 +6,10 @@ import * as LRU from 'lru-cache'
 import * as groupBy from 'lodash.groupby'
 import * as uniq from 'lodash.uniq'
 
-import { Lemma } from './dictionary/lemma-group/lemma.model'
-import { AuthenticationService } from '../core'
+import { Lemma } from './lemma.model'
+import { AuthService } from '../core'
 import { HttpHelper } from '../core'
-import { LanguageService } from '../language/language.service'
+import { LanguageService } from './language/language.service'
 import { environment } from '../../environments/environment'
 
 export interface SearchParams {
@@ -66,9 +66,6 @@ export interface PopoverResponse {
 @Injectable()
 export class SearchApi {
 
-  baseLang: string
-  targetLang: string
-
   readonly popupEmitter = new EventEmitter<SearchPopupParams>()
   readonly searchEmitter = new EventEmitter<SearchParams>()
   readonly searchSubject = new BehaviorSubject<SearchParams>(null)
@@ -79,7 +76,7 @@ export class SearchApi {
   constructor(
     private _http: Http,
     private _httpHelper: HttpHelper,
-    private _auth: AuthenticationService,
+    private _auth: AuthService,
     private _language: LanguageService
   ) {
     this.searchEmitter.subscribe(this.searchSubject)

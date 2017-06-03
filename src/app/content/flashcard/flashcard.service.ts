@@ -20,20 +20,20 @@ const PAUSE_AFTER_SHOW = 2500
 const STANDARD_TICK_DURATION = 200
 const MIN_TICKS = 15
 
-export interface FlashCard {
+export interface Flashcard {
   title: string
   show: boolean
-  prompt: FlashCardText,
-  answer: FlashCardText
+  prompt: FlashcardText,
+  answer: FlashcardText
 }
 
-export interface FlashCardText {
+export interface FlashcardText {
   text: string,
   lang: string,
   isForeign: boolean
 }
 
-interface FlashCardSettings {
+interface FlashcardSettings {
   flashcard: {
     order: string
     mode: string
@@ -44,30 +44,30 @@ interface FlashCardSettings {
   }
 }
 
-interface FlashCardSection {
+interface FlashcardSection {
   title: string
-  flashCards: FlashCardData[]
+  flashCards: FlashcardData[]
 }
 
-interface FlashCardData {
+interface FlashcardData {
   sectionTitle: string
   phrase: string
   translation: string
 }
 
-export interface FlashCardCallback {
-  (item: FlashCard): void
+export interface FlashcardCallback {
+  (item: Flashcard): void
 }
 
 @Injectable()
-export class FlashCardService {
+export class FlashcardService {
   private _article: Article
-  private _settings: FlashCardSettings
-  private _flashCardData: FlashCardData[]
+  private _settings: FlashcardSettings
+  private _flashCardData: FlashcardData[]
   private _speechSubscription: Subscription
   private _timerSubscription: Subscription
   private _tickDuration = STANDARD_TICK_DURATION
-  private _callback: FlashCardCallback
+  private _callback: FlashcardCallback
   private _autoPlay = false
   private _lastIndex = 0
 
@@ -105,7 +105,7 @@ export class FlashCardService {
     private speechSynthesizer: SpeechSynthesizer
   ) { }
 
-  setArticle(article: Article, callback: FlashCardCallback) {
+  setArticle(article: Article, callback: FlashcardCallback) {
     this._article = article
     this._callback = callback
     this._start()
@@ -186,9 +186,9 @@ export class FlashCardService {
     this.lastIndex = index
   }
 
-  private _getFlashCard(): FlashCard {
+  private _getFlashCard(): Flashcard {
     const data = this._flashCardData[Math.floor(this.lastIndex / 2)]
-    let flashCard: FlashCard
+    let flashCard: Flashcard
     const show = this.lastIndex % 2 !== 0
     const mode = this._settings.flashcard.mode
     if (mode === 'baseFirst') {
@@ -226,7 +226,7 @@ export class FlashCardService {
     return flashCard
   }
 
-  private _speak(flashCard: FlashCard): Observable<void> {
+  private _speak(flashCard: Flashcard): Observable<void> {
     const foreignRate = this.speechSynthesizer.getSpeechRate()
     let observable$: Observable<any>
 
@@ -257,8 +257,8 @@ export class FlashCardService {
     return observable$
   }
 
-  private _getFlashCardSections(): FlashCardSection[] {
-    const sections: FlashCardSection[] = []
+  private _getFlashCardSections(): FlashcardSection[] {
+    const sections: FlashcardSection[] = []
     let text = this._article.mdText
     let match = text.match(BEGIN_MARKER_REGEXP)
 
@@ -285,7 +285,7 @@ export class FlashCardService {
     return sections
   }
 
-  private _getSettings(): FlashCardSettings {
+  private _getSettings(): FlashcardSettings {
     const json = localStorage.getItem(LOCAL_STORAGE_KEY)
     if (json) {
       return JSON.parse(json)
@@ -307,9 +307,9 @@ export class FlashCardService {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(this._settings))
   }
 
-  private getSingleLineFlashCardSection(lines: string[]): FlashCardSection {
-    let title: string
-    let section: FlashCardSection
+  private getSingleLineFlashCardSection(lines: string[]): FlashcardSection {
+    let title: string = null // TODO: title is unused
+    let section: FlashcardSection
 
     for (const line of lines) {
       let foreignText: string
@@ -343,9 +343,9 @@ export class FlashCardService {
     return section
   }
 
-  private getUnorderListFlashCardSection(lines: string[]): FlashCardSection {
+  private getUnorderListFlashCardSection(lines: string[]): FlashcardSection {
     let title: string
-    let section: FlashCardSection
+    let section: FlashcardSection
 
     let i = 0
     const len = lines.length
@@ -406,7 +406,7 @@ export class FlashCardService {
 
 }
 
-function computeTimeout(exercisePair: FlashCard): number {
+function computeTimeout(exercisePair: Flashcard): number {
   const phraseWordCount = exercisePair.prompt.text.split(' ').length
   const translationWordCount = exercisePair.answer.text.split(' ').length
   const wordCount = Math.max(phraseWordCount, translationWordCount)

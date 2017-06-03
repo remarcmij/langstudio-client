@@ -1,7 +1,7 @@
 export const environment = {
   production: true,
-    api: {
+  api: {
     host: '',
     path: '/api'
   }
-};
+}

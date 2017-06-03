@@ -10,11 +10,7 @@ import { FlexContainerComponent } from './flex-container.component'
 @NgModule({
   imports: [
     CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    RouterModule,
-    FlexLayoutModule,
-    MaterialModule
+    FlexLayoutModule
   ],
   declarations: [
     FlexContainerComponent

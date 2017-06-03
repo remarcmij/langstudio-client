@@ -1,7 +1,7 @@
 import { Component, ViewContainerRef } from '@angular/core'
 import { MdIconRegistry } from '@angular/material'
 
-import { AuthenticationService } from './core'
+import { AuthService } from './core'
 import { SpeechSynthesizer } from './core'
 
 @Component({
@@ -14,17 +14,17 @@ export class AppComponent {
   constructor(
     _mdIconRegistry: MdIconRegistry,
     _viewContainerRef: ViewContainerRef,
-    _authService: AuthenticationService,
-    _speechSynthesizer: SpeechSynthesizer
+    _auth: AuthService,
+    _speech: SpeechSynthesizer
   ) {
     _mdIconRegistry.registerFontClassAlias('fontawesome', 'fa')
 
     // You need this small hack in order to catch application root view container ref
     this.viewContainerRef = _viewContainerRef
 
-    _authService.captureTokenCookie()
+    _auth.captureTokenCookie()
 
-    if (_speechSynthesizer.isSynthesisSupported) {
+    if (_speech.isSynthesisSupported) {
       console.log('speech synthesis is available')
     } else {
       console.log('speech synthesis is NOT available')

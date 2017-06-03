@@ -5,12 +5,12 @@ import * as LRU from 'lru-cache'
 
 import { Topic } from '../shared'
 import { Article, HashTagItem } from './article/article.model'
-import { AuthenticationService } from '../core'
+import { AuthService } from '../core'
 import { HttpHelper } from '../core'
 import { environment } from '../../environments/environment'
 
 @Injectable()
-export class ContentHttp {
+export class ContentApi {
 
   private readonly _topicCache = LRU<Topic[]>({ max: 100, maxAge: 1000 * 60 * 60 })
   private readonly _hashTagCache = LRU<HashTagItem[]>({ max: 100, maxAge: 1000 * 60 * 60 })
@@ -23,7 +23,7 @@ export class ContentHttp {
   constructor(
     private _http: Http,
     private _httpHelper: HttpHelper,
-    private _authService: AuthenticationService
+    private _authService: AuthService
   ) { }
 
   getPublications(): Observable<Topic[]> {
