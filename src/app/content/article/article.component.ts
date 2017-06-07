@@ -56,11 +56,11 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this._language.targetLang = this.article.foreignLang
     this.hidePopover()
 
-    this._navigation.popTopEmitter
+    this._navigation.scrollState
       .takeUntil(this._ngUnsubscribe)
-      .subscribe((scrollState: string) => this.scrollState = scrollState)
+      .subscribe(state => this.scrollState = state)
 
-    this._searchApi.popupEmitter
+    this._searchApi.showPopover
       .takeUntil(this._ngUnsubscribe)
       .subscribe(params => this._showPopover(params))
 
@@ -164,7 +164,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
         ev.preventDefault()
         ev.stopPropagation()
         params.lang = this.article.foreignLang
-        this._searchApi.popupEmitter.emit(params)
+        this._searchApi.showPopover.next(params)
       }
     }
   }
@@ -183,7 +183,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
   wordSearch(word?: string) {
     if (word) {
-      this._searchApi.searchEmitter.emit({ word, lang: this.article.foreignLang })
+      this._searchApi.searchSubject.next({ word, lang: this.article.foreignLang })
     }
     this._router.navigate(['/search/dict'])
   }

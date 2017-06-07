@@ -48,7 +48,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._searchApi.popupEmitter
+    this._searchApi.showPopover
       .takeUntil(this._ngUnsubscribe)
       .subscribe(params => this._showPopover(params))
   }
@@ -75,7 +75,7 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   foreignWordSearch(word: string) {
     this.hidePopover()
-    this._searchApi.searchEmitter.emit({ word, lang: this._language.targetLang })
+    this._searchApi.searchSubject.next({ word, lang: this._language.targetLang })
   }
 
   private _showPopover(params: DictPopoverParams) {

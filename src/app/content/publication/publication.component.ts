@@ -29,14 +29,14 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
     private _content: ContentService,
     private _contentApi: ContentApiService,
     private _language: LanguageService,
-    private _navigationService: NavigationService
+    private _navigation: NavigationService
   ) {
   }
 
   ngOnInit() {
-    this._navigationService.popTopEmitter
+    this._navigation.scrollState
       .takeUntil(this._ngUnsubscribe)
-      .subscribe((scrollState: string) => this.scrollState = scrollState)
+      .subscribe(state => this.scrollState = state)
 
     this.publication = this._route.snapshot.params['publication']
     this._contentApi.getPublicationTopics(this.publication)
@@ -46,7 +46,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
         this._language.baseLang = this.indexTopic.baseLang
         this._language.targetLang = this.indexTopic.foreignLang
         this.topics = topics.filter(topic => topic.chapter !== 'index')
-        this._navigationService.restoreTop(SELECTOR)
+        this._navigation.restoreTop(SELECTOR)
       }, err => window.alert(`Error: ${err}`))
 
     this._content.onEscKey()
@@ -60,7 +60,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   canDeactivate(): boolean {
-    this._navigationService.saveTop(SELECTOR)
+    this._navigation.saveTop(SELECTOR)
     return true
   }
 
@@ -76,7 +76,7 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   openArticle(topic: Topic) {
-    this._navigationService.clearTop('article')
+    this._navigation.clearTop('article')
     this._router.navigate(['/library', topic.publication, topic.chapter])
   }
 

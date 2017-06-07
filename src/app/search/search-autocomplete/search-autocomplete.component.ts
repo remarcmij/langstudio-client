@@ -5,7 +5,6 @@ import { Observable } from 'rxjs/Observable'
 import { Observer } from 'rxjs/Observer'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
-import * as debounce from 'lodash.debounce'
 
 import { SearchApiService, SearchParams } from '../../content/services/search-api.service'
 import { ContentService } from '../../content/services/content.service'
@@ -35,7 +34,7 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
   @ViewChild(MdAutocompleteTrigger) private _trigger: MdAutocompleteTrigger
   @ViewChild('searchField') private _input: ElementRef
   private _ngUnsubscribe = new Subject<void>()
-  private _debouncedSearch: (ev: any) => void
+  private _subject = new Subject<string>()
 
   constructor(
     private _renderer: Renderer,
@@ -44,11 +43,23 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
     private _content: ContentService,
     private _language: LanguageService
   ) {
-    this._debouncedSearch = debounce(this._autoCompleteSearch.bind(this), 100)
   }
 
   ngOnInit() {
     this.targetLang = this._language.targetLang
+
+    this._subject
+      .debounceTime(250)
+      .mergeMap((term: string) => this._searchApi.autoCompleteSearch(term))
+      .map(items => items.slice(0, MAX_ITEMS))
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(items => {
+        this.items = items
+        if (items.length > 0) {
+          this._searchApi.searchSubject.next(items[0])
+        }
+      }, err => console.error(err))
+
   }
 
   ngAfterViewInit() {
@@ -88,7 +99,7 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
   onItemSelect(item: SearchParams) {
     this.items = []
     this.term = ''
-    this._searchApi.searchEmitter.emit(item)
+    this._searchApi.searchSubject.next(item)
     // this.onSelect.emit(item)
   }
 
@@ -99,21 +110,7 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
     }
     ev = ev.toLowerCase().trim()
     if (ev.length > 0) {
-      this._debouncedSearch(ev)
+      this._subject.next(ev)
     }
-  }
-
-  private _autoCompleteSearch(term: string) {
-    this._searchApi
-      .autoCompleteSearch(term)
-      .map(items => items.slice(0, MAX_ITEMS))
-      .takeUntil(this._ngUnsubscribe)
-      .subscribe(items => {
-        this.items = items
-        if (items.length > 0) {
-          this._searchApi.searchEmitter.emit(items[0])
-          // this.onSelect.emit(items[0])
-        }
-      }, err => console.error(err))
   }
 }

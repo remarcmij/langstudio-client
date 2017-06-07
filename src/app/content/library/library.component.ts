@@ -31,17 +31,17 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   constructor(
     private _router: Router,
     private _content: ContentService,
-    private _authService: AuthService,
+    private _auth: AuthService,
     private _contentApi: ContentApiService,
-    private _navigationService: NavigationService
+    private _navigation: NavigationService
   ) { }
 
   ngOnInit() {
-    this._navigationService.popTopEmitter
+    this._navigation.scrollState
       .takeUntil(this._ngUnsubscribe)
-      .subscribe((scrollState: string) => this.scrollState = scrollState)
+      .subscribe(state => this.scrollState = state)
 
-    this._authService.getUser()
+    this._auth.getUser()
       .do(user => this.user = user)
       .mergeMap(() => this._getTopics())
       .takeUntil(this._ngUnsubscribe)
@@ -58,7 +58,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   }
 
   canDeactivate(): boolean {
-    this._navigationService.saveTop(SELECTOR)
+    this._navigation.saveTop(SELECTOR)
     return true
   }
 
@@ -101,7 +101,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
   signOut() {
     this.sidenav.isOpen = false
-    this._authService.signOut()
+    this._auth.signOut()
     this.user = undefined
     this._contentApi.clearCache()
     this._getTopics()
@@ -141,7 +141,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       .map(topics => topics.sort((a, b) => makeSortKey(a).localeCompare(makeSortKey(b))))
       .do((topics: Topic[]) => {
         this.topics = topics
-        this._navigationService.restoreTop(SELECTOR)
+        this._navigation.restoreTop(SELECTOR)
       })
   }
 

@@ -1,21 +1,23 @@
-import { Injectable, EventEmitter, NgZone } from '@angular/core'
+import { Injectable, NgZone } from '@angular/core'
 import { Observable } from 'rxjs/Observable'
+import { Subject } from 'rxjs/Subject'
 
 const delay = 200 // ms
 
 @Injectable()
 export class NavigationService {
 
-  popTopEmitter = new EventEmitter<string>()
+  readonly scrollState = new Subject<string>()
   public topMap: { [key: string]: number } = {}
 
   constructor(
     private _zone: NgZone
-  ) { }
+  ) {
+  }
 
   saveTop(key: string) {
     this.topMap[key] = document.querySelector('#my-content').scrollTop
-    this.popTopEmitter.emit('busy')
+    this.scrollState.next('busy')
   }
 
   restoreTop(key: string) {
@@ -24,7 +26,7 @@ export class NavigationService {
       setTimeout(() => {
         this._zone.run(() => {
           document.querySelector('#my-content').scrollTop = top
-          this.popTopEmitter.emit('ready')
+          this.scrollState.next('ready')
         })
       }, delay)
     })

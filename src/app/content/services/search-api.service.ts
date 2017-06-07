@@ -1,6 +1,7 @@
-import { Injectable, EventEmitter } from '@angular/core'
+import { Injectable } from '@angular/core'
 import { Http, Response, URLSearchParams, Headers, RequestOptions } from '@angular/http'
 import { Observable } from 'rxjs/Observable'
+import { Subject } from 'rxjs/Subject'
 import { BehaviorSubject } from 'rxjs/BehaviorSubject'
 import * as LRU from 'lru-cache'
 import * as groupBy from 'lodash.groupby'
@@ -77,8 +78,7 @@ export interface PopoverResponse {
 @Injectable()
 export class SearchApiService {
 
-  readonly popupEmitter = new EventEmitter<DictPopoverParams>()
-  readonly searchEmitter = new EventEmitter<SearchParams>()
+  readonly showPopover = new Subject<DictPopoverParams>()
   readonly searchSubject = new BehaviorSubject<SearchParams>(null)
 
   private readonly _searchWordCache = LRU<LemmaSearchResult>({ max: 500, maxAge: 1000 * 60 * 60 })
@@ -90,7 +90,6 @@ export class SearchApiService {
     private _auth: AuthService,
     private _language: LanguageService
   ) {
-    this.searchEmitter.subscribe(this.searchSubject)
   }
 
   searchParagraphs(searchRequest: SearchRequest) {

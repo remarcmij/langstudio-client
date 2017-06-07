@@ -79,10 +79,6 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     this._location.back()
   }
 
-  searchTermChanged() {
-
-  }
-
   wordLangSearch(searchTarget: SearchParams) {
     this.hidePopover()
     this.searchRequest.word = searchTarget.word

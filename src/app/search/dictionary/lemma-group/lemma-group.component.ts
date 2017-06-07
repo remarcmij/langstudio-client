@@ -45,7 +45,7 @@ export class LemmaGroupComponent {
       ev.preventDefault()
       ev.stopPropagation()
       params.lang = this._language.targetLang
-      this._searchApi.popupEmitter.emit(params)
+      this._searchApi.showPopover.next(params)
     }
   }
 
@@ -54,7 +54,7 @@ export class LemmaGroupComponent {
     ev.stopPropagation()
     const word = base
     const lang = this.lemmas[0].baseLang
-    this._searchApi.searchEmitter.emit({ word, lang })
+    this._searchApi.searchSubject.next({ word, lang })
   }
 
   convertMarkdown(text: string): string {
