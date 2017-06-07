@@ -34,7 +34,6 @@ export class AdminPublicationComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.publication = this._activatedRoute.snapshot.params['publication']
     this._getTopics()
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(topics => this.topics = topics)
   }
 
@@ -64,7 +63,6 @@ export class AdminPublicationComponent implements OnInit, OnDestroy {
   deleteArticle(topic: Topic) {
     this._adminContentApi.deleteTopic(topic.fileName)
       .mergeMap(() => this._getTopics())
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(topics => {
         this.topics = topics
       }, () => {

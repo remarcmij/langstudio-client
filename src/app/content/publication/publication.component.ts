@@ -40,7 +40,6 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
 
     this.publication = this._route.snapshot.params['publication']
     this._contentApi.getPublicationTopics(this.publication)
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(topics => {
         this.indexTopic = topics.filter(topic => topic.chapter === 'index')[0]
         this._language.baseLang = this.indexTopic.baseLang

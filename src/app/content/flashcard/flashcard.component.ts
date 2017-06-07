@@ -75,7 +75,6 @@ export class FlashCardComponent implements OnInit, OnDestroy {
     this.chapter = params['chapter']
     this._contentHttp
       .getArticle(this.publication, this.chapter)
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(article => {
         this.article = article
         // this.updateNavButtons()

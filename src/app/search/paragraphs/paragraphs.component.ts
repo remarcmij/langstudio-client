@@ -64,7 +64,6 @@ export class ParagraphsComponent implements OnInit, OnDestroy {
 
   private _searchMore() {
     this._searchApi.searchParagraphs(this.searchRequest)
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(result => {
         this.paras = this.paras.concat(result.paragraphs)
         if (result.haveMore) {

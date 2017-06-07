@@ -51,7 +51,6 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
   ngOnInit() {
 
     this._searchApi.popoverSearch(this.input.word, this.input.lang)
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(resp => {
         if (!resp) {
           this.errorText = 'Not in in dictionary.'
@@ -92,7 +91,6 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
     Observable.fromEvent(window, 'touchmove')
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.shouldHide.emit())
-
   }
 
   ngOnDestroy() {

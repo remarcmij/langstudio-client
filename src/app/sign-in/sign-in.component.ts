@@ -36,7 +36,6 @@ export class SignInComponent implements OnDestroy {
     })
 
     this._http.post(`${environment.api.host}/auth/local`, body, options)
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(() => {
         // let cookieHeader = response.headers.get('set-cookie')
         this._authService.captureTokenCookie()

@@ -28,7 +28,6 @@ export class AdminLibraryComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this._getTopics()
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(topics => this.topics = topics)
   }
 

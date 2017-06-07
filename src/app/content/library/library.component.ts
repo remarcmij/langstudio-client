@@ -22,7 +22,6 @@ const SELECTOR = 'library'
 export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   sidenav = { isOpen: false }
-  user: User | undefined
   topics: Topic[]
   scrollState = 'busy'
   readonly title = config.appTitle
@@ -41,10 +40,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       .takeUntil(this._ngUnsubscribe)
       .subscribe(state => this.scrollState = state)
 
-    this._auth.getUser()
-      .do(user => this.user = user)
-      .mergeMap(() => this._getTopics())
-      .takeUntil(this._ngUnsubscribe)
+    this._getTopics()
       .subscribe(null, err => window.alert(`Error: ${err}`))
 
     this._content.onEscKey()
@@ -102,10 +98,8 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   signOut() {
     this.sidenav.isOpen = false
     this._auth.signOut()
-    this.user = undefined
     this._contentApi.clearCache()
     this._getTopics()
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(null, err => window.alert(`Error: ${err}`))
   }
 

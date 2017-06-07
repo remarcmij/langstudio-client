@@ -91,7 +91,6 @@ export class DictionaryComponent implements OnInit, OnDestroy {
 
   private _searchMore() {
     this._searchApi.searchLemmas(this.result, this.searchRequest)
-      .takeUntil(this._ngUnsubscribe)
       .subscribe(result => {
         this.result = result
         if (result.haveMore) {

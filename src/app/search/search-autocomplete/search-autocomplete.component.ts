@@ -50,7 +50,7 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
 
     this._subject
       .debounceTime(250)
-      .mergeMap((term: string) => this._searchApi.autoCompleteSearch(term))
+      .switchMap((term: string) => this._searchApi.autoCompleteSearch(term))
       .map(items => items.slice(0, MAX_ITEMS))
       .takeUntil(this._ngUnsubscribe)
       .subscribe(items => {
