@@ -7,9 +7,9 @@ import * as debounce from 'lodash.debounce'
 import * as equal from 'deep-equal'
 
 import { Article } from '../article/article.model'
-import { ContentApi } from '../content-api.service'
+import { ContentApiService } from '../services/content-api.service'
 import { FlashcardService, Flashcard } from './flashcard.service'
-import { SpeechSynthesizer } from '../../core'
+import { SpeechSynthesizerService } from '../../core'
 // import { NavButton } from '../../shared'
 
 const keyCodeSpace = 32
@@ -59,9 +59,9 @@ export class FlashCardComponent implements OnInit, OnDestroy {
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
     private _changeDetector: ChangeDetectorRef,
-    private _contentHttp: ContentApi,
+    private _contentHttp: ContentApiService,
     private _flashCardService: FlashcardService,
-    private _speechSynthesizer: SpeechSynthesizer
+    private _speechSynthesizer: SpeechSynthesizerService
   ) {
     this._goIndexDebounced = debounce(this.goIndex.bind(this), buttonDelay)
   }

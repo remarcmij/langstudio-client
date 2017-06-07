@@ -5,7 +5,7 @@ import { LibraryComponent } from './library/library.component'
 import { PublicationComponent } from './publication/publication.component'
 import { ArticleComponent } from './article/article.component'
 import { FlashCardComponent } from './flashcard/flashcard.component'
-import { ArticleResolver } from './article/article.resolver'
+import { ArticleResolverService } from './article/article-resolver.service'
 
 import { CanDeactivateGuard } from '../core'
 
@@ -17,7 +17,7 @@ const contentRoutes: Routes = [
   {
     path: 'library/:publication/:chapter',
     component: ArticleComponent,
-    resolve: { article: ArticleResolver },
+    resolve: { article: ArticleResolverService },
     canDeactivate: [CanDeactivateGuard]
   },
   {

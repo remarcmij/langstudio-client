@@ -18,15 +18,13 @@ import 'rxjs/add/operator/delay'
 import 'rxjs/add/operator/catch'
 import 'rxjs/add/operator/takeUntil'
 import 'rxjs/add/operator/delay'
-import 'rxjs/add/operator/toPromise'
 
-import { SpeechSynthesizer } from './speech-synthesizer.service'
+import { SpeechSynthesizerService } from './speech-synthesizer.service'
 import { AuthService } from './auth.service'
-import { CoreUtil } from './core-util.service'
-import { HttpHelper } from './http-helper.service'
-import { Navigation } from './navigation.service'
+import { HttpHelperService } from './http-helper.service'
+import { NavigationService } from './navigation.service'
 import { AuthGuard } from './auth-guard.service'
-import { CanDeactivateGuard } from './can-deactivate.guard'
+import { CanDeactivateGuard } from './can-deactivate-guard.service'
 import { config } from '../app.config'
 
 @NgModule({
@@ -34,11 +32,10 @@ import { config } from '../app.config'
   exports: [],
   declarations: [],
   providers: [
-    CoreUtil,
-    SpeechSynthesizer,
+    SpeechSynthesizerService,
+    HttpHelperService,
     AuthService,
-    HttpHelper,
-    Navigation,
+    NavigationService,
     AuthGuard,
     CanDeactivateGuard
   ]

@@ -5,9 +5,12 @@ import { Observable } from 'rxjs/Observable'
 import { Observer } from 'rxjs/Observer'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
+import * as debounce from 'lodash.debounce'
 
-import { SearchApi, SearchParams } from '../../content/search-api.service'
-import { CoreUtil } from '../../core'
+import { SearchApiService, SearchParams } from '../../content/services/search-api.service'
+import { ContentService } from '../../content/services/content.service'
+import { LanguageService } from '../../content/services/language.service'
+import { NavigationService } from '../../core'
 
 const MAX_ITEMS = 20
 const SCROLL_THRESHOLD = 16
@@ -27,24 +30,31 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
   searchCtrl = new FormControl()
   term: string
   items: SearchParams[] = []
-  // @Output() onSelect = new EventEmitter<WordLang>()
+  targetLang: string
+
   @ViewChild(MdAutocompleteTrigger) private _trigger: MdAutocompleteTrigger
   @ViewChild('searchField') private _input: ElementRef
   private _ngUnsubscribe = new Subject<void>()
+  private _debouncedSearch: (ev: any) => void
 
   constructor(
     private _renderer: Renderer,
-    private _coreUtil: CoreUtil,
-    private _search: SearchApi
-  ) { }
+    private _navigation: NavigationService,
+    private _searchApi: SearchApiService,
+    private _content: ContentService,
+    private _language: LanguageService
+  ) {
+    this._debouncedSearch = debounce(this._autoCompleteSearch.bind(this), 100)
+  }
 
   ngOnInit() {
+    this.targetLang = this._language.targetLang
   }
 
   ngAfterViewInit() {
     const searchField = this._input.nativeElement
 
-    this._coreUtil.onEscKey()
+    this._content.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => {
         this._trigger.closePanel()
@@ -63,7 +73,7 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
         }
       })
 
-    this._coreUtil.scrollDetectorFor(document.querySelector('#my-content'))
+    this._navigation.scrollDetectorFor(document.querySelector('#my-content'))
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this._trigger.closePanel())
 
@@ -78,7 +88,7 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
   onItemSelect(item: SearchParams) {
     this.items = []
     this.term = ''
-    this._search.searchEmitter.emit(item)
+    this._searchApi.searchEmitter.emit(item)
     // this.onSelect.emit(item)
   }
 
@@ -89,17 +99,21 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
     }
     ev = ev.toLowerCase().trim()
     if (ev.length > 0) {
-      this._search
-        .autoCompleteSearch(ev)
-        .map(items => items.slice(0, MAX_ITEMS))
-        .takeUntil(this._ngUnsubscribe)
-        .subscribe(items => {
-          this.items = items
-          if (items.length > 0) {
-            this._search.searchEmitter.emit(items[0])
-            // this.onSelect.emit(items[0])
-          }
-        }, err => console.error(err))
+      this._debouncedSearch(ev)
     }
+  }
+
+  private _autoCompleteSearch(term: string) {
+    this._searchApi
+      .autoCompleteSearch(term)
+      .map(items => items.slice(0, MAX_ITEMS))
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe(items => {
+        this.items = items
+        if (items.length > 0) {
+          this._searchApi.searchEmitter.emit(items[0])
+          // this.onSelect.emit(items[0])
+        }
+      }, err => console.error(err))
   }
 }

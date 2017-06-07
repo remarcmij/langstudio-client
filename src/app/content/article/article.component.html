@@ -22,7 +22,7 @@
       <my-flex-container>
         <div *ngIf="article" class="my-whiteframe-2dp my-padding-2" [style.text-align]="article.baseLang.startsWith('ar') ? 'right' : 'left'">
           <div class="my-fade-in" [class.my-hide]="scrollState === 'busy'">
-            <my-article-core [article]="article" [hashTag]="tag" (clicked)="onClick($event)" (anchors)="acceptAnchors($event)"></my-article-core>
+            <my-article-body [article]="article" [hashTag]="tag" (clicked)="onClick($event)" (anchors)="acceptAnchors($event)"></my-article-body>
           </div>
         </div>
       </my-flex-container>

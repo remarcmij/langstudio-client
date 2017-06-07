@@ -1,6 +1,6 @@
 <md-card (click)="onClick($event)">
   <md-card-title *ngIf="base === word">{{base}}</md-card-title>
-  <md-card-content>
+  <md-card-content class="text-content markdown-body">
     <p *ngFor="let lemma of lemmas; let idx = index; trackBy: trackByFn" [innerHTML]="convertMarkdown(lemma.text)" [class.homonym-separator]="isNewHomonym(idx)"></p>
   </md-card-content>
   <md-card-actions fxLayout="row" fxLayoutAlign="end">

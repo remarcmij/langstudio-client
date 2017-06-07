@@ -6,12 +6,14 @@ import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
 import { Article, AnchorInfo } from './article.model'
-import { ContentApi } from '../content-api.service'
-import { SpeechSynthesizer } from '../../core'
-import { CoreUtil } from '../../core'
-import { Navigation } from '../../core'
+import { ContentApiService } from '../services/content-api.service'
+import { ContentService } from '../services/content.service'
+import { LanguageService } from '../services/language.service'
+import { SpeechSynthesizerService } from '../../core'
+import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
-import { SearchApi, SearchPopupParams } from '../search-api.service'
+import { SearchApiService, DictPopoverParams } from '../services/search-api.service'
+import { DictPopoverService } from '../../content/dict-popover/dict-popover.service'
 
 const SELECTOR = 'article'
 
@@ -25,7 +27,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
   chapter: string
   tag: string
   hashTag: string
-  popoverParams: SearchPopupParams
+  popoverParams: DictPopoverParams
   scrollState = 'busy'
   sidepanel: { isopen: boolean } = { isopen: false }
   anchors: AnchorInfo[] = []
@@ -38,16 +40,20 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     private _route: ActivatedRoute,
     private _changeDetector: ChangeDetectorRef,
     private _zone: NgZone,
-    private _searchApi: SearchApi,
-    private _coreUtil: CoreUtil,
-    private _contentHttp: ContentApi,
-    private _speechSynthesizer: SpeechSynthesizer,
-    private _navigation: Navigation,
+    private _contentApi: ContentApiService,
+    private _content: ContentService,
+    private _searchApi: SearchApiService,
+    private _language: LanguageService,
+    private _speechSynthesizer: SpeechSynthesizerService,
+    private _navigation: NavigationService,
+    private _popoverService: DictPopoverService
   ) {
   }
 
   ngOnInit() {
     this.article = this._route.snapshot.data['article']
+    this._language.baseLang = this.article.baseLang
+    this._language.targetLang = this.article.foreignLang
     this.hidePopover()
 
     this._navigation.popTopEmitter
@@ -68,7 +74,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
       this._navigation.restoreTop(SELECTOR)
     }
 
-    this._coreUtil.onEscKey()
+    this._content.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.onAction('search'))
 
@@ -148,30 +154,22 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
         }
         this._speechSynthesizer.speakMulti(text, this.article.foreignLang, {
           rate: this._speechSynthesizer.getSpeechRate()
-        })
+        }).takeUntil(this._ngUnsubscribe)
+          .subscribe()
       }
     } else {
       const target = <HTMLElement>ev.target
-      if (target.tagName === 'SPAN') {
+      const params = <DictPopoverParams>this._popoverService.getWordClickParams(target)
+      if (params) {
         ev.preventDefault()
         ev.stopPropagation()
-        let word = target.innerText.trim()
-        word = this._coreUtil.cleanseTerm(word)
-        const top = this._coreUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
-        const style = window.getComputedStyle(target)
-        const height = parseInt(style.getPropertyValue('line-height'), 10)
-        this._searchApi.popupEmitter.emit({
-          word,
-          lang: this.article.foreignLang,
-          top,
-          height
-        })
-        // this.showPopover(word, top, height)
+        params.lang = this.article.foreignLang
+        this._searchApi.popupEmitter.emit(params)
       }
     }
   }
 
-  _showPopover(params: SearchPopupParams) {
+  private _showPopover(params: DictPopoverParams) {
     this.hidePopover()
     this.popoverParams = params
     this._changeDetector.detectChanges()
@@ -192,10 +190,12 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
   speakWord(word: string) {
     this._speechSynthesizer.speakSingle(word, this.article.foreignLang)
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe()
   }
 
   hashTagClicked(hashTag: string) {
-    this._contentHttp.getHashTagItems(hashTag)
+    this._contentApi.getHashTagItems(hashTag)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(items => {
         if (items.length === 1 && items[0].publication === this.publication && items[0].chapter === this.chapter) {

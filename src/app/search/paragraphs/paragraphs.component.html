@@ -1,3 +1,5 @@
-<p>
-  paragraphs works!
-</p>
+<div class="my-whiteframe-3dp markdown-body text-content my-padding">
+  <ul>
+    <li *ngFor="let para of paras; trackBy: trackByFn" [innerHTML]="safeHtml(para.content)"></li>
+  </ul>
+</div>

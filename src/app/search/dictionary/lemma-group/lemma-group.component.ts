@@ -1,9 +1,10 @@
 import { Component, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core'
 
 import { Lemma } from '../../../content/lemma.model'
-import { CoreUtil } from '../../../core'
-import { SearchApi, SearchPopupParams } from '../../../content/search-api.service'
-import { LanguageService } from '../../../content/language/language.service'
+import { DictPopoverService } from '../../../content/dict-popover/dict-popover.service'
+import { SearchApiService, DictPopoverParams } from '../../../content/services/search-api.service'
+import { MarkdownService } from '../../../content/services/markdown.service'
+import { LanguageService } from '../../../content/services/language.service'
 
 @Component({
   selector: 'my-lemma-group',
@@ -30,34 +31,34 @@ export class LemmaGroupComponent {
   @Input() lemmas: Lemma[]
 
   constructor(
-    private _searchApi: SearchApi,
+    private _searchApi: SearchApiService,
     private _language: LanguageService,
-    private _coreUtil: CoreUtil
+    private _popoverService: DictPopoverService,
+    private _markdown: MarkdownService
   ) {
   }
 
   onClick(ev: MouseEvent) {
     const target = <HTMLElement>ev.target
-    if (target.tagName === 'SPAN') {
+    const params = <DictPopoverParams>this._popoverService.getWordClickParams(target)
+    if (params) {
       ev.preventDefault()
       ev.stopPropagation()
-      let word = target.innerText.trim()
-      word = this._coreUtil.cleanseTerm(word)
-      const top = this._coreUtil.cumulativeTop(target) - document.querySelector('#my-content').scrollTop
-      const style = window.getComputedStyle(target)
-      const height = parseInt(style.getPropertyValue('line-height'), 10)
-      this._searchApi.popupEmitter.emit({ word, top, height, lang: 'id-ID' })
+      params.lang = this._language.targetLang
+      this._searchApi.popupEmitter.emit(params)
     }
   }
 
   baseClicked(ev: MouseEvent, base: string) {
     ev.preventDefault()
     ev.stopPropagation()
-    this._searchApi.searchEmitter.emit({word: base, lang: this._language.targetLang})
+    const word = base
+    const lang = this.lemmas[0].baseLang
+    this._searchApi.searchEmitter.emit({ word, lang })
   }
 
   convertMarkdown(text: string): string {
-    return this._coreUtil.insertMarkdownHtml(text).replace(/<\/?p>/g, '')
+    return this._markdown.insertMarkdownHtml(text).replace(/<\/?p>/g, '')
   }
 
   isNewHomonym(idx: number): boolean {

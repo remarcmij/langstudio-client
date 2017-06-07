@@ -5,7 +5,7 @@ import * as flatten from 'lodash.flatten'
 import * as shuffle from 'lodash.shuffle'
 
 import { Article } from '../article/article.model'
-import { SpeechSynthesizer } from '../../core'
+import { SpeechSynthesizerService } from '../../core'
 
 const LOCAL_STORAGE_KEY = 'flashcards'
 const BEGIN_MARKER_REGEXP = /<!-- flashcard -->/
@@ -102,7 +102,7 @@ export class FlashcardService {
   }
 
   constructor(
-    private speechSynthesizer: SpeechSynthesizer
+    private speechSynthesizer: SpeechSynthesizerService
   ) { }
 
   setArticle(article: Article, callback: FlashcardCallback) {

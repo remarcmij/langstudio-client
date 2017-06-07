@@ -1,5 +1,4 @@
 import { NgModule } from '@angular/core'
-import { HttpModule } from '@angular/http'
 import { MdAutocompleteModule } from '@angular/material'
 
 import { SharedModule } from '../shared'
@@ -13,7 +12,6 @@ import { SearchRoutingModule } from './search-routing.module'
 
 @NgModule({
   imports: [
-    HttpModule,
     SharedModule,
     MdAutocompleteModule,
     DictPopoverModule,

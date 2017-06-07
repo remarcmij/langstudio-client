@@ -173,7 +173,7 @@ export interface SpeakOptions {
 }
 
 @Injectable()
-export class SpeechSynthesizer {
+export class SpeechSynthesizerService {
   voicesAvailable: SpeechSynthesisVoice[]
   private _hasSpoken = false // needed for iOS
   isCancelling = false
@@ -296,7 +296,7 @@ export class SpeechSynthesizer {
     }
   }
 
-  speakMulti(text: string, lang: string, options?: SpeakOptions): Promise<{}> {
+  speakMulti(text: string, lang: string, options?: SpeakOptions): Observable<{}> {
     if (!this.isSynthesisSupported()) {
       throw new Error('speech synthesis not supported')
     }
@@ -323,16 +323,15 @@ export class SpeechSynthesizer {
       .map(phrase => phrase.trim())
       .filter(phrase => phrase.length !== 0)
       .concatMap(phrase => this.speakObservable(phrase, lang, options).delay(options.pause))
-      .toPromise()
   }
 
-  speakSingle(text: string, lang: string, options?: SpeakOptions): Promise<{}> {
+  speakSingle(text: string, lang: string, options?: SpeakOptions): Observable<{}> {
     if (!this.isSynthesisSupported()) {
-      return Promise.reject(new Error('speech synthesis not supported'))
+      return Observable.throw(new Error('speech synthesis not supported'))
     }
     this.cancel()
     this.isCancelling = false
-    return this.speakObservable(text, lang, options).toPromise()
+    return this.speakObservable(text, lang, options)
   }
 
   speakObservable(text: string, lang: string, options: SpeakOptions = {}): Observable<any> {

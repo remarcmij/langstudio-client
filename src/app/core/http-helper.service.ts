@@ -6,7 +6,7 @@ import { AuthService } from './auth.service'
 
 
 @Injectable()
-export class HttpHelper {
+export class HttpHelperService {
 
   constructor(
     private _authService: AuthService,

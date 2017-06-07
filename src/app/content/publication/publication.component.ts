@@ -5,10 +5,11 @@ import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
 import { Topic } from '../../shared'
-import { ContentApi } from '../content-api.service'
-import { Navigation } from '../../core'
+import { ContentApiService } from '../services/content-api.service'
+import { ContentService } from '../services/content.service'
+import { LanguageService } from '../services/language.service'
+import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
-import { CoreUtil} from '../../core'
 
 const SELECTOR = 'publication'
 
@@ -25,10 +26,12 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   constructor(
     private _router: Router,
     private _route: ActivatedRoute,
-    private _coreUtil: CoreUtil,
-    private _contentHttp: ContentApi,
-    private _navigationService: Navigation
-  ) { }
+    private _content: ContentService,
+    private _contentApi: ContentApiService,
+    private _language: LanguageService,
+    private _navigationService: NavigationService
+  ) {
+  }
 
   ngOnInit() {
     this._navigationService.popTopEmitter
@@ -36,21 +39,17 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
       .subscribe((scrollState: string) => this.scrollState = scrollState)
 
     this.publication = this._route.snapshot.params['publication']
-    this._contentHttp.getPublicationTopics(this.publication)
+    this._contentApi.getPublicationTopics(this.publication)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(topics => {
         this.indexTopic = topics.filter(topic => topic.chapter === 'index')[0]
+        this._language.baseLang = this.indexTopic.baseLang
+        this._language.targetLang = this.indexTopic.foreignLang
         this.topics = topics.filter(topic => topic.chapter !== 'index')
         this._navigationService.restoreTop(SELECTOR)
-      }, (err: Response) => {
-        if (err.status === 401) {
-          this._router.navigate(['/signin'])
-        } else {
-          window.alert(`Network Error: ${err.statusText}`)
-        }
-      })
+      }, err => window.alert(`Error: ${err}`))
 
-    this._coreUtil.onEscKey()
+    this._content.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.onAction('search'))
   }

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core'
 import { Observable } from 'rxjs/Observable'
 import { Http } from '@angular/http'
 
-import { HttpHelper } from '../../core'
+import { HttpHelperService } from '../../core/http-helper.service'
 import { User } from '../../core'
 import { environment } from '../../../environments/environment'
 
@@ -16,7 +16,7 @@ export class AdminUserApi {
 
   constructor(
     private _http: Http,
-    private _httpHelper: HttpHelper
+    private _httpHelper: HttpHelperService
   ) { }
 
   getUsers(): Observable<User[]> {

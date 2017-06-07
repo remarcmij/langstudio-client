@@ -6,10 +6,10 @@ import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
 import { AuthService, User } from '../../core'
-import { ContentApi } from '../content-api.service'
-import { CoreUtil } from '../../core'
+import { ContentApiService } from '../services/content-api.service'
+import { ContentService } from '../services/content.service'
 import { Topic } from '../../shared'
-import { Navigation } from '../../core'
+import { NavigationService } from '../../core'
 import { CanComponentDeactivate } from '../../core'
 import { config } from '../../app.config'
 
@@ -30,10 +30,10 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
   constructor(
     private _router: Router,
-    private _coreUtil: CoreUtil,
+    private _content: ContentService,
     private _authService: AuthService,
-    private _contentService: ContentApi,
-    private _navigationService: Navigation
+    private _contentApi: ContentApiService,
+    private _navigationService: NavigationService
   ) { }
 
   ngOnInit() {
@@ -45,9 +45,9 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       .do(user => this.user = user)
       .mergeMap(() => this._getTopics())
       .takeUntil(this._ngUnsubscribe)
-      .subscribe(() => { }, err => this._httpErrorHandler(err))
+      .subscribe(null, err => window.alert(`Error: ${err}`))
 
-    this._coreUtil.onEscKey()
+    this._content.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.onAction('search'))
   }
@@ -103,24 +103,24 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this.sidenav.isOpen = false
     this._authService.signOut()
     this.user = undefined
-    this._contentService.clearCache()
+    this._contentApi.clearCache()
     this._getTopics()
       .takeUntil(this._ngUnsubscribe)
-      .subscribe(() => { }, err => this._httpErrorHandler(err))
+      .subscribe(null, err => window.alert(`Error: ${err}`))
   }
 
   uploadFiles() {
-    this._contentService.clearCache()
+    this._contentApi.clearCache()
     this._router.navigate(['/admin', 'upload'])
   }
 
   manageContent() {
-    this._contentService.clearCache()
+    this._contentApi.clearCache()
     this._router.navigate(['/admin', 'library'])
   }
 
   manageUsers() {
-    this._contentService.clearCache()
+    this._contentApi.clearCache()
     this._router.navigate(['/admin', 'user'])
   }
 
@@ -137,7 +137,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       }
     }
 
-    return this._contentService.getPublications()
+    return this._contentApi.getPublications()
       .map(topics => topics.sort((a, b) => makeSortKey(a).localeCompare(makeSortKey(b))))
       .do((topics: Topic[]) => {
         this.topics = topics

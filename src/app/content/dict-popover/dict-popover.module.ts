@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core'
 
 import { SharedModule } from '../../shared'
-import { DictPopoverComponent} from './dict-popover.component'
+import { DictPopoverComponent } from './dict-popover.component'
+import { DictPopoverService } from './dict-popover.service'
 
 @NgModule({
   imports: [
@@ -9,6 +10,9 @@ import { DictPopoverComponent} from './dict-popover.component'
   ],
   declarations: [
     DictPopoverComponent
+  ],
+  providers: [
+    DictPopoverService
   ],
   exports: [
     DictPopoverComponent

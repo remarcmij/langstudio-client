@@ -13,11 +13,11 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 import { Article, AnchorInfo } from './article.model'
 
 @Component({
-  selector: 'my-article-core',
-  template: `<article #articleRef [innerHTML]="safeHtml" (click)="clicked.emit($event)"></article>`,
+  selector: 'my-article-body',
+  template: `<article #articleRef class="text-content markdown-body" [innerHTML]="safeHtml" (click)="clicked.emit($event)"></article>`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ArticleCoreComponent implements AfterViewChecked {
+export class ArticleBodyComponent implements AfterViewChecked {
 
   @Input() set article(article: Article) {
     this._articleElement = undefined

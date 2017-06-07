@@ -5,13 +5,15 @@ import { LibraryComponent } from './library/library.component'
 import { LibraryItemComponent } from './library/library-item.component'
 import { PublicationComponent } from './publication/publication.component'
 import { ArticleComponent } from './article/article.component'
-import { ArticleCoreComponent } from './article/article-core.component'
-import { ArticleResolver } from './article/article.resolver'
+import { ArticleBodyComponent } from './article/article-body.component'
+import { ArticleResolverService } from './article/article-resolver.service'
 import { NavigationModule } from '../navigation/navigation.module'
 import { DictPopoverModule } from './dict-popover/dict-popover.module'
-import { ContentApi } from './content-api.service'
-import { SearchApi } from './search-api.service'
-import { LanguageService } from './language/language.service'
+import { ContentApiService } from './services/content-api.service'
+import { SearchApiService } from './services/search-api.service'
+import { ContentService } from './services/content.service'
+import { LanguageService } from './services/language.service'
+import { MarkdownService } from './services/markdown.service'
 import { ContentRoutingModule } from './content-routing.module'
 
 @NgModule({
@@ -26,13 +28,15 @@ import { ContentRoutingModule } from './content-routing.module'
     LibraryItemComponent,
     PublicationComponent,
     ArticleComponent,
-    ArticleCoreComponent,
+    ArticleBodyComponent,
   ],
   providers: [
-    ContentApi,
-    SearchApi,
+    ContentApiService,
+    SearchApiService,
+    ContentService,
     LanguageService,
-    ArticleResolver
+    MarkdownService,
+    ArticleResolverService
   ]
 })
 export class ContentModule { }

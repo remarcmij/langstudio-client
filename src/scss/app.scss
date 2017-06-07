@@ -1,16 +1,11 @@
 @import "variables";
-@import '../../node_modules/@material/typography/mdc-typography';
-
-/*@import "../../node_modules/bootstrap/scss/bootstrap";*/
-
-// @import "bootstrap";
+$fa-font-path: "../../node_modules/font-awesome/fonts";
+@import "~font-awesome/scss/font-awesome.scss";
+@import "~github-markdown-css/github-markdown.css";
 @import "material";
 @import "dictionary";
 @import "article";
-// @import "flashcard";
 @import "side-panel";
-$fa-font-path: "../../node_modules/font-awesome/fonts";
-@import "../../node_modules/font-awesome/scss/font-awesome.scss";
 
 /* You can add global styles to this file, and also import other style files */
 
@@ -20,14 +15,10 @@ body {
     font-family: 'Helvetica Neue', 'Roboto', sans-serif;
 }
 
-my-article-core,
-my-lemma-group {
+.text-content {
     span {
         cursor: pointer;
         color: $brand-primary;
-    }
-    span.hashtag {
-        color: $brand-danger;
     }
 }
 

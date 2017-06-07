@@ -2,8 +2,8 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core'
 import { Router } from '@angular/router'
 
 import { Topic } from '../../shared'
-import {CoreUtil } from '../../core'
-import { Navigation } from '../../core'
+import { NavigationService } from '../../core'
+import { MarkdownService } from '../services/markdown.service'
 
 @Component({
   selector: 'my-library-item',
@@ -28,13 +28,13 @@ export class LibraryItemComponent {
   @Input() topic: Topic
 
   get subtitle() {
-    return this._coreUtil.tinyMarkdown(this.topic.subtitle)
+    return this._markdown.tinyMarkdown(this.topic.subtitle)
   }
 
   constructor(
-    private _coreUtil: CoreUtil,
     private _router: Router,
-    private _navigationService: Navigation
+    private _navigation: NavigationService,
+    private _markdown: MarkdownService
   ) {
   }
 
@@ -43,7 +43,7 @@ export class LibraryItemComponent {
   }
 
   openPublication() {
-    this._navigationService.clearTop('publication')
+    this._navigation.clearTop('publication')
     this._router.navigate(['/library', this.topic.publication])
   }
 }

@@ -3,14 +3,14 @@ import { Http, Response } from '@angular/http'
 import { Observable } from 'rxjs/Observable'
 import * as LRU from 'lru-cache'
 
-import { Topic } from '../shared'
-import { Article, HashTagItem } from './article/article.model'
-import { AuthService } from '../core'
-import { HttpHelper } from '../core'
-import { environment } from '../../environments/environment'
+import { Topic } from '../../shared'
+import { Article, HashTagItem } from '../article/article.model'
+import { AuthService } from '../../core'
+import { HttpHelperService } from '../../core/http-helper.service'
+import { environment } from '../../../environments/environment'
 
 @Injectable()
-export class ContentApi {
+export class ContentApiService {
 
   private readonly _topicCache = LRU<Topic[]>({ max: 100, maxAge: 1000 * 60 * 60 })
   private readonly _hashTagCache = LRU<HashTagItem[]>({ max: 100, maxAge: 1000 * 60 * 60 })
@@ -22,7 +22,7 @@ export class ContentApi {
 
   constructor(
     private _http: Http,
-    private _httpHelper: HttpHelper,
+    private _httpHelper: HttpHelperService,
     private _authService: AuthService
   ) { }
 
@@ -36,6 +36,7 @@ export class ContentApi {
     return this._http.get(url, options)
       .map(res => <Topic[]>res.json())
       .do(topics => this._topicCache.set(url, topics))
+      .catch(this._httpHelper.handleError)
   }
 
   getPublicationTopics(publication: string): Observable<Topic[]> {
@@ -56,6 +57,7 @@ export class ContentApi {
         })
         this._topicCache.set(url, topics)
       })
+      .catch(this._httpHelper.handleError)
   }
 
   getHashTagItems(hashTagName: string): Observable<HashTagItem[]> {
@@ -67,6 +69,8 @@ export class ContentApi {
     return this._http.get(url)
       .map(res => <HashTagItem[]>res.json())
       .do(hashTags => this._hashTagCache.set(hashTagName, hashTags))
+      .catch(this._httpHelper.handleError)
+
   }
 
   getAllHashTags(): Observable<any[]> {
@@ -77,6 +81,7 @@ export class ContentApi {
     return this._http.get(url)
       .map(res => <string[]>res.json())
       .do(hashTags => this._allTags = hashTags)
+      .catch(this._httpHelper.handleError)
   }
 
   getArticle(publication: string, chapter: string): Observable<Article> {
@@ -94,6 +99,7 @@ export class ContentApi {
             article.baseLang = topic.baseLang
           })
       })
+      .catch(this._httpHelper.handleError)
   }
 
   clearCache() {

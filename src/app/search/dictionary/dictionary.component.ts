@@ -3,10 +3,13 @@ import { Location } from '@angular/common'
 import { Router, ActivatedRoute } from '@angular/router'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApi, SearchRequest, SearchResult, SearchParams, SearchPopupParams } from '../../content/search-api.service'
-import { LanguageService } from '../../content/language/language.service'
-import { SpeechSynthesizer } from '../../core'
-import { Navigation } from '../../core'
+import {
+  SearchApiService, SearchRequest,
+  LemmaSearchResult, SearchParams, DictPopoverParams
+} from '../../content/services/search-api.service'
+import { LanguageService } from '../../content/services/language.service'
+import { SpeechSynthesizerService } from '../../core'
+import { NavigationService } from '../../core'
 
 @Component({
   templateUrl: './dictionary.component.html',
@@ -19,8 +22,8 @@ import { Navigation } from '../../core'
 })
 export class DictionaryComponent implements OnInit, OnDestroy {
 
-  result = new SearchResult()
-  popoverParams: SearchPopupParams
+  result = new LemmaSearchResult()
+  popoverParams: DictPopoverParams
   searchRequest: SearchRequest = {
     word: '',
     lang: '',
@@ -36,10 +39,10 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     private _activatedRoute: ActivatedRoute,
     private _changeDetector: ChangeDetectorRef,
     private _location: Location,
-    private _searchApi: SearchApi,
+    private _searchApi: SearchApiService,
     private _language: LanguageService,
-    private _speechSynthesizer: SpeechSynthesizer,
-    private _navigation: Navigation
+    private _speechSynthesizer: SpeechSynthesizerService,
+    private _navigation: NavigationService
   ) {
   }
 
@@ -85,13 +88,13 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     this.searchRequest.word = searchTarget.word
     this.searchRequest.lang = searchTarget.lang
     this.searchRequest.chunk = 0
-    this.result = new SearchResult()
+    this.result = new LemmaSearchResult()
     window.scrollTo(0, 0)
     this._searchMore()
   }
 
   private _searchMore() {
-    this._searchApi.searchWord(this.result, this.searchRequest)
+    this._searchApi.searchLemmas(this.result, this.searchRequest)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(result => {
         this.result = result

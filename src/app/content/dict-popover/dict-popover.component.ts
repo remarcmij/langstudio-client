@@ -7,8 +7,9 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApi, SearchPopupParams } from '../search-api.service'
-import { SpeechSynthesizer, CoreUtil } from '../../core'
+import { SearchApiService, DictPopoverParams } from '../services/search-api.service'
+import { MarkdownService } from '../services/markdown.service'
+import { SpeechSynthesizerService, NavigationService } from '../../core'
 
 const SCROLL_THRESHOLD = 16
 
@@ -18,7 +19,7 @@ const SCROLL_THRESHOLD = 16
   styleUrls: ['./dict-popover.component.scss']
 })
 export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, AfterViewChecked {
-  @Input() input = <SearchPopupParams>null
+  @Input() input = <DictPopoverParams>null
   @Output() wordSearch = new EventEmitter<string>()
   @Output() speakWord = new EventEmitter<string>()
   @Output() shouldHide = new EventEmitter<void>()
@@ -36,13 +37,14 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   constructor(
     private _elementRef: ElementRef,
-    private _searchApi: SearchApi,
+    private _searchApi: SearchApiService,
     private _sanitizer: DomSanitizer,
     private _renderer: Renderer,
     private _zone: NgZone,
     private _changeDetector: ChangeDetectorRef,
-    private _coreUtil: CoreUtil,
-    private _speechSynthesizer: SpeechSynthesizer
+    private _markdown: MarkdownService,
+    private _navigation: NavigationService,
+    private _speechSynthesizer: SpeechSynthesizerService
   ) {
   }
 
@@ -54,7 +56,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
         if (!resp) {
           this.errorText = 'Not in in dictionary.'
         } else {
-          const htmlText = this._coreUtil.tinyMarkdown(resp.text)
+          const htmlText = this._markdown.tinyMarkdown(resp.text)
           this.safeHtml = this._sanitizer.bypassSecurityTrustHtml(htmlText)
           this.baseWords = resp.baseWords
           this.baseList = resp.baseWords.join(', ')
@@ -66,7 +68,7 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   ngAfterViewInit() {
 
-    this._coreUtil.scrollDetectorFor(document.querySelector('#my-content'))
+    this._navigation.scrollDetectorFor(document.querySelector('#my-content'))
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.shouldHide.emit())
 

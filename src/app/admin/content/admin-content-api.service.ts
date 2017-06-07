@@ -4,7 +4,7 @@ import { Http } from '@angular/http'
 import * as LRU from 'lru-cache'
 
 import { Topic } from '../../shared'
-import { HttpHelper } from '../../core'
+import { HttpHelperService } from '../../core/http-helper.service'
 import { environment } from '../../../environments/environment'
 
 @Injectable()
@@ -14,7 +14,7 @@ export class AdminContentApi {
 
   constructor(
     private _http: Http,
-    private _httpHelper: HttpHelper
+    private _httpHelper: HttpHelperService
   ) { }
 
   getTopics(): Observable<Topic[]> {

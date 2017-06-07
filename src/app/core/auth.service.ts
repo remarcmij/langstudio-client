@@ -5,6 +5,8 @@ import { Observable } from 'rxjs/Observable'
 
 import { environment } from '../../environments/environment'
 
+// import { HttpHelper } from './http-helper.service'
+
 const TOKEN_NAME = 'token'
 
 export class User {
@@ -27,13 +29,14 @@ export class AuthService implements OnInit {
 
   constructor(
     private _http: Http,
-    private _router: Router
+    private _router: Router,
+    // private _httpHelper: HttpHelper
   ) {
   }
 
   ngOnInit() {
-    this._headers.append('Content-Type', 'application/json')
-    this._http.get(`${environment.api.host}${environment.api.path}/users/me`)
+    // this._headers.append('Content-Type', 'application/json')
+    // this._http.get(`${environment.api.host}${environment.api.path}/users/me`)
   }
 
   getUser(): Observable<User> {
@@ -45,6 +48,7 @@ export class AuthService implements OnInit {
       return this._http.get(`${environment.api.host}${environment.api.path}/users/me`, options)
         .map(response => response.json())
         .do((user: User) => this._user = user)
+        // .catch(this._httpHelper.handleError)
     } else {
       return Observable.of(undefined)
     }

@@ -6,26 +6,37 @@ import * as LRU from 'lru-cache'
 import * as groupBy from 'lodash.groupby'
 import * as uniq from 'lodash.uniq'
 
-import { Lemma } from './lemma.model'
-import { AuthService } from '../core'
-import { HttpHelper } from '../core'
-import { LanguageService } from './language/language.service'
-import { environment } from '../../environments/environment'
+import { Lemma } from '../lemma.model'
+import { AuthService } from '../../core'
+import { HttpHelperService } from '../../core/http-helper.service'
+import { LanguageService } from '../services/language.service'
+import { environment } from '../../../environments/environment'
+
+export interface Paragraph {
+  _id: string
+  word: string
+  wordLang: string
+  content: string
+  baseLang: string
+  targetLang: string
+  groupName: string
+  _topic: string
+}
 
 export interface SearchParams {
   word: string
   lang: string
 }
 
-export interface SearchPopupParams extends SearchParams {
+export interface DictPopoverParams extends SearchParams {
   top: number
   height: number
 }
 
 export interface SearchRequest {
   word: string
-  lang?: string
-  attr: string
+  lang: string
+  attr?: string
   chunk: number
 }
 
@@ -34,7 +45,7 @@ export interface LemmaOrderedMap {
   lemmas: { [base: string]: Lemma[] }
 }
 
-export class SearchResult {
+export class LemmaSearchResult {
   baseMap: LemmaOrderedMap = {
     bases: [],
     lemmas: {}
@@ -64,35 +75,40 @@ export interface PopoverResponse {
 }
 
 @Injectable()
-export class SearchApi {
+export class SearchApiService {
 
-  readonly popupEmitter = new EventEmitter<SearchPopupParams>()
+  readonly popupEmitter = new EventEmitter<DictPopoverParams>()
   readonly searchEmitter = new EventEmitter<SearchParams>()
   readonly searchSubject = new BehaviorSubject<SearchParams>(null)
 
-  private readonly _searchWordCache = LRU<SearchResult>({ max: 500, maxAge: 1000 * 60 * 60 })
+  private readonly _searchWordCache = LRU<LemmaSearchResult>({ max: 500, maxAge: 1000 * 60 * 60 })
   private readonly _autoCompleteCache = LRU<SearchParams[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
   constructor(
     private _http: Http,
-    private _httpHelper: HttpHelper,
+    private _httpHelper: HttpHelperService,
     private _auth: AuthService,
     private _language: LanguageService
   ) {
     this.searchEmitter.subscribe(this.searchSubject)
   }
 
-  searchWord(baseResult: SearchResult, searchRequest: SearchRequest): Observable<SearchResult> {
+  searchParagraphs(searchRequest: SearchRequest) {
+    return this._handleParaSearchRequest(searchRequest)
+      .catch(this._httpHelper.handleError)
+  }
+
+  searchLemmas(baseResult: LemmaSearchResult, searchRequest: SearchRequest): Observable<LemmaSearchResult> {
     const key = JSON.stringify(searchRequest)
     const searchResult = this._searchWordCache.get(key)
     if (searchResult) {
       return Observable.of(searchResult)
     }
 
-    return this._sendSearchRequest(searchRequest)
+    return this._handleLemmaSearchRequest(searchRequest)
       .map(resp => this._makeSearchResult(resp))
       .map(newResult => this._mergeSearchResult(baseResult, newResult))
-      .do((result: SearchResult) => this._searchWordCache.set(key, result))
+      .do((result: LemmaSearchResult) => this._searchWordCache.set(key, result))
       .catch(this._httpHelper.handleError)
   }
 
@@ -119,7 +135,7 @@ export class SearchApi {
       attr: 'k',
       chunk: -1
     }
-    return this._sendSearchRequest(sr)
+    return this._handleLemmaSearchRequest(sr)
       .map(res => {
         if (!res || res.lemmas.length === 0) {
           return
@@ -128,8 +144,8 @@ export class SearchApi {
       })
   }
 
-  private _makeSearchResult(response: DictSearchResponse): SearchResult {
-    const result = new SearchResult()
+  private _makeSearchResult(response: DictSearchResponse): LemmaSearchResult {
+    const result = new LemmaSearchResult()
     result.haveMore = response.haveMore
 
     result.baseMap = response.lemmas.reduce<LemmaOrderedMap>((map, lemma) => {
@@ -145,7 +161,7 @@ export class SearchApi {
     return result
   }
 
-  private _mergeSearchResult(result: SearchResult, newResult: SearchResult): SearchResult {
+  private _mergeSearchResult(result: LemmaSearchResult, newResult: LemmaSearchResult): LemmaSearchResult {
     result.haveMore = newResult.haveMore
 
     newResult.baseMap.bases.forEach(base => {
@@ -192,17 +208,33 @@ export class SearchApi {
     }
   }
 
-  private _sendSearchRequest(sr: SearchRequest): Observable<DictSearchResponse> {
+  private _handleLemmaSearchRequest(sr: SearchRequest): Observable<DictSearchResponse> {
     const search = new URLSearchParams()
     search.set('word', sr.word)
     search.set('attr', sr.attr)
     search.set('chunk', sr.chunk.toString())
-    if (sr.lang) {
-      search.set('lang', sr.lang)
-    }
+    search.set('lang', sr.lang)
     const options = this._httpHelper.getRequestOptions(search)
 
     let url = `${environment.api.host}${environment.api.path}/search/dict`
+    if (this._auth.token) {
+      url += '/auth'
+    }
+
+    return this._http.get(url, options)
+      .map((res: Response) => res.json())
+      .catch(this._httpHelper.handleError)
+  }
+
+  private _handleParaSearchRequest(sr: SearchRequest): Observable<any> {
+    const search = new URLSearchParams()
+    search.set('word', sr.word)
+    search.set('attr', sr.attr)
+    search.set('chunk', sr.chunk.toString())
+    search.set('lang', sr.lang)
+    const options = this._httpHelper.getRequestOptions(search)
+
+    let url = `${environment.api.host}${environment.api.path}/search/para`
     if (this._auth.token) {
       url += '/auth'
     }

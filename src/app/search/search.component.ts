@@ -5,18 +5,18 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApi, SearchParams, SearchPopupParams, SearchRequest, SearchResult } from '../content/search-api.service'
-import { LanguageService } from '../content/language/language.service'
-import { SpeechSynthesizer } from '../core'
-import { Navigation } from '../core'
+import { SearchApiService, SearchParams, DictPopoverParams, SearchRequest, LemmaSearchResult } from '../content/services/search-api.service'
+import { LanguageService } from '../content/services/language.service'
+import { SpeechSynthesizerService } from '../core'
+import { NavigationService } from '../core'
 
 @Component({
   templateUrl: './search.component.html'
 })
 export class SearchComponent implements OnInit, OnDestroy {
 
-  result = new SearchResult()
-  popoverParams: SearchPopupParams
+  result = new LemmaSearchResult()
+  popoverParams: DictPopoverParams
   searchRequest: SearchRequest = {
     word: '',
     lang: '',
@@ -36,10 +36,10 @@ export class SearchComponent implements OnInit, OnDestroy {
     private _activatedRoute: ActivatedRoute,
     private _changeDetector: ChangeDetectorRef,
     private _location: Location,
-    private _searchApi: SearchApi,
+    private _searchApi: SearchApiService,
     private _language: LanguageService,
-    private _speechSynthesizer: SpeechSynthesizer,
-    private _navigationService: Navigation
+    private _speechSynthesizer: SpeechSynthesizerService,
+    private _navigationService: NavigationService
   ) {
     Observable.fromEvent(window, 'resize', () => document.documentElement.clientWidth)
       .debounceTime(200)
@@ -69,6 +69,8 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   speakWord(word: string) {
     this._speechSynthesizer.speakSingle(word, this._language.targetLang)
+      .takeUntil(this._ngUnsubscribe)
+      .subscribe()
   }
 
   foreignWordSearch(word: string) {
@@ -76,7 +78,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     this._searchApi.searchEmitter.emit({ word, lang: this._language.targetLang })
   }
 
-  private _showPopover(params: SearchPopupParams) {
+  private _showPopover(params: DictPopoverParams) {
     this.hidePopover()
     this.popoverParams = params
     this._changeDetector.detectChanges()

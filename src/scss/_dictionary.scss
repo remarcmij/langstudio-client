@@ -6,3 +6,10 @@
 .homonym-separator {
     margin-top: 1rem;
 }
+
+my-lemma-group {
+    margin: 0;
+    @media (max-width: 599px) {
+        margin: 0 2px;
+    }
+}
