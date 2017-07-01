@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApiService, SearchParams, DictPopoverParams, SearchRequest, LemmaSearchResult } from '../content/services/search-api.service'
+import { SearchApiService, WordLang, DictPopoverParams, SearchRequest, LemmaSearchResult } from '../content/services/search-api.service'
 import { LanguageService } from '../content/services/language.service'
 import { SpeechSynthesizerService } from '../core'
 import { NavigationService } from '../core'
@@ -23,7 +23,7 @@ export class SearchComponent implements OnInit, OnDestroy {
     attr: 'r',
     chunk: 0
   }
-  searchTarget: SearchParams
+  searchTarget: WordLang
 
   readonly THRESHOLD = 480
   width = document.documentElement.clientWidth

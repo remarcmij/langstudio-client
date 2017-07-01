@@ -5,7 +5,7 @@ import { Subject } from 'rxjs/Subject'
 
 import {
   SearchApiService, SearchRequest,
-  LemmaSearchResult, SearchParams, DictPopoverParams
+  LemmaSearchResult, WordLang, DictPopoverParams
 } from '../../content/services/search-api.service'
 import { LanguageService } from '../../content/services/language.service'
 import { SpeechSynthesizerService } from '../../core'
@@ -79,7 +79,7 @@ export class DictionaryComponent implements OnInit, OnDestroy {
     this.location.back()
   }
 
-  wordLangSearch(searchTarget: SearchParams) {
+  wordLangSearch(searchTarget: WordLang) {
     this.hidePopover()
     this.searchRequest.word = searchTarget.word
     this.searchRequest.lang = searchTarget.lang

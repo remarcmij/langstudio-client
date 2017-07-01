@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core'
 import { Subject } from 'rxjs/Subject'
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser'
 
-import { SearchApiService, SearchRequest, LemmaSearchResult, SearchParams, Paragraph } from '../../content/services/search-api.service'
+import { SearchApiService, SearchRequest, LemmaSearchResult, WordLang, Paragraph } from '../../content/services/search-api.service'
 import { MarkdownService } from '../../content/services/markdown.service'
 
 @Component({
@@ -53,7 +53,7 @@ export class ParagraphsComponent implements OnInit, OnDestroy {
     return para._id
   }
 
-  wordLangSearch(searchTarget: SearchParams) {
+  wordLangSearch(searchTarget: WordLang) {
     this.searchRequest.word = searchTarget.word
     this.searchRequest.lang = searchTarget.lang
     this.searchRequest.chunk = 0

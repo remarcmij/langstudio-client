@@ -6,7 +6,7 @@ import { Observer } from 'rxjs/Observer'
 import { Subscription } from 'rxjs/Subscription'
 import { Subject } from 'rxjs/Subject'
 
-import { SearchApiService, SearchParams } from '../../content/services/search-api.service'
+import { SearchApiService, WordLang } from '../../content/services/search-api.service'
 import { ContentService } from '../../content/services/content.service'
 import { LanguageService } from '../../content/services/language.service'
 import { NavigationService } from '../../core'
@@ -28,7 +28,7 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
 
   searchCtrl = new FormControl()
   term: string
-  items: SearchParams[] = []
+  items: WordLang[] = []
   targetLang: string
 
   @ViewChild(MdAutocompleteTrigger) private _trigger: MdAutocompleteTrigger
@@ -88,7 +88,9 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this._trigger.closePanel())
 
-    this.renderer.invokeElementMethod(searchField, 'focus')
+    setTimeout(() => {
+      this.renderer.invokeElementMethod(searchField, 'focus')
+    })
   }
 
   ngOnDestroy() {
@@ -96,21 +98,20 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
     this._ngUnsubscribe.complete()
   }
 
-  onItemSelect(item: SearchParams) {
+  onItemSelect(item: WordLang) {
     this.items = []
-    this.term = ''
+    this.term = item.word
     this.searchApi.searchSubject.next(item)
-    // this.onSelect.emit(item)
   }
 
   onChange(ev: any) {
-    if (typeof ev !== 'string') {
-      this.term = ''
-      return
-    }
-    ev = ev.toLowerCase().trim()
-    if (ev.length > 0) {
-      this._subject.next(ev)
+    if (typeof ev === 'object') {
+      this.term = (<WordLang>ev).word
+    } else if (typeof ev === 'string') {
+      ev = ev.toLowerCase().trim()
+      if (ev.length > 0) {
+        this._subject.next(ev)
+      }
     }
   }
 }

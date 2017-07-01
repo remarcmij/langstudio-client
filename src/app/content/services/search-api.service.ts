@@ -24,12 +24,12 @@ export interface Paragraph {
   _topic: string
 }
 
-export interface SearchParams {
+export interface WordLang {
   word: string
   lang: string
 }
 
-export interface DictPopoverParams extends SearchParams {
+export interface DictPopoverParams extends WordLang {
   top: number
   height: number
 }
@@ -79,11 +79,11 @@ export interface PopoverResponse {
 export class SearchApiService {
 
   readonly showPopover = new Subject<DictPopoverParams>()
-  readonly searchSubject = new BehaviorSubject<SearchParams>(null)
+  readonly searchSubject = new BehaviorSubject<WordLang>(null)
 
   private readonly _lemmaCache = LRU<LemmaSearchResult>({ max: 200, maxAge: 1000 * 60 * 60 })
   private readonly _paraCache = LRU<any>({ max: 500, maxAge: 1000 * 60 * 60 })
-  private readonly _autoCompleteCache = LRU<SearchParams[]>({ max: 500, maxAge: 1000 * 60 * 60 })
+  private readonly _autoCompleteCache = LRU<WordLang[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
   constructor(
     private http: Http,
@@ -119,7 +119,7 @@ export class SearchApiService {
       .catch(this.helper.handleError)
   }
 
-  autoCompleteSearch(term: string): Observable<SearchParams[]> {
+  autoCompleteSearch(term: string): Observable<WordLang[]> {
     const items = this._autoCompleteCache.get(term)
     if (items) {
       return Observable.of(items)
@@ -129,7 +129,7 @@ export class SearchApiService {
     const options = this.helper.getRequestOptions(search)
     return this.http.get(`${environment.api.host}${environment.api.path}/search/autocomplete`, options)
       .map(res => res.json())
-      .do((result: SearchParams[]) => this._autoCompleteCache.set(term, result))
+      .do((result: WordLang[]) => this._autoCompleteCache.set(term, result))
       .catch(this.helper.handleError)
   }
 
