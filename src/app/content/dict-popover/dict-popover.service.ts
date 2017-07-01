@@ -6,8 +6,6 @@ const WORD_REGEXP = /[-'()a-zA-Z\u00C0-\u00FF]{2,}/g
 @Injectable()
 export class DictPopoverService {
 
-  constructor() { }
-
   getWordClickParams(target: HTMLElement): {} {
     if (target.tagName !== 'SPAN') {
       return null

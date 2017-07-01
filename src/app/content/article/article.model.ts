@@ -2,7 +2,7 @@ export class Article {
     fileName: string
     groupName: string
     title: string
-    foreignLang?: string
+    targetLang?: string
     baseLang?: string
     mdText: string
     htmlText: string

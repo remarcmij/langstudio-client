@@ -17,13 +17,13 @@ export class FileUploadComponent implements OnDestroy {
   hasAnotherDropZoneOver = false
 
   constructor(
-    private _router: Router,
-    private _authService: AuthService,
-    private _adminContentApi: AdminContentApi
+    private router: Router,
+    private auth: AuthService,
+    private api: AdminContentApi
   ) {
     this.uploader = new FileUploader({
       url: `${environment.api.host}${environment.api.path}/upload`,
-      authToken: 'Bearer ' + this._authService.token,
+      authToken: 'Bearer ' + this.auth.token,
       isHTML5: true
     })
   }
@@ -37,13 +37,13 @@ export class FileUploadComponent implements OnDestroy {
   }
 
   ngOnDestroy() {
-    this._adminContentApi.clearCache()
+    this.api.clearCache()
   }
 
   onAction(action: string) {
     switch (action) {
       case 'back':
-        this._router.navigate(['/library'])
+        this.router.navigate(['/library'])
         break
     }
   }

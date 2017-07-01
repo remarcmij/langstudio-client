@@ -16,48 +16,47 @@ export class ContentApiService {
   private readonly _hashTagCache = LRU<HashTagItem[]>({ max: 100, maxAge: 1000 * 60 * 60 })
   private _allTags: any[]
 
-  private get _auth(): string {
-    return this._authService.token ? 'auth' : 'pub'
+  constructor(
+    private http: Http,
+    private httpHelper: HttpHelperService,
+    private auth: AuthService
+  ) {
   }
 
-  constructor(
-    private _http: Http,
-    private _httpHelper: HttpHelperService,
-    private _authService: AuthService
-  ) { }
-
   getPublications(): Observable<Topic[]> {
-    const url = `${environment.api.host}${environment.api.path}/topics/${this._auth}`
+    const url = `${environment.api.host}${environment.api.path}/topics/index`
     const topics = this._topicCache.get(url)
     if (topics) {
       return Observable.of(topics)
     }
-    const options = this._httpHelper.getRequestOptions()
-    return this._http.get(url, options)
+    const options = this.httpHelper.getRequestOptions()
+    return this.http.get(url, options)
       .map(res => <Topic[]>res.json())
       .do(topics => this._topicCache.set(url, topics))
-      .catch(this._httpHelper.handleError)
+      .catch(this.httpHelper.handleError)
   }
 
   getPublicationTopics(publication: string): Observable<Topic[]> {
-    const url = `${environment.api.host}${environment.api.path}/topics/${this._auth}/${publication}`
+    const url = `${environment.api.host}${environment.api.path}/topics/publication/${publication}`
     const topics = this._topicCache.get(url)
     if (topics) {
       return Observable.of(topics)
     }
-    const options = this._httpHelper.getRequestOptions()
-    return this._http.get(url, options)
+
+    const options = this.httpHelper.getRequestOptions()
+
+    return this.http.get(url, options)
       .map(res => <Topic[]>res.json())
       .do(topics => {
         const indexTopic = topics.filter(topic => topic.chapter === 'index')[0]
         topics = topics.map(topic => {
-          topic.foreignLang = topic.foreignLang || indexTopic.foreignLang
+          topic.targetLang = topic.targetLang || indexTopic.targetLang
           topic.baseLang = topic.baseLang || indexTopic.baseLang
           return topic
         })
         this._topicCache.set(url, topics)
       })
-      .catch(this._httpHelper.handleError)
+      .catch(this.httpHelper.handleError)
   }
 
   getHashTagItems(hashTagName: string): Observable<HashTagItem[]> {
@@ -65,11 +64,13 @@ export class ContentApiService {
     if (hashTags) {
       return Observable.of(hashTags)
     }
-    const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/hashtag/search?q=${hashTagName}`
-    return this._http.get(url)
+
+    const url = `${environment.api.host}${environment.api.path}/article/hashtag/search?q=${hashTagName}`
+
+    return this.http.get(url)
       .map(res => <HashTagItem[]>res.json())
       .do(hashTags => this._hashTagCache.set(hashTagName, hashTags))
-      .catch(this._httpHelper.handleError)
+      .catch(this.httpHelper.handleError)
 
   }
 
@@ -77,11 +78,13 @@ export class ContentApiService {
     if (this._allTags) {
       return Observable.of(this._allTags)
     }
-    const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/hashtag/all`
-    return this._http.get(url)
+
+    const url = `${environment.api.host}${environment.api.path}/article/hashtag/all`
+
+    return this.http.get(url)
       .map(res => <string[]>res.json())
       .do(hashTags => this._allTags = hashTags)
-      .catch(this._httpHelper.handleError)
+      .catch(this.httpHelper.handleError)
   }
 
   getArticle(publication: string, chapter: string): Observable<Article> {
@@ -90,16 +93,16 @@ export class ContentApiService {
       .mergeMap(topics => Observable.from(topics))
       .first(topic => topic.fileName === fileName)
       .mergeMap(topic => {
-        const url = `${environment.api.host}${environment.api.path}/article/${this._auth}/${fileName}/${topic.hash}`
-        const options = this._httpHelper.getRequestOptions()
-        return this._http.get(url, options)
+        const url = `${environment.api.host}${environment.api.path}/article/${fileName}`
+        const options = this.httpHelper.getRequestOptions()
+        return this.http.get(url, options)
           .map(res => <Article>res.json())
           .do(article => {
-            article.foreignLang = topic.foreignLang
+            article.targetLang = topic.targetLang
             article.baseLang = topic.baseLang
           })
       })
-      .catch(this._httpHelper.handleError)
+      .catch(this.httpHelper.handleError)
   }
 
   clearCache() {

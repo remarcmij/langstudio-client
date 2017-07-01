@@ -71,7 +71,7 @@ export interface DictSearchResponse {
 export interface PopoverResponse {
   baseWords: string[]
   resolvedWord: string
-  foreignLang: string
+  targetLang: string
   text: string
 }
 
@@ -81,25 +81,33 @@ export class SearchApiService {
   readonly showPopover = new Subject<DictPopoverParams>()
   readonly searchSubject = new BehaviorSubject<SearchParams>(null)
 
-  private readonly _searchWordCache = LRU<LemmaSearchResult>({ max: 500, maxAge: 1000 * 60 * 60 })
+  private readonly _lemmaCache = LRU<LemmaSearchResult>({ max: 200, maxAge: 1000 * 60 * 60 })
+  private readonly _paraCache = LRU<any>({ max: 500, maxAge: 1000 * 60 * 60 })
   private readonly _autoCompleteCache = LRU<SearchParams[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
   constructor(
-    private _http: Http,
-    private _httpHelper: HttpHelperService,
-    private _auth: AuthService,
-    private _language: LanguageService
+    private http: Http,
+    private helper: HttpHelperService,
+    private auth: AuthService,
+    private language: LanguageService
   ) {
   }
 
   searchParagraphs(searchRequest: SearchRequest) {
+    const key = JSON.stringify(searchRequest)
+    const searchResult = this._paraCache.get(key)
+    if (searchResult) {
+      return Observable.of(searchResult)
+    }
+
     return this._handleParaSearchRequest(searchRequest)
-      .catch(this._httpHelper.handleError)
+      .do((result: any) => this._paraCache.set(key, result))
+      .catch(this.helper.handleError)
   }
 
   searchLemmas(baseResult: LemmaSearchResult, searchRequest: SearchRequest): Observable<LemmaSearchResult> {
     const key = JSON.stringify(searchRequest)
-    const searchResult = this._searchWordCache.get(key)
+    const searchResult = this._lemmaCache.get(key)
     if (searchResult) {
       return Observable.of(searchResult)
     }
@@ -107,8 +115,8 @@ export class SearchApiService {
     return this._handleLemmaSearchRequest(searchRequest)
       .map(resp => this._makeSearchResult(resp))
       .map(newResult => this._mergeSearchResult(baseResult, newResult))
-      .do((result: LemmaSearchResult) => this._searchWordCache.set(key, result))
-      .catch(this._httpHelper.handleError)
+      .do((result: LemmaSearchResult) => this._lemmaCache.set(key, result))
+      .catch(this.helper.handleError)
   }
 
   autoCompleteSearch(term: string): Observable<SearchParams[]> {
@@ -118,15 +126,15 @@ export class SearchApiService {
     }
     const search = new URLSearchParams()
     search.set('term', term)
-    const options = this._httpHelper.getRequestOptions(search)
-    return this._http.get(`${environment.api.host}${environment.api.path}/search/autocomplete`, options)
+    const options = this.helper.getRequestOptions(search)
+    return this.http.get(`${environment.api.host}${environment.api.path}/search/autocomplete`, options)
       .map(res => res.json())
       .do((result: SearchParams[]) => this._autoCompleteCache.set(term, result))
-      .catch(this._httpHelper.handleError)
+      .catch(this.helper.handleError)
   }
 
   popoverSearch(word: string, lang: string): Observable<PopoverResponse> {
-    const helper = this._language.getLangHelper(lang)
+    const helper = this.language.getLangHelper(lang)
     const variations = helper.getWordVariations(word)
     const sr: SearchRequest = {
       word: variations.join(','),
@@ -148,7 +156,7 @@ export class SearchApiService {
     result.haveMore = response.haveMore
 
     result.baseMap = response.lemmas.reduce<LemmaOrderedMap>((map, lemma) => {
-      const base = lemma.baseWord
+      const base = lemma.base
       if (!map.lemmas[base]) {
         map.lemmas[base] = []
         map.bases.push(base)
@@ -180,7 +188,7 @@ export class SearchApiService {
 
   private _makePopoverResponse(resp: DictSearchResponse, lang: string): PopoverResponse {
 
-    const homonymMap: { [key: string]: Lemma[] } = groupBy(resp.lemmas, (lemma: Lemma) => `${lemma.baseWord}.${lemma.homonym}`)
+    const homonymMap: { [key: string]: Lemma[] } = groupBy(resp.lemmas, (lemma: Lemma) => `${lemma.base}.${lemma.homonym}`)
 
     const homonyms = Object.keys(homonymMap).map(key => {
       let first = true
@@ -197,12 +205,12 @@ export class SearchApiService {
       return '<div class=\'my-homonym\'>' + texts.join(' ').replace(/;$/, '.') + '</div>'
     })
 
-    const baseWords = uniq(resp.lemmas.map(lemmaData => lemmaData.baseWord))
+    const baseWords = uniq(resp.lemmas.map(lemmaData => lemmaData.base))
 
     return {
       baseWords,
       resolvedWord: resp.lemmas[0].word,
-      foreignLang: lang,
+      targetLang: lang,
       text: homonyms.join('')
     }
   }
@@ -210,19 +218,21 @@ export class SearchApiService {
   private _handleLemmaSearchRequest(sr: SearchRequest): Observable<DictSearchResponse> {
     const search = new URLSearchParams()
     search.set('word', sr.word)
-    search.set('attr', sr.attr)
+    if (sr.attr === 'k') {
+      search.set('attr', sr.attr)
+    }
     search.set('chunk', sr.chunk.toString())
     search.set('lang', sr.lang)
-    const options = this._httpHelper.getRequestOptions(search)
+    const options = this.helper.getRequestOptions(search)
 
     let url = `${environment.api.host}${environment.api.path}/search/dict`
-    if (this._auth.token) {
+    if (this.auth.token) {
       url += '/auth'
     }
 
-    return this._http.get(url, options)
+    return this.http.get(url, options)
       .map((res: Response) => res.json())
-      .catch(this._httpHelper.handleError)
+      .catch(this.helper.handleError)
   }
 
   private _handleParaSearchRequest(sr: SearchRequest): Observable<any> {
@@ -231,16 +241,16 @@ export class SearchApiService {
     search.set('attr', sr.attr)
     search.set('chunk', sr.chunk.toString())
     search.set('lang', sr.lang)
-    const options = this._httpHelper.getRequestOptions(search)
+    const options = this.helper.getRequestOptions(search)
 
     let url = `${environment.api.host}${environment.api.path}/search/para`
-    if (this._auth.token) {
+    if (this.auth.token) {
       url += '/auth'
     }
 
-    return this._http.get(url, options)
+    return this.http.get(url, options)
       .map((res: Response) => res.json())
-      .catch(this._httpHelper.handleError)
+      .catch(this.helper.handleError)
   }
 
 }

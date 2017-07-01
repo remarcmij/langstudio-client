@@ -28,13 +28,13 @@ export class LibraryItemComponent {
   @Input() topic: Topic
 
   get subtitle() {
-    return this._markdown.tinyMarkdown(this.topic.subtitle)
+    return this.markdown.tinyMarkdown(this.topic.subtitle)
   }
 
   constructor(
-    private _router: Router,
-    private _navigation: NavigationService,
-    private _markdown: MarkdownService
+    private router: Router,
+    private navigation: NavigationService,
+    private markdown: MarkdownService
   ) {
   }
 
@@ -43,7 +43,7 @@ export class LibraryItemComponent {
   }
 
   openPublication() {
-    this._navigation.clearTop('publication')
-    this._router.navigate(['/library', this.topic.publication])
+    this.navigation.clearTop('publication')
+    this.router.navigate(['/library', this.topic.publication])
   }
 }

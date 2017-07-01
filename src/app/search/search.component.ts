@@ -32,14 +32,14 @@ export class SearchComponent implements OnInit, OnDestroy {
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private _router: Router,
-    private _activatedRoute: ActivatedRoute,
-    private _changeDetector: ChangeDetectorRef,
-    private _location: Location,
-    private _searchApi: SearchApiService,
-    private _language: LanguageService,
-    private _speechSynthesizer: SpeechSynthesizerService,
-    private _navigationService: NavigationService
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private location: Location,
+    private searchApi: SearchApiService,
+    private language: LanguageService,
+    private speech: SpeechSynthesizerService,
+    private navigation: NavigationService
   ) {
     Observable.fromEvent(window, 'resize', () => document.documentElement.clientWidth)
       .debounceTime(200)
@@ -48,7 +48,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this._searchApi.showPopover
+    this.searchApi.showPopover
       .takeUntil(this._ngUnsubscribe)
       .subscribe(params => this._showPopover(params))
   }
@@ -60,27 +60,27 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   hidePopover() {
     this.popoverParams = undefined
-    this._changeDetector.detectChanges()
+    this.cdr.detectChanges()
   }
 
   goBack() {
-    this._location.back()
+    this.location.back()
   }
 
   speakWord(word: string) {
-    this._speechSynthesizer.speakSingle(word, this._language.targetLang)
+    this.speech.speakSingle(word, this.language.targetLang)
       .takeUntil(this._ngUnsubscribe)
       .subscribe()
   }
 
   foreignWordSearch(word: string) {
     this.hidePopover()
-    this._searchApi.searchSubject.next({ word, lang: this._language.targetLang })
+    this.searchApi.searchSubject.next({ word, lang: this.language.targetLang })
   }
 
   private _showPopover(params: DictPopoverParams) {
     this.hidePopover()
     this.popoverParams = params
-    this._changeDetector.detectChanges()
+    this.cdr.detectChanges()
   }
 }

@@ -8,17 +8,17 @@ import { AuthService } from './auth.service'
 export class AuthGuard implements CanActivate, CanLoad {
 
   constructor(
-    private _authService: AuthService
+    private auth: AuthService
   ) {
   }
 
   canActivate(): Observable<boolean> {
-    return this._authService.getUser()
+    return this.auth.getUser()
       .map(user => user && user.role === 'admin')
   }
 
   canLoad(route: Route):  Observable<boolean> {
-    return this._authService.getUser()
+    return this.auth.getUser()
       .map(user => user && user.role === 'admin')
   }
 }

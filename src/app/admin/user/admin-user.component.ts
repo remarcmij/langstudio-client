@@ -16,13 +16,13 @@ export class AdminUserComponent implements OnInit, OnDestroy {
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private _router: Router,
-    private _adminUserHttp: AdminUserApi
+    private router: Router,
+    private api: AdminUserApi
   ) {
   }
 
   ngOnInit() {
-    this._adminUserHttp.getUsers()
+    this.api.getUsers()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(users => {
         this.users = users
@@ -35,13 +35,13 @@ export class AdminUserComponent implements OnInit, OnDestroy {
   }
 
   gotoUserDetail(userId: string) {
-    this._router.navigate(['/admin', 'user', userId])
+    this.router.navigate(['/admin', 'user', userId])
   }
 
   onAction(action: string) {
     switch (action) {
       case 'back':
-        this._router.navigate(['/library'])
+        this.router.navigate(['/library'])
         break
     }
   }

@@ -21,9 +21,9 @@ export class AdminLibraryComponent implements OnInit, OnDestroy {
   get indexTopics() { return this.topics.filter(topic => topic.chapter === 'index') }
 
   constructor(
-    private _dialog: MdDialog,
-    private _router: Router,
-    private _adminContentApi: AdminContentApi
+    private dialog: MdDialog,
+    private router: Router,
+    private api: AdminContentApi
   ) { }
 
   ngOnInit() {
@@ -44,7 +44,7 @@ export class AdminLibraryComponent implements OnInit, OnDestroy {
       message: `Are you sure you wish to delete publication '${publication}'?`,
       confirmButtonLabel: 'CONFIRM'
     }
-    const dialogRef = this._dialog.open(ConfirmDialogComponent, config)
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, config)
     dialogRef.afterClosed()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(result => {
@@ -57,7 +57,7 @@ export class AdminLibraryComponent implements OnInit, OnDestroy {
   deletePublication(publication: string) {
     Observable.from(this.topics)
       .filter(topic => topic.publication === publication)
-      .map(topic => this._adminContentApi.deleteTopic(topic.fileName))
+      .map(topic => this.api.deleteTopic(topic.fileName))
       .mergeAll(4)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(success => {
@@ -72,19 +72,19 @@ export class AdminLibraryComponent implements OnInit, OnDestroy {
   }
 
   openPublication(publication: string) {
-    this._router.navigate(['/admin', 'library', publication])
+    this.router.navigate(['/admin', 'library', publication])
   }
 
   onAction(action: string) {
     switch (action) {
       case 'back':
-        this._router.navigate(['/library'])
+        this.router.navigate(['/library'])
         break
     }
   }
 
   private _getTopics(): Observable<Topic[]> {
-    return this._adminContentApi.getTopics()
+    return this.api.getTopics()
       .map(topics => topics.filter(topic => topic.type === 'article'))
   }
 }

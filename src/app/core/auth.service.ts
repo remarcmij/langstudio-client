@@ -28,8 +28,8 @@ export class AuthService implements OnInit {
   private _user: User | undefined
 
   constructor(
-    private _http: Http,
-    private _router: Router,
+    private http: Http,
+    private router: Router,
     // private _httpHelper: HttpHelper
   ) {
   }
@@ -45,7 +45,7 @@ export class AuthService implements OnInit {
     }
     if (this.token) {
       const options = this._getRequestOptions()
-      return this._http.get(`${environment.api.host}${environment.api.path}/users/me`, options)
+      return this.http.get(`${environment.api.host}${environment.api.path}/users/me`, options)
         .map(response => response.json())
         .do((user: User) => this._user = user)
         // .catch(this._httpHelper.handleError)
@@ -58,7 +58,7 @@ export class AuthService implements OnInit {
     document.cookie = 'token=;expires=Thu, 01 Jan 1970 00:00:01 GMT;'
     localStorage.removeItem(TOKEN_NAME)
     this._user = undefined
-    this._router.navigate(['/'])
+    this.router.navigate(['/'])
   }
 
   captureTokenCookie() {

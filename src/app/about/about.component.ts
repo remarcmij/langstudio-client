@@ -12,13 +12,14 @@ export class AboutComponent {
   appTitle = config.appTitle
 
   constructor(
-    private _router: Router,
-  ) { }
+    private router: Router,
+  ) {
+  }
 
   onAction(action: string) {
     switch (action) {
       case 'back':
-        this._router.navigate(['/library'])
+        this.router.navigate(['/library'])
         break
     }
   }

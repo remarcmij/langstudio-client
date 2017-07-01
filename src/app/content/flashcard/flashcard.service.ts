@@ -202,7 +202,7 @@ export class FlashcardService {
         },
         answer: {
           text: data.phrase,
-          lang: this._article.foreignLang,
+          lang: this._article.targetLang,
           isForeign: true
         }
       }
@@ -212,7 +212,7 @@ export class FlashcardService {
         show,
         prompt: {
           text: data.phrase,
-          lang: this._article.foreignLang,
+          lang: this._article.targetLang,
           isForeign: true
         },
         answer: {

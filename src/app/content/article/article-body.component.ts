@@ -21,7 +21,7 @@ export class ArticleBodyComponent implements AfterViewChecked {
 
   @Input() set article(article: Article) {
     this._articleElement = undefined
-    this.safeHtml = this._sanitizer.bypassSecurityTrustHtml(article.htmlText)
+    this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(article.htmlText)
   }
 
   @Input() hashTag: string
@@ -33,7 +33,7 @@ export class ArticleBodyComponent implements AfterViewChecked {
   private _articleElement: HTMLElement
 
   constructor(
-    private _sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer
   ) {
   }
 

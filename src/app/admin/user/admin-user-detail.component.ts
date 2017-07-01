@@ -33,19 +33,19 @@ export class AdminUserDetailComponent implements OnInit, OnDestroy {
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private _router: Router,
-    private _activatedRoute: ActivatedRoute,
-    private _adminUserApi: AdminUserApi,
-    private _adminContentHttp: AdminContentApi
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private userApi: AdminUserApi,
+    private contentApi: AdminContentApi
   ) {
   }
 
   ngOnInit() {
-    const params = this._activatedRoute.snapshot.params
-    this._adminUserApi.getUser(params['id'])
-      .mergeMap(user => this._adminUserApi.getGroups().map(groups => ({ groups, user })))
+    const params = this.activatedRoute.snapshot.params
+    this.userApi.getUser(params['id'])
+      .mergeMap(user => this.userApi.getGroups().map(groups => ({ groups, user })))
       .mergeMap((result: IntermediateResult) =>
-        this._adminContentHttp.getTopics().map(topics => {
+        this.contentApi.getTopics().map(topics => {
           result.topics = topics.filter(topic => topic.chapter === 'index')
           return result
         }))
@@ -73,7 +73,7 @@ export class AdminUserDetailComponent implements OnInit, OnDestroy {
       .filter(group => group.selected)
       .map(group => group.name)
 
-    this._adminUserApi.saveGroups(this.user._id, groupNames)
+    this.userApi.saveGroups(this.user._id, groupNames)
       .takeUntil(this._ngUnsubscribe)
       .subscribe(ok => {
         if (!ok) {
@@ -114,7 +114,7 @@ export class AdminUserDetailComponent implements OnInit, OnDestroy {
   onAction(action: string) {
     switch (action) {
       case 'back':
-        this._router.navigate(['/admin/user'])
+        this.router.navigate(['/admin/user'])
         break
     }
   }

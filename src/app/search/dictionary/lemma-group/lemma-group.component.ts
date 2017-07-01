@@ -31,21 +31,21 @@ export class LemmaGroupComponent {
   @Input() lemmas: Lemma[]
 
   constructor(
-    private _searchApi: SearchApiService,
-    private _language: LanguageService,
-    private _popoverService: DictPopoverService,
-    private _markdown: MarkdownService
+    private searchApi: SearchApiService,
+    private language: LanguageService,
+    private popoverService: DictPopoverService,
+    private markdown: MarkdownService
   ) {
   }
 
   onClick(ev: MouseEvent) {
     const target = <HTMLElement>ev.target
-    const params = <DictPopoverParams>this._popoverService.getWordClickParams(target)
+    const params = <DictPopoverParams>this.popoverService.getWordClickParams(target)
     if (params) {
       ev.preventDefault()
       ev.stopPropagation()
-      params.lang = this._language.targetLang
-      this._searchApi.showPopover.next(params)
+      params.lang = this.language.targetLang
+      this.searchApi.showPopover.next(params)
     }
   }
 
@@ -54,11 +54,11 @@ export class LemmaGroupComponent {
     ev.stopPropagation()
     const word = base
     const lang = this.lemmas[0].baseLang
-    this._searchApi.searchSubject.next({ word, lang })
+    this.searchApi.searchSubject.next({ word, lang })
   }
 
   convertMarkdown(text: string): string {
-    return this._markdown.insertMarkdownHtml(text).replace(/<\/?p>/g, '')
+    return this.markdown.insertMarkdownHtml(text).replace(/<\/?p>/g, '')
   }
 
   isNewHomonym(idx: number): boolean {

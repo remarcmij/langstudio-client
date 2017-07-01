@@ -9,14 +9,14 @@ import { AuthService } from './auth.service'
 export class HttpHelperService {
 
   constructor(
-    private _authService: AuthService,
+    private auth: AuthService,
   ) { }
 
   getRequestOptions(searchParams?: URLSearchParams): RequestOptions {
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
-    if (this._authService.token) {
-      headers.append('Authorization', 'Bearer ' + this._authService.token)
+    if (this.auth.token) {
+      headers.append('Authorization', 'Bearer ' + this.auth.token)
     }
     const options = new RequestOptions({ headers })
     if (searchParams) {

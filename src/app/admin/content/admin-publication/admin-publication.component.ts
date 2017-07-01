@@ -24,15 +24,15 @@ export class AdminPublicationComponent implements OnInit, OnDestroy {
   get indexTopics() { return this.topics.filter(topic => topic.chapter === 'index') }
 
   constructor(
-    private _dialog: MdDialog,
-    private _router: Router,
-    private _activatedRoute: ActivatedRoute,
-    private _adminContentApi: AdminContentApi
+    private dialog: MdDialog,
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private api: AdminContentApi
   ) {
   }
 
   ngOnInit() {
-    this.publication = this._activatedRoute.snapshot.params['publication']
+    this.publication = this.activatedRoute.snapshot.params['publication']
     this._getTopics()
       .subscribe(topics => this.topics = topics)
   }
@@ -50,7 +50,7 @@ export class AdminPublicationComponent implements OnInit, OnDestroy {
       message: `Are you sure you wish to delete article '${topic.title}'?`,
       confirmButtonLabel: 'CONFIRM'
     }
-    const dialogRef = this._dialog.open(ConfirmDialogComponent, config)
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, config)
     dialogRef.afterClosed()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(result => {
@@ -61,7 +61,7 @@ export class AdminPublicationComponent implements OnInit, OnDestroy {
   }
 
   deleteArticle(topic: Topic) {
-    this._adminContentApi.deleteTopic(topic.fileName)
+    this.api.deleteTopic(topic.fileName)
       .mergeMap(() => this._getTopics())
       .subscribe(topics => {
         this.topics = topics
@@ -75,13 +75,13 @@ export class AdminPublicationComponent implements OnInit, OnDestroy {
   onAction(action: string) {
     switch (action) {
       case 'back':
-        this._router.navigate(['/admin', 'library'])
+        this.router.navigate(['/admin', 'library'])
         break
     }
   }
 
   private _getTopics(): Observable<Topic[]> {
-    return this._adminContentApi.getTopics()
+    return this.api.getTopics()
       .map(topics => topics.filter(topic => topic.publication === this.publication && topic.chapter !== 'index'))
   }
 }

@@ -10,6 +10,7 @@ export class ConfirmDialogComponent {
   constructor(
     public dialogRef: MdDialogRef<ConfirmDialogComponent>,
     @Inject(MD_DIALOG_DATA) public data: any
-  ) { }
+  ) {
+  }
 
 }

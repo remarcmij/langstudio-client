@@ -24,26 +24,30 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   sidenav = { isOpen: false }
   topics: Topic[]
   scrollState = 'busy'
+  user: User
   readonly title = config.appTitle
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private _router: Router,
-    private _content: ContentService,
-    private _auth: AuthService,
-    private _contentApi: ContentApiService,
-    private _navigation: NavigationService
-  ) { }
+    private router: Router,
+    private contentService: ContentService,
+    private auth: AuthService,
+    private contentApi: ContentApiService,
+    private navigation: NavigationService
+  ) {
+  }
 
   ngOnInit() {
-    this._navigation.scrollState
+    this.navigation.scrollState
       .takeUntil(this._ngUnsubscribe)
       .subscribe(state => this.scrollState = state)
 
-    this._getTopics()
+    this.auth.getUser()
+      .do(user => this.user = user)
+      .mergeMap(() => this._getTopics())
       .subscribe(null, err => window.alert(`Error: ${err}`))
 
-    this._content.onEscKey()
+    this.contentService.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.onAction('search'))
   }
@@ -54,7 +58,7 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
   }
 
   canDeactivate(): boolean {
-    this._navigation.saveTop(SELECTOR)
+    this.navigation.saveTop(SELECTOR)
     return true
   }
 
@@ -69,7 +73,8 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.sidenav.isOpen = true
         break
       case 'signin':
-        this._router.navigate(['/signin'])
+        this.contentApi.clearCache()
+        this.router.navigate(['/signin'])
         break
       case 'signout':
         this.signOut()
@@ -84,10 +89,10 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
         this.manageUsers()
         break
       case 'search':
-        this._router.navigate(['/search/dict'])
+        this.router.navigate(['/search/dict'])
         break
       case 'about':
-        this._router.navigate(['/about'])
+        this.router.navigate(['/about'])
         break
       case 'closeSidenav':
         this.sidenav.isOpen = false
@@ -97,25 +102,26 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
 
   signOut() {
     this.sidenav.isOpen = false
-    this._auth.signOut()
-    this._contentApi.clearCache()
+    this.user = null
+    this.auth.signOut()
+    this.contentApi.clearCache()
     this._getTopics()
       .subscribe(null, err => window.alert(`Error: ${err}`))
   }
 
   uploadFiles() {
-    this._contentApi.clearCache()
-    this._router.navigate(['/admin', 'upload'])
+    this.contentApi.clearCache()
+    this.router.navigate(['/admin', 'upload'])
   }
 
   manageContent() {
-    this._contentApi.clearCache()
-    this._router.navigate(['/admin', 'library'])
+    this.contentApi.clearCache()
+    this.router.navigate(['/admin', 'library'])
   }
 
   manageUsers() {
-    this._contentApi.clearCache()
-    this._router.navigate(['/admin', 'user'])
+    this.contentApi.clearCache()
+    this.router.navigate(['/admin', 'user'])
   }
 
   private _getTopics(): Observable<Topic[]> {
@@ -131,11 +137,11 @@ export class LibraryComponent implements OnInit, OnDestroy, CanComponentDeactiva
       }
     }
 
-    return this._contentApi.getPublications()
+    return this.contentApi.getPublications()
       .map(topics => topics.sort((a, b) => makeSortKey(a).localeCompare(makeSortKey(b))))
       .do((topics: Topic[]) => {
         this.topics = topics
-        this._navigation.restoreTop(SELECTOR)
+        this.navigation.restoreTop(SELECTOR)
       })
   }
 

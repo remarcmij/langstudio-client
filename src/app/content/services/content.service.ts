@@ -6,8 +6,6 @@ const ESC_KEYCODE = 27
 @Injectable()
 export class ContentService {
 
-  constructor() { }
-
   onEscKey(): Observable<KeyboardEvent> {
     return Observable.fromEvent(document.body, 'keyup')
       .filter((ev: KeyboardEvent) => ev.keyCode === ESC_KEYCODE)

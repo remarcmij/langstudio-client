@@ -24,31 +24,31 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private _router: Router,
-    private _route: ActivatedRoute,
-    private _content: ContentService,
-    private _contentApi: ContentApiService,
-    private _language: LanguageService,
-    private _navigation: NavigationService
+    private router: Router,
+    private route: ActivatedRoute,
+    private content: ContentService,
+    private api: ContentApiService,
+    private language: LanguageService,
+    private navigation: NavigationService
   ) {
   }
 
   ngOnInit() {
-    this._navigation.scrollState
+    this.navigation.scrollState
       .takeUntil(this._ngUnsubscribe)
       .subscribe(state => this.scrollState = state)
 
-    this.publication = this._route.snapshot.params['publication']
-    this._contentApi.getPublicationTopics(this.publication)
+    this.publication = this.route.snapshot.params['publication']
+    this.api.getPublicationTopics(this.publication)
       .subscribe(topics => {
         this.indexTopic = topics.filter(topic => topic.chapter === 'index')[0]
-        this._language.baseLang = this.indexTopic.baseLang
-        this._language.targetLang = this.indexTopic.foreignLang
+        this.language.baseLang = this.indexTopic.baseLang
+        this.language.targetLang = this.indexTopic.targetLang
         this.topics = topics.filter(topic => topic.chapter !== 'index')
-        this._navigation.restoreTop(SELECTOR)
+        this.navigation.restoreTop(SELECTOR)
       }, err => window.alert(`Error: ${err}`))
 
-    this._content.onEscKey()
+    this.content.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.onAction('search'))
   }
@@ -59,24 +59,24 @@ export class PublicationComponent implements OnInit, OnDestroy, CanComponentDeac
   }
 
   canDeactivate(): boolean {
-    this._navigation.saveTop(SELECTOR)
+    this.navigation.saveTop(SELECTOR)
     return true
   }
 
   onAction(action: string) {
     switch (action) {
       case 'back':
-        this._router.navigate(['/library'])
+        this.router.navigate(['/library'])
         break
       case 'search':
-        this._router.navigate(['/search/dict'])
+        this.router.navigate(['/search/dict'])
         break
     }
   }
 
   openArticle(topic: Topic) {
-    this._navigation.clearTop('article')
-    this._router.navigate(['/library', topic.publication, topic.chapter])
+    this.navigation.clearTop('article')
+    this.router.navigate(['/library', topic.publication, topic.chapter])
   }
 
 }

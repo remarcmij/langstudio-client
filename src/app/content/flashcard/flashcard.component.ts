@@ -37,31 +37,31 @@ export class FlashCardComponent implements OnInit, OnDestroy {
   // private navButtons: NavButton[] = []
 
   get autoPlay() {
-    return this._flashCardService.autoPlay
+    return this.flashCardService.autoPlay
   }
 
   set autoPlay(value: boolean) {
-    this._flashCardService.autoPlay = value
+    this.flashCardService.autoPlay = value
   }
 
   get speechEnabled() {
-    return this._flashCardService.speechEnabled
+    return this.flashCardService.speechEnabled
   }
 
   set speechEnabled(value: boolean) {
-    this._flashCardService.speechEnabled = value
+    this.flashCardService.speechEnabled = value
   }
 
   private _goIndexDebounced: (index: number) => void
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private _router: Router,
-    private _activatedRoute: ActivatedRoute,
-    private _changeDetector: ChangeDetectorRef,
-    private _contentHttp: ContentApiService,
-    private _flashCardService: FlashcardService,
-    private _speechSynthesizer: SpeechSynthesizerService
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private api: ContentApiService,
+    private flashCardService: FlashcardService,
+    private speech: SpeechSynthesizerService
   ) {
     this._goIndexDebounced = debounce(this.goIndex.bind(this), buttonDelay)
   }
@@ -70,18 +70,18 @@ export class FlashCardComponent implements OnInit, OnDestroy {
 
     // this.updateNavButtons()
 
-    const params = this._activatedRoute.snapshot.params
+    const params = this.activatedRoute.snapshot.params
     this.publication = params['publication']
     this.chapter = params['chapter']
-    this._contentHttp
+    this.api
       .getArticle(this.publication, this.chapter)
       .subscribe(article => {
         this.article = article
         // this.updateNavButtons()
-        this._flashCardService.setArticle(article, this.flashCardCallback.bind(this))
+        this.flashCardService.setArticle(article, this.flashCardCallback.bind(this))
       }, (err: Response) => {
         if (err.status === 401) {
-          this._router.navigate(['/signin'])
+          this.router.navigate(['/signin'])
         } else {
           window.alert(`Network Error: ${err.statusText}`)
         }
@@ -105,31 +105,31 @@ export class FlashCardComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this._ngUnsubscribe.next()
     this._ngUnsubscribe.complete()
-    this._flashCardService.stop()
+    this.flashCardService.stop()
   }
 
   goNext() {
     if (this.canGoNext()) {
-      this._goIndexDebounced(this._flashCardService.lastIndex + 1)
+      this._goIndexDebounced(this.flashCardService.lastIndex + 1)
     }
   }
 
   goLast() {
-    this._goIndexDebounced(this._flashCardService.getFlashCardCount() * 2 - 1)
+    this._goIndexDebounced(this.flashCardService.getFlashCardCount() * 2 - 1)
   }
 
   canGoNext(): boolean {
-    return this._flashCardService.lastIndex < this._flashCardService.getFlashCardCount() * 2 - 1
+    return this.flashCardService.lastIndex < this.flashCardService.getFlashCardCount() * 2 - 1
   }
 
 
   canGoPrev(): boolean {
-    return this._flashCardService.lastIndex > 0
+    return this.flashCardService.lastIndex > 0
   }
 
   goPrev() {
     if (this.canGoPrev()) {
-      this._goIndexDebounced(Math.max(this._flashCardService.lastIndex - 1, 0))
+      this._goIndexDebounced(Math.max(this.flashCardService.lastIndex - 1, 0))
     }
   }
 
@@ -138,30 +138,30 @@ export class FlashCardComponent implements OnInit, OnDestroy {
   }
 
   goIndex(index: number) {
-    this._flashCardService.autoPlay = false
-    this._flashCardService.lastIndex = index
+    this.flashCardService.autoPlay = false
+    this.flashCardService.lastIndex = index
   }
 
   flashCardCallback(flashCard: Flashcard) {
     this.flashCard = flashCard
-    this.sliderIndex = this._flashCardService.lastIndex
+    this.sliderIndex = this.flashCardService.lastIndex
 
     // needed on iOS
-    this._changeDetector.detectChanges()
+    this.cdr.detectChanges()
   }
 
   getFlashCardNumber(): number {
-    return Math.floor(this._flashCardService.lastIndex / 2) + 1
+    return Math.floor(this.flashCardService.lastIndex / 2) + 1
   }
 
   getFlashCardCount(): number {
-    return this._flashCardService.getFlashCardCount()
+    return this.flashCardService.getFlashCardCount()
   }
 
   // private updateNavButtons(): NavButton[] {
   //   const buttons: NavButton[] = []
 
-  //   if (this.article && this._speechSynthesizer.canSpeakLanguage(this.article.foreignLang)
+  //   if (this.article && this._speechSynthesizer.canSpeakLanguage(this.article.targetLang)
   //     && this._speechSynthesizer.canSpeakLanguage(this.article.baseLang)) {
   //     buttons.push({
   //       faName: this._flashCardService.speechEnabled ? 'fa-volume-up' : 'fa-volume-off',
@@ -184,20 +184,20 @@ export class FlashCardComponent implements OnInit, OnDestroy {
     switch (command) {
 
       case 'play':
-        this._flashCardService.autoPlay = true
+        this.flashCardService.autoPlay = true
         break
 
       case 'pause':
-        this._flashCardService.autoPlay = false
+        this.flashCardService.autoPlay = false
         break
 
       case 'speechOff':
-        this._flashCardService.speechEnabled = false
+        this.flashCardService.speechEnabled = false
         // this.updateNavButtons()
         break
 
       case 'speechOn':
-        this._flashCardService.speechEnabled = true
+        this.flashCardService.speechEnabled = true
         // this.updateNavButtons()
         break
 
@@ -213,24 +213,24 @@ export class FlashCardComponent implements OnInit, OnDestroy {
   onAction(action: string) {
     switch (action) {
       case 'back':
-        this._router.navigate(['/library', this.publication, this.chapter])
+        this.router.navigate(['/library', this.publication, this.chapter])
         break
 
       case 'play':
-        this._flashCardService.autoPlay = true
+        this.flashCardService.autoPlay = true
         break
 
       case 'pause':
-        this._flashCardService.autoPlay = false
+        this.flashCardService.autoPlay = false
         break
 
       case 'speechOff':
-        this._flashCardService.speechEnabled = false
+        this.flashCardService.speechEnabled = false
         // this.updateNavButtons()
         break
 
       case 'speechOn':
-        this._flashCardService.speechEnabled = true
+        this.flashCardService.speechEnabled = true
         // this.updateNavButtons()
         break
 

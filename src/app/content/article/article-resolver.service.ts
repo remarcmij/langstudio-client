@@ -9,12 +9,12 @@ import { Article } from './article.model'
 export class ArticleResolverService implements Resolve<Article> {
 
   constructor(
-    private _contentApi: ContentApiService
+    private api: ContentApiService
   ) {
   }
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<Article> | Promise<Article> | Article {
-    return this._contentApi.getArticle(route.params['publication'], route.params['chapter'])
+    return this.api.getArticle(route.params['publication'], route.params['chapter'])
   }
 
 }

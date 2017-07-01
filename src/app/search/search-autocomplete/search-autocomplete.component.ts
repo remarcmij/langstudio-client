@@ -37,26 +37,26 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
   private _subject = new Subject<string>()
 
   constructor(
-    private _renderer: Renderer,
-    private _navigation: NavigationService,
-    private _searchApi: SearchApiService,
-    private _content: ContentService,
-    private _language: LanguageService
+    private renderer: Renderer,
+    private navigation: NavigationService,
+    private searchApi: SearchApiService,
+    private content: ContentService,
+    private language: LanguageService
   ) {
   }
 
   ngOnInit() {
-    this.targetLang = this._language.targetLang
+    this.targetLang = this.language.targetLang
 
     this._subject
       .debounceTime(250)
-      .switchMap((term: string) => this._searchApi.autoCompleteSearch(term))
+      .switchMap((term: string) => this.searchApi.autoCompleteSearch(term))
       .map(items => items.slice(0, MAX_ITEMS))
       .takeUntil(this._ngUnsubscribe)
       .subscribe(items => {
         this.items = items
         if (items.length > 0) {
-          this._searchApi.searchSubject.next(items[0])
+          this.searchApi.searchSubject.next(items[0])
         }
       }, err => console.error(err))
 
@@ -65,12 +65,12 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
   ngAfterViewInit() {
     const searchField = this._input.nativeElement
 
-    this._content.onEscKey()
+    this.content.onEscKey()
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => {
         this._trigger.closePanel()
         this.term = ''
-        this._renderer.invokeElementMethod(searchField, 'focus')
+        this.renderer.invokeElementMethod(searchField, 'focus')
       })
 
     Observable.fromEvent(searchField, 'keyup')
@@ -84,11 +84,11 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
         }
       })
 
-    this._navigation.scrollDetectorFor(document.querySelector('#my-content'))
+    this.navigation.scrollDetectorFor(document.querySelector('#my-content'))
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this._trigger.closePanel())
 
-    this._renderer.invokeElementMethod(searchField, 'focus')
+    this.renderer.invokeElementMethod(searchField, 'focus')
   }
 
   ngOnDestroy() {
@@ -99,7 +99,7 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
   onItemSelect(item: SearchParams) {
     this.items = []
     this.term = ''
-    this._searchApi.searchSubject.next(item)
+    this.searchApi.searchSubject.next(item)
     // this.onSelect.emit(item)
   }
 

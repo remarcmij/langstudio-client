@@ -5,8 +5,6 @@ const WORD_REGEXP = /[-'()a-zA-Z\u00C0-\u00FF]{2,}/g
 @Injectable()
 export class MarkdownService {
 
-  constructor() { }
-
   insertMarkdownHtml(text: string): string {
     const foreignFragmentRegExp = /\*{1,2}.+?\*{1,2}/g
     let buffer = ''

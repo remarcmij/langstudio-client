@@ -13,8 +13,8 @@ export class AdminContentApi {
   private readonly _cache = LRU<Topic[]>({ max: 500, maxAge: 1000 * 60 * 60 })
 
   constructor(
-    private _http: Http,
-    private _httpHelper: HttpHelperService
+    private http: Http,
+    private helper: HttpHelperService
   ) { }
 
   getTopics(): Observable<Topic[]> {
@@ -23,16 +23,16 @@ export class AdminContentApi {
     if (topics) {
       return Observable.of(topics)
     }
-    const options = this._httpHelper.getRequestOptions()
-    return this._http.get(url, options)
+    const options = this.helper.getRequestOptions()
+    return this.http.get(url, options)
       .map(response => <Topic[]>response.json())
       .do(data => this._cache.set(url, data))
   }
 
   deleteTopic(fileName: string): Observable<boolean> {
     const url = `${environment.api.host}${environment.api.path}/topics/admin/${fileName}`
-    const options = this._httpHelper.getRequestOptions()
-    return this._http.delete(url, options)
+    const options = this.helper.getRequestOptions()
+    return this.http.delete(url, options)
       .map(response => response.ok)
       .do(() => this.clearCache())
   }

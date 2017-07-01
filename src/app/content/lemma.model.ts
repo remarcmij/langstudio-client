@@ -1,5 +1,5 @@
 export interface HomonymGroup {
-  baseWord: string
+  base: string
   baseLang: string
   homonym: number
   lemmas: Lemma[]
@@ -15,7 +15,7 @@ export class Lemma {
   word: string
   lang: string
   attr: string
-  baseWord: string
+  base: string
   baseLang: string
   text: string
   order: number
@@ -28,13 +28,13 @@ export class Lemma {
       baseMap: {}
     }
     return lemmas.reduce((acc, lemma) => {
-      const key = `${lemma.baseWord}`
+      const key = `${lemma.base}`
       if (key in acc.baseMap) {
         acc.baseMap[key].lemmas.push(lemma)
       } else {
         acc.bases.push(key)
         acc.baseMap[key] = {
-          baseWord: lemma.baseWord,
+          base: lemma.base,
           baseLang: lemma.baseLang,
           lemmas: [lemma],
           homonym: lemma.homonym

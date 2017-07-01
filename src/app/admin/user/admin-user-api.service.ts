@@ -15,35 +15,35 @@ export interface Group {
 export class AdminUserApi {
 
   constructor(
-    private _http: Http,
-    private _httpHelper: HttpHelperService
+    private http: Http,
+    private helper: HttpHelperService
   ) { }
 
   getUsers(): Observable<User[]> {
     const url = `${environment.api.host}${environment.api.path}/users`
-    const options = this._httpHelper.getRequestOptions()
-    return this._http.get(url, options)
+    const options = this.helper.getRequestOptions()
+    return this.http.get(url, options)
       .map(response => response.json())
   }
 
   getGroups(): Observable<Group[]> {
     const url = `${environment.api.host}${environment.api.path}/topics/groups`
-    const options = this._httpHelper.getRequestOptions()
-    return this._http.get(url, options)
+    const options = this.helper.getRequestOptions()
+    return this.http.get(url, options)
       .map(response => response.json())
   }
 
   getUser(id: string): Observable<User> {
     const url = `${environment.api.host}${environment.api.path}/users/${id}`
-    const options = this._httpHelper.getRequestOptions()
-    return this._http.get(url, options)
+    const options = this.helper.getRequestOptions()
+    return this.http.get(url, options)
       .map(response => response.json())
   }
 
   saveGroups(id: string, groups: string[]): Observable<boolean> {
     const url = `${environment.api.host}${environment.api.path}/users/${id}/groups`
-    const options = this._httpHelper.getRequestOptions()
-    return this._http.put(url, { groups }, options)
+    const options = this.helper.getRequestOptions()
+    return this.http.put(url, { groups }, options)
       .map(response => response.ok)
   }
 }

@@ -23,14 +23,14 @@ export class ParagraphsComponent implements OnInit, OnDestroy {
 
 
   constructor(
-    private _sanitizer: DomSanitizer,
-    private _searchApi: SearchApiService,
-    private _markdown: MarkdownService
+    private sanitizer: DomSanitizer,
+    private searchApi: SearchApiService,
+    private markdown: MarkdownService
   ) {
   }
 
   ngOnInit() {
-    this._searchApi.searchSubject
+    this.searchApi.searchSubject
       .takeUntil(this._ngUnsubscribe)
       .subscribe(target => {
         if (target) {
@@ -45,8 +45,8 @@ export class ParagraphsComponent implements OnInit, OnDestroy {
   }
 
   safeHtml(mdText: string): SafeHtml {
-    const html = this._markdown.insertMarkdownHtml(mdText)
-    return this._sanitizer.bypassSecurityTrustHtml(html)
+    const html = this.markdown.insertMarkdownHtml(mdText)
+    return this.sanitizer.bypassSecurityTrustHtml(html)
   }
 
   trackByFn(index: number, para: Paragraph): string {
@@ -63,7 +63,8 @@ export class ParagraphsComponent implements OnInit, OnDestroy {
   }
 
   private _searchMore() {
-    this._searchApi.searchParagraphs(this.searchRequest)
+    this.searchApi.searchParagraphs(this.searchRequest)
+      .takeUntil(this._ngUnsubscribe)
       .subscribe(result => {
         this.paras = this.paras.concat(result.paragraphs)
         if (result.haveMore) {

@@ -35,26 +35,26 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private _router: Router,
-    private _activatedRoute: ActivatedRoute,
-    private _changeDetector: ChangeDetectorRef,
-    private _location: Location,
-    private _searchApi: SearchApiService,
-    private _language: LanguageService,
-    private _speechSynthesizer: SpeechSynthesizerService,
-    private _navigation: NavigationService
+    private router: Router,
+    private activatedRoute: ActivatedRoute,
+    private cdr: ChangeDetectorRef,
+    private location: Location,
+    private searchApi: SearchApiService,
+    private language: LanguageService,
+    private speech: SpeechSynthesizerService,
+    private navigation: NavigationService
   ) {
   }
 
   ngOnInit() {
-    const params = this._activatedRoute.snapshot.params
+    const params = this.activatedRoute.snapshot.params
     this.searchRequest.word = params['word'] || this.searchRequest.word
-    this.searchRequest.lang = this._language.targetLang
+    this.searchRequest.lang = this.language.targetLang
     if (this.searchRequest.word) {
       this.wordLangSearch({ word: this.searchRequest.word, lang: this.searchRequest.lang })
     }
 
-    this._searchApi.searchSubject
+    this.searchApi.searchSubject
       .takeUntil(this._ngUnsubscribe)
       .subscribe(target => {
         if (target) {
@@ -72,11 +72,11 @@ export class DictionaryComponent implements OnInit, OnDestroy {
 
   hidePopover() {
     this.popoverParams = undefined
-    this._changeDetector.detectChanges()
+    this.cdr.detectChanges()
   }
 
   goBack() {
-    this._location.back()
+    this.location.back()
   }
 
   wordLangSearch(searchTarget: SearchParams) {
@@ -90,7 +90,8 @@ export class DictionaryComponent implements OnInit, OnDestroy {
   }
 
   private _searchMore() {
-    this._searchApi.searchLemmas(this.result, this.searchRequest)
+    this.searchApi.searchLemmas(this.result, this.searchRequest)
+      .takeUntil(this._ngUnsubscribe)
       .subscribe(result => {
         this.result = result
         if (result.haveMore) {

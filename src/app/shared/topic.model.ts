@@ -4,7 +4,7 @@ export class Topic {
     publication?: string
     chapter?: string
     part?: string
-    foreignLang?: string
+    targetLang?: string
     baseLang?: string
     groupName: string
     sortIndex?: number

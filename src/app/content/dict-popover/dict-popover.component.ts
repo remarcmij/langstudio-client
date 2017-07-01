@@ -36,27 +36,27 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
   private _ngUnsubscribe = new Subject<void>()
 
   constructor(
-    private _elementRef: ElementRef,
-    private _searchApi: SearchApiService,
-    private _sanitizer: DomSanitizer,
-    private _renderer: Renderer,
-    private _zone: NgZone,
-    private _changeDetector: ChangeDetectorRef,
-    private _markdown: MarkdownService,
-    private _navigation: NavigationService,
-    private _speechSynthesizer: SpeechSynthesizerService
+    private elementRef: ElementRef,
+    private searchApi: SearchApiService,
+    private sanitizer: DomSanitizer,
+    private renderer: Renderer,
+    private zone: NgZone,
+    private cdr: ChangeDetectorRef,
+    private markdown: MarkdownService,
+    private navigation: NavigationService,
+    private speech: SpeechSynthesizerService
   ) {
   }
 
   ngOnInit() {
 
-    this._searchApi.popoverSearch(this.input.word, this.input.lang)
+    this.searchApi.popoverSearch(this.input.word, this.input.lang)
       .subscribe(resp => {
         if (!resp) {
           this.errorText = 'Not in in dictionary.'
         } else {
-          const htmlText = this._markdown.tinyMarkdown(resp.text)
-          this.safeHtml = this._sanitizer.bypassSecurityTrustHtml(htmlText)
+          const htmlText = this.markdown.tinyMarkdown(resp.text)
+          this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(htmlText)
           this.baseWords = resp.baseWords
           this.baseList = resp.baseWords.join(', ')
           this.resolvedWord = resp.resolvedWord
@@ -67,12 +67,12 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
 
   ngAfterViewInit() {
 
-    this._navigation.scrollDetectorFor(document.querySelector('#my-content'))
+    this.navigation.scrollDetectorFor(document.querySelector('#my-content'))
       .takeUntil(this._ngUnsubscribe)
       .subscribe(() => this.shouldHide.emit())
 
     // ignore clicks on popover body
-    Observable.fromEvent(this._elementRef.nativeElement, 'click')
+    Observable.fromEvent(this.elementRef.nativeElement, 'click')
       .takeUntil(this._ngUnsubscribe)
       .subscribe((ev: MouseEvent) => {
         ev.preventDefault()
@@ -99,8 +99,8 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
   }
 
   ngAfterViewChecked() {
-    if (this.popoverHeight !== this._elementRef.nativeElement.clientHeight) {
-      this.popoverHeight = this._elementRef.nativeElement.clientHeight
+    if (this.popoverHeight !== this.elementRef.nativeElement.clientHeight) {
+      this.popoverHeight = this.elementRef.nativeElement.clientHeight
       let popoverTop = this.input.top - this.popoverHeight
       const navbarElem = <HTMLElement>document.querySelector('md-toolbar')
       if (popoverTop <= navbarElem.offsetHeight) {
@@ -109,13 +109,13 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
       if (popoverTop + this.popoverHeight > window.innerHeight) {
         popoverTop = navbarElem.offsetHeight + this.input.height
       }
-      this._renderer.setElementStyle(this._elementRef.nativeElement, 'top', `${popoverTop}px`)
+      this.renderer.setElementStyle(this.elementRef.nativeElement, 'top', `${popoverTop}px`)
 
       if (this.safeHtml || this.errorText) {
-        this._zone.runOutsideAngular(() => {
+        this.zone.runOutsideAngular(() => {
           window.requestAnimationFrame(() => {
             this.scrollState = 'ready'
-            this._changeDetector.detectChanges()
+            this.cdr.detectChanges()
           })
         })
       }
@@ -133,6 +133,6 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
   }
 
   canSpeak(): boolean {
-    return this._speechSynthesizer.canSpeakLanguage(this.input.lang)
+    return this.speech.canSpeakLanguage(this.input.lang)
   }
 }

@@ -11,7 +11,7 @@ export class NavigationService {
   public topMap: { [key: string]: number } = {}
 
   constructor(
-    private _zone: NgZone
+    private zone: NgZone
   ) {
   }
 
@@ -22,9 +22,9 @@ export class NavigationService {
 
   restoreTop(key: string) {
     const top = this.topMap[key] || 0
-    this._zone.runOutsideAngular(() => {
+    this.zone.runOutsideAngular(() => {
       setTimeout(() => {
-        this._zone.run(() => {
+        this.zone.run(() => {
           document.querySelector('#my-content').scrollTop = top
           this.scrollState.next('ready')
         })

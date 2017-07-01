@@ -194,8 +194,7 @@ export class SpeechSynthesizerService {
     }
   }
 
-  constructor(
-  ) {
+  constructor() {
     this.onInit()
   }
 
