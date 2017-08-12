@@ -4,8 +4,8 @@ export class Article {
     title: string
     targetLang?: string
     baseLang?: string
-    mdText: string
-    htmlText: string
+    rawBody: string
+    body: string
     indexText?: string
     _topic?: any
 }

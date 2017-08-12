@@ -39,8 +39,8 @@ export class MarkdownService {
     return this.tinyMarkdown(buffer)
   }
 
-  tinyMarkdown(mdText: string): string {
-    return mdText
+  tinyMarkdown(rawBody: string): string {
+    return rawBody
       .replace(/\*\*(.+?)\*\*/g, '<strong>$1</span></strong>')
       .replace(/\*(.+?)\*/g, '<em>$1</span></em>')
       .replace(/__(.+?)__/g, '<strong>$1</strong>')

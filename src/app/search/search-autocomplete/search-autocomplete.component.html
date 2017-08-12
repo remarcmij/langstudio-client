@@ -4,7 +4,7 @@
 </md-input-container>
 
 <md-autocomplete #auto="mdAutocomplete">
-  <md-option *ngFor="let item of items" [value]="item" (onSelectionChange)="onItemSelect(item)" class="text-content">
+  <md-option *ngFor="let item of items" [value]="item.word" (onSelectionChange)="onItemSelect(item)" class="text-content">
     <span *ngIf="item.lang === targetLang; else baseLangBlock"><strong>{{ item.word }}</strong></span>
     <ng-template #baseLangBlock>{{ item.word }}</ng-template>
   </md-option>

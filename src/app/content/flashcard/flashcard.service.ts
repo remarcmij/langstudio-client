@@ -154,7 +154,7 @@ export class FlashcardService {
   }
 
   hasFlashCards(article: Article): boolean {
-    return article.mdText && article.mdText.indexOf(`<!-- flashcard -->`) !== -1
+    return article.rawBody && article.rawBody.indexOf(`<!-- flashcard -->`) !== -1
   }
 
   stopCurrent() {
@@ -259,7 +259,7 @@ export class FlashcardService {
 
   private _getFlashCardSections(): FlashcardSection[] {
     const sections: FlashcardSection[] = []
-    let text = this._article.mdText
+    let text = this._article.rawBody
     let match = text.match(BEGIN_MARKER_REGEXP)
 
     while (match) {

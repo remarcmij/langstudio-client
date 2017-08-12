@@ -44,8 +44,8 @@ export class ParagraphsComponent implements OnInit, OnDestroy {
     this._ngUnsubscribe.complete()
   }
 
-  safeHtml(mdText: string): SafeHtml {
-    const html = this.markdown.insertMarkdownHtml(mdText)
+  safeHtml(rawBody: string): SafeHtml {
+    const html = this.markdown.insertMarkdownHtml(rawBody)
     return this.sanitizer.bypassSecurityTrustHtml(html)
   }
 

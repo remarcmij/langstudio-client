@@ -37,7 +37,7 @@ export class ContentApiService {
   }
 
   getPublicationTopics(publication: string): Observable<Topic[]> {
-    const url = `${environment.api.host}${environment.api.path}/topics/publication/${publication}`
+    const url = `${environment.api.host}${environment.api.path}/topics/${publication}`
     const topics = this._topicCache.get(url)
     if (topics) {
       return Observable.of(topics)

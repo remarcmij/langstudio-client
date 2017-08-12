@@ -73,7 +73,7 @@ export class AuthService implements OnInit {
     const caLen = ca.length
     const cookieName = name + '='
     for (let i = 0; i < caLen; i += 1) {
-      const c = ca[i].replace(/^\s\+/g, '')
+      const c = ca[i].replace(/^\s+/g, '')
       if (c.indexOf(cookieName) === 0) {
         return decodeURI(c.substring(cookieName.length, c.length))
       }

@@ -105,9 +105,7 @@ export class SearchAutocompleteComponent implements OnInit, AfterViewInit, OnDes
   }
 
   onChange(ev: any) {
-    if (typeof ev === 'object') {
-      this.term = (<WordLang>ev).word
-    } else if (typeof ev === 'string') {
+    if (typeof ev === 'string') {
       ev = ev.toLowerCase().trim()
       if (ev.length > 0) {
         this._subject.next(ev)

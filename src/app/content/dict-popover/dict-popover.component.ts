@@ -55,8 +55,8 @@ export class DictPopoverComponent implements OnInit, OnDestroy, AfterViewInit, A
         if (!resp) {
           this.errorText = 'Not in in dictionary.'
         } else {
-          const htmlText = this.markdown.tinyMarkdown(resp.text)
-          this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(htmlText)
+          const body = this.markdown.tinyMarkdown(resp.text)
+          this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(body)
           this.baseWords = resp.baseWords
           this.baseList = resp.baseWords.join(', ')
           this.resolvedWord = resp.resolvedWord

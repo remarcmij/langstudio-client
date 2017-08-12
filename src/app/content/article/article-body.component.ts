@@ -21,7 +21,7 @@ export class ArticleBodyComponent implements AfterViewChecked {
 
   @Input() set article(article: Article) {
     this._articleElement = undefined
-    this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(article.htmlText)
+    this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(article.body)
   }
 
   @Input() hashTag: string

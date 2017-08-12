@@ -69,7 +69,7 @@ export class ArticleComponent implements OnInit, OnDestroy, CanComponentDeactiva
     this.publication = params['publication']
     this.chapter = params['chapter']
     this.tag = params['tag']
-    this.hasFlashCards = this.article.mdText && this.article.mdText.indexOf(`<!-- flashcard -->`) !== -1
+    this.hasFlashCards = this.article.rawBody && this.article.rawBody.indexOf(`<!-- flashcard -->`) !== -1
     if (!this.tag) {
       this.navigation.restoreTop(SELECTOR)
     }

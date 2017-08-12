@@ -18,7 +18,7 @@ export class AdminContentApi {
   ) { }
 
   getTopics(): Observable<Topic[]> {
-    const url = `${environment.api.host}${environment.api.path}/topics/admin`
+    const url = `${environment.api.host}${environment.api.path}/topics/all`
     const topics = this._cache.get(url)
     if (topics) {
       return Observable.of(topics)
@@ -30,7 +30,7 @@ export class AdminContentApi {
   }
 
   deleteTopic(fileName: string): Observable<boolean> {
-    const url = `${environment.api.host}${environment.api.path}/topics/admin/${fileName}`
+    const url = `${environment.api.host}${environment.api.path}/topics/${fileName}`
     const options = this.helper.getRequestOptions()
     return this.http.delete(url, options)
       .map(response => response.ok)
